@@ -55,7 +55,7 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka-streams'
 	implementation 'org.springframework.cloud:spring-cloud-stream'
 	// added by for CVE-2022-1471
-	implementation 'org.yaml:snakeyaml:2.0'
+	implementation 'org.yaml:snakeyaml:2.2'
 
 
 	// spring boot
