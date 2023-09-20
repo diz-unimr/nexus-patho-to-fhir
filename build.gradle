@@ -1,0 +1,145 @@
+plugins {
+	id 'org.springframework.boot' version '3.1.3'
+	id 'io.spring.dependency-management' version '1.1.3'
+	id 'java'
+	id 'jacoco'
+	id "io.freefair.lombok" version "6.5.1"
+}
+
+group = 'de.unimarburg.diz'
+version = '0.0.2-SNAPSHOT'
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/snapshot' }
+	maven { url 'https://repo.spring.io/milestone' }
+}
+
+sourceSets {
+	intTest {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+configurations {
+	intTestImplementation.extendsFrom implementation
+	intTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+task integrationTest(type: Test) {
+	description = 'Runs integration tests.'
+	group = 'verification'
+
+	testClassesDirs = sourceSets.intTest.output.classesDirs
+	classpath = sourceSets.intTest.runtimeClasspath
+	shouldRunAfter test
+}
+
+check.dependsOn integrationTest
+
+ext {
+	set('springCloudVersion', "2022.0.4")
+	set("hapiFhirVersion", "6.6.2")
+	set("kafka.version","3.5.1")
+}
+
+dependencies {
+	// spring cloud stream kafka
+	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka-streams'
+	implementation 'org.springframework.cloud:spring-cloud-stream'
+	// added by for CVE-2022-1471
+	implementation 'org.yaml:snakeyaml:2.0'
+
+
+	// spring boot
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-actuator"
+
+	// metrics
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'io.micrometer:micrometer-core'
+
+	// mapper
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+	// hapi fhir
+	implementation "ca.uhn.hapi.fhir:hapi-fhir-base:$hapiFhirVersion"
+	implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiFhirVersion"
+	implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiFhirVersion"
+	implementation "ca.uhn.hapi.fhir:hapi-fhir-validation:$hapiFhirVersion"
+	implementation "ca.uhn.hapi.fhir:hapi-fhir-validation-resources-r4:$hapiFhirVersion"
+	implementation 'org.miracum:kafka-fhir-serializer:1.0.2'
+
+	// unit tests
+	testImplementation 'org.springframework.cloud:spring-cloud-stream'
+	testImplementation 'org.apache.kafka:kafka-streams-test-utils:3.4.0'
+	testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	testImplementation 'org.assertj:assertj-core'
+
+	// integration tests
+	intTestImplementation 'org.springframework.kafka:spring-kafka-test'
+	intTestImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	intTestImplementation 'org.assertj:assertj-core'
+
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+
+integrationTest {
+	useJUnitPlatform()
+}
+
+jacoco {
+	toolVersion = "0.8.8"
+	reportsDirectory = layout.buildDirectory.dir('jacoco-reports')
+}
+
+jacocoTestReport {
+	reports {
+		xml.required = true
+		csv.required = true
+		csv.outputLocation = layout.buildDirectory.file('jacoco/coverage.csv')
+		html.outputLocation = layout.buildDirectory.dir('jacoco/html')
+	}
+}
+
+jar {
+	enabled = false
+}
+
+bootJar {
+	mainClass.set('de.unimarburg.diz.nexuspathotofhir.Application')
+}
+
+tasks.named("bootBuildImage") {
+	imageName = "${project.name}"
+	environment["BP_JVM_VERSION"] = "17"
+	environment["BP_OCI_SOURCE"]="https://github.com/DIZ-UNIMR/nexus-patho-to-fhir"
+	environment["BP_OCI_TITLE"]="nexus-patho-to-fhir"
+	environment["BP_OCI_VENDOR"]="https://github.com/diz-unimr"
+	environment["BP_OCI_LICENSES"]="AGPLv3"
+	environment["BP_OCI_DESCRIPTION"]= "Kafka processor transforms Nexus pathology report data to FHIR resources meeting MII pathology profiling"
+}

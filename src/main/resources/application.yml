@@ -1,0 +1,47 @@
+spring:
+  jmx:
+    enabled: true
+  kafka:
+    bootstrapServers: ${BOOTSTRAP_SERVERS:localhost:9092}
+    security.protocol: ${SECURITY_PROTOCOL:PLAINTEXT}
+    ssl:
+      trust-store-location: file://${SSL_TRUST_STORE_LOCATION_INTERNAL:/opt/kafka-streams-template/ssl/truststore.jks}
+      trust-store-password: ${SSL_TRUST_STORE_PASSWORD}
+      key-store-location: file://${SSL_KEY_STORE_LOCATION_INTERNAL:/opt/kafka-streams-template/ssl/keystore.jks}
+      key-store-password: ${SSL_KEY_STORE_PASSWORD}
+
+  cloud:
+    stream:
+      function.definition: process
+      bindings:
+        process-in-0:
+          destination: input-topic
+        process-out-0:
+          destination: output-topic
+      kafka:
+        streams:
+          binder:
+            applicationId: nexus-patho-to-fhir
+            configuration:
+              compression.type: gzip
+              max.request.size: 5242880
+
+
+management:
+  server:
+    port: 8080
+  endpoints:
+    web:
+      exposure:
+        include: "health, prometheus, info, metric"
+  endpoint:
+    health:
+      show-details: always
+      enabled: true
+    info:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.kafka.config: info
+    de.unimarburg.diz.nexuspathotofhir: debug
