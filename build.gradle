@@ -45,7 +45,7 @@ check.dependsOn integrationTest
 
 ext {
 	set('springCloudVersion', "2022.0.4")
-	set("hapiFhirVersion", "6.6.2")
+	set("hapiFhirVersion", "6.8.3")
 	set("kafka.version","3.5.1")
 }
 
