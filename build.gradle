@@ -4,6 +4,8 @@ plugins {
 	id 'java'
 	id 'jacoco'
 	id "io.freefair.lombok" version "6.5.1"
+	id "com.diffplug.spotless" version "6.22.0"
+
 }
 
 group = 'de.unimarburg.diz'
@@ -79,7 +81,7 @@ dependencies {
 
 	// unit tests
 	testImplementation 'org.springframework.cloud:spring-cloud-stream'
-	testImplementation 'org.apache.kafka:kafka-streams-test-utils:3.4.0'
+	testImplementation 'org.apache.kafka:kafka-streams-test-utils:3.6.0'
 	testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -132,6 +134,17 @@ jar {
 
 bootJar {
 	mainClass.set('de.unimarburg.diz.nexuspathotofhir.Application')
+}
+
+spotless {
+	java {
+		importOrder()
+		removeUnusedImports()
+		googleJavaFormat()
+		formatAnnotations()
+		cleanthat()
+		licenseHeader '/* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)$YEAR */'
+	}
 }
 
 tasks.named("bootBuildImage") {

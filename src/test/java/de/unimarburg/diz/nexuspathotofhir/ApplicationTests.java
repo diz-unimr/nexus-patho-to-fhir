@@ -1,3 +1,4 @@
+/* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir;
 
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,6 @@ import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 @EnableAutoConfiguration(exclude = {KafkaAutoConfiguration.class})
 class ApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+  @Test
+  void contextLoads() {}
 }

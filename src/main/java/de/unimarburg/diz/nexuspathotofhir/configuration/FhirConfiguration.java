@@ -1,3 +1,4 @@
+/* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.configuration;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -14,29 +15,26 @@ import org.springframework.stereotype.Component;
 @ConfigurationPropertiesScan
 public class FhirConfiguration {
 
-    private final Logger log = LoggerFactory.getLogger(FhirConfiguration.class);
+  private final Logger log = LoggerFactory.getLogger(FhirConfiguration.class);
 
-    public FhirConfiguration(FhirProperties fhirProperties) {
-        this.fhirProperties = fhirProperties;
+  public FhirConfiguration(FhirProperties fhirProperties) {
+    this.fhirProperties = fhirProperties;
+  }
 
-    }
+  @PostConstruct
+  private void logConfig() {
+    log.info(this.toString());
+  }
 
-    @PostConstruct
-    private void logConfig(){
-        log.info(this.toString());
-    }
+  @Bean
+  public FhirContext fhirContext() {
+    return PathoFhirContext.getInstance();
+  }
 
-    @Bean
-    public FhirContext fhirContext() {
-        return PathoFhirContext.getInstance();
-    }
+  public final FhirProperties fhirProperties;
 
-    public final FhirProperties fhirProperties;
-
-    @Override
-    public String toString() {
-        return "FhirConfiguration{" +
-                "fhirProperties=" + fhirProperties +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "FhirConfiguration{" + "fhirProperties=" + fhirProperties + '}';
+  }
 }
