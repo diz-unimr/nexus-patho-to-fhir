@@ -20,8 +20,6 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.hl7.fhir.r4.model.Bundle;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.kafka.support.serializer.JsonSerializer;
@@ -41,7 +39,6 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
       PathoSpecimenMapper.class,
       ServiceRequestMapper.class
     })
-@EnableAutoConfiguration(exclude = {KafkaAutoConfiguration.class})
 public class KafkaTopologyTest {
 
   @Autowired PathologyProcessor processor;
