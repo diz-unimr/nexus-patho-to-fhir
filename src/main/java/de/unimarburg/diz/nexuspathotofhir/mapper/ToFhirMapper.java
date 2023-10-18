@@ -2,6 +2,7 @@
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import org.apache.kafka.streams.kstream.ValueMapper;
@@ -11,14 +12,14 @@ import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Resource;
 
 public abstract class ToFhirMapper
-    implements ValueMapper<PathoReport, Bundle.BundleEntryComponent> {
+    implements ValueMapper<PathoInputBase, Bundle.BundleEntryComponent> {
   protected final FhirProperties fhirProperties;
 
   public ToFhirMapper(final FhirProperties fhirProperties) {
     this.fhirProperties = fhirProperties;
   }
 
-  public abstract Resource map(PathoReport input);
+  public abstract Resource map(PathoInputBase input);
 
   public Observation mapBaseGrouper(PathoReport input) {
     if (input == null) return null;
@@ -34,7 +35,7 @@ public abstract class ToFhirMapper
     return result;
   }
 
-  public abstract Bundle.BundleEntryComponent apply(PathoReport input);
+  public abstract Bundle.BundleEntryComponent apply(PathoInputBase input);
 
   protected Bundle.BundleEntryRequestComponent buildPutRequest(
       Resource resource, String identifierSystem) {

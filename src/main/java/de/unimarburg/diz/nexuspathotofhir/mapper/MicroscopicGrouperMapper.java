@@ -2,6 +2,7 @@
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
@@ -21,10 +22,10 @@ public class MicroscopicGrouperMapper extends ToFhirMapper {
   }
 
   @Override
-  public Observation map(PathoReport input) {
+  public Observation map(PathoInputBase inputBase) {
     log.debug(
-        String.format(
-            "creating MicroscopicGrouper from patho-guid '%s'", input.getPathologieBefundId()));
+        String.format("creating MicroscopicGrouper from patho-guid '%s'", inputBase.getUUID()));
+    var input = (PathoReport) inputBase;
     var result = super.mapBaseGrouper(input);
     result.setMeta(new Meta().setSource("#nexus-pathology"));
 
@@ -37,7 +38,7 @@ public class MicroscopicGrouperMapper extends ToFhirMapper {
   }
 
   @Override
-  public Bundle.BundleEntryComponent apply(PathoReport value) {
+  public Bundle.BundleEntryComponent apply(PathoInputBase value) {
     var mapped = map(value);
     return new Bundle.BundleEntryComponent()
         .setResource(mapped)

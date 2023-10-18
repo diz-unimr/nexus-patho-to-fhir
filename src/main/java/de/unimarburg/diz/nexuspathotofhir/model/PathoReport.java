@@ -6,14 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
-import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
 @Data
-public class PathoReport implements Serializable {
+public class PathoReport implements PathoInputBase {
 
   /** incremental number for this object instance to allow order */
   @JsonProperty("Index_ID")
@@ -151,5 +150,10 @@ public class PathoReport implements Serializable {
               "report id %s has an unexpected value at property 'Dokumentart': {%s}",
               this.indexID, this.getDocumentart()));
     return result;
+  }
+
+  @JsonIgnore
+  public String getUUID() {
+    return getPathologieBefundId();
   }
 }

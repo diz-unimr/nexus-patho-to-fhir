@@ -1,9 +1,10 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
-package de.unimarburg.diz.nexuspathotofhir;
+package de.unimarburg.diz.nexuspathotofhir.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -79,8 +80,19 @@ public class DummyDataUtil {
     return List.of(mainReport, reportCorrection1, reportCorrection2, reportAddition);
   }
 
+  public static PathoSpecimen getDummySpecimen() {
+    final PathoSpecimen pathoSpecimen = new PathoSpecimen();
+    pathoSpecimen.setProbeId("specimen-dummy-id");
+    pathoSpecimen.setPatientennummer("0000001");
+    pathoSpecimen.setFallnummer("5000001");
+    pathoSpecimen.setAuftragnummer("H/20223/00001");
+
+    return pathoSpecimen;
+  }
+
   @Test
   public void check() {
     assertThat(getDummyReport()).isNotNull();
+    assertThat(getDummySpecimen()).isNotNull();
   }
 }

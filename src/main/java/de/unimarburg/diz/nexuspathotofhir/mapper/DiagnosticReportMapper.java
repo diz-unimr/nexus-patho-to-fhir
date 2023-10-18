@@ -2,6 +2,7 @@
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
@@ -18,7 +19,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
   }
 
   @Override
-  public DiagnosticReport map(PathoReport input) {
+  public DiagnosticReport map(PathoInputBase input) {
     var result = new DiagnosticReport();
     return result.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(
@@ -123,7 +124,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
   }
 
   @Override
-  public Bundle.BundleEntryComponent apply(PathoReport value) {
+  public Bundle.BundleEntryComponent apply(PathoInputBase value) {
     var mapped = map(value);
     return new Bundle.BundleEntryComponent()
         .setResource(mapped)

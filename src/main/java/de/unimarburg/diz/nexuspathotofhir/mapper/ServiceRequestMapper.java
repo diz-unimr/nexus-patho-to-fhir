@@ -2,7 +2,7 @@
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
-import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
 import org.hl7.fhir.r4.model.Bundle;
@@ -21,11 +21,11 @@ public class ServiceRequestMapper extends ToFhirMapper {
   }
 
   @Override
-  public ServiceRequest map(PathoReport input) {
+  public ServiceRequest map(PathoInputBase input) {
     log.debug(
         String.format(
             "creating service_request '%s' from patho-guid '%s'",
-            input.getAuftragnummer(), input.getPathologieBefundId()));
+            input.getAuftragnummer(), input.getUUID()));
 
     ServiceRequest result = new ServiceRequest();
     result.setMeta(new Meta().setSource("#nexus-pathology"));
@@ -39,7 +39,7 @@ public class ServiceRequestMapper extends ToFhirMapper {
   }
 
   @Override
-  public Bundle.BundleEntryComponent apply(PathoReport value) {
+  public Bundle.BundleEntryComponent apply(PathoInputBase value) {
     var mapped = map(value);
     return new Bundle.BundleEntryComponent()
         .setResource(mapped)

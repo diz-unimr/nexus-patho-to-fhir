@@ -2,13 +2,13 @@
 package de.unimarburg.diz.nexuspathotofhir.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-public class PathoSpecimen implements Serializable {
+public class PathoSpecimen implements PathoInputBase {
 
   @JsonProperty("Auftragnummer")
   private String auftragnummer;
@@ -24,6 +24,11 @@ public class PathoSpecimen implements Serializable {
    */
   @JsonProperty("Probe_id")
   private String probeId;
+
+  @JsonIgnore
+  public String getUUID() {
+    return getProbeId();
+  }
 
   /**
    * @apiNote value has white space separator (german name, extraction method, side localization) -

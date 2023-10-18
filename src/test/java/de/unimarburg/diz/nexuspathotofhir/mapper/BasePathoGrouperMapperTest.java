@@ -4,9 +4,9 @@ package de.unimarburg.diz.nexuspathotofhir.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-import de.unimarburg.diz.nexuspathotofhir.DummyDataUtil;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
+import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
 import java.lang.reflect.InvocationTargetException;

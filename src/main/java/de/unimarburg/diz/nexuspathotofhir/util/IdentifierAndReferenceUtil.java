@@ -1,7 +1,7 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.util;
 
-import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Reference;
 import org.springframework.util.StringUtils;
@@ -9,26 +9,26 @@ import org.springframework.util.StringUtils;
 public class IdentifierAndReferenceUtil {
 
   /**
-   * @param pathoReport
+   * @param inputBase
    * @param identType
    * @param args
    * @return
    */
   public static String getPathoIdentifierValue(
-      PathoReport pathoReport, PathologyIdentifierType identType, String[] args) {
+      PathoInputBase inputBase, PathologyIdentifierType identType, String[] args) {
     if (identType == null) throw new IllegalArgumentException("identType was null");
-    if (pathoReport == null) throw new IllegalArgumentException("pathoReport was null");
-    if (!StringUtils.hasText(pathoReport.getAuftragnummer()))
-      throw new IllegalArgumentException("pathoReport.Auftragnummer was null");
+    if (inputBase == null) throw new IllegalArgumentException("inputBase was null");
+    if (!StringUtils.hasText(inputBase.getAuftragnummer()))
+      throw new IllegalArgumentException("inputBase.Auftragnummer was null");
 
     var builder = new StringBuilder();
 
     if (identType == PathologyIdentifierType.PATIENT) {
-      return pathoReport.getPatientennummer();
+      return inputBase.getPatientennummer();
     } else {
-      builder.append(pathoReport.getFallnummer());
+      builder.append(inputBase.getFallnummer());
       builder.append("-");
-      builder.append(pathoReport.getAuftragnummer());
+      builder.append(inputBase.getAuftragnummer());
       builder.append("-");
       builder.append(identType.name());
     }
@@ -39,17 +39,17 @@ public class IdentifierAndReferenceUtil {
   }
 
   public static Identifier getIdentifier(
-      PathoReport pathoReport, PathologyIdentifierType identType, String system, String... args) {
+      PathoInputBase inputBase, PathologyIdentifierType identType, String system, String... args) {
     return new Identifier()
         .setSystem(system)
-        .setValue(getPathoIdentifierValue(pathoReport, identType, args));
+        .setValue(getPathoIdentifierValue(inputBase, identType, args));
   }
 
   public static Identifier getIdentifier(
-      PathoReport pathoReport, PathologyIdentifierType identType, String system) {
+      PathoInputBase inputBase, PathologyIdentifierType identType, String system) {
     return new Identifier()
         .setSystem(system)
-        .setValue(getPathoIdentifierValue(pathoReport, identType, null));
+        .setValue(getPathoIdentifierValue(inputBase, identType, null));
   }
 
   public static Reference getReferenceTo(String resourceR4Name, Identifier identifier) {

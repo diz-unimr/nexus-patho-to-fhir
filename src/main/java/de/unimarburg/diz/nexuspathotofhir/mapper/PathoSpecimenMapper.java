@@ -2,6 +2,7 @@
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
@@ -25,7 +26,7 @@ public class PathoSpecimenMapper extends ToFhirMapper {
   }
 
   @Override
-  public Specimen map(PathoReport input) {
+  public Specimen map(PathoInputBase input) {
 
     // fixme this method should consume from specimen topic and therefore have other input type
     var result = new Specimen();
@@ -99,7 +100,7 @@ public class PathoSpecimenMapper extends ToFhirMapper {
   }
 
   @Override
-  public Bundle.BundleEntryComponent apply(PathoReport value) {
+  public Bundle.BundleEntryComponent apply(PathoInputBase value) {
     var mapped = map(value);
     return new Bundle.BundleEntryComponent()
         .setResource(mapped)

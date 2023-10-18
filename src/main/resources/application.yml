@@ -12,12 +12,16 @@ spring:
 
   cloud:
     stream:
-      function.definition: process
+      function.definition: processPathoReport,processPathoSpecimen
       bindings:
         process-in-0:
-          destination: input-topic
+          destination: input-patho-report
         process-out-0:
-          destination: output-topic
+          destination: output-patho-report
+        process-in-1:
+          destination: input-patho-specimen
+        process-out-1:
+          destination: output-patho-specimen
       kafka:
         streams:
           binder:
