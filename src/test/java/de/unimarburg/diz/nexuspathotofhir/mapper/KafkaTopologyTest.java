@@ -46,9 +46,7 @@ public class KafkaTopologyTest {
 
   @Autowired PathologyProcessor processor;
 
-  /**
-   * fixme: basic structure - need to be refined
-   */
+  /** fixme: basic structure - need to be refined */
   @Test
   public void test() {
     String INPUT_TOPIC = "input";
