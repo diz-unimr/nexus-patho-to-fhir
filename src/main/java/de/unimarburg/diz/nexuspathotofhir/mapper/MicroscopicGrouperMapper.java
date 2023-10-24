@@ -25,7 +25,8 @@ public class MicroscopicGrouperMapper extends ToFhirMapper {
   public Observation map(PathoInputBase inputBase) {
     log.debug(
         String.format("creating MicroscopicGrouper from patho-guid '%s'", inputBase.getUUID()));
-    var input = (PathoReport) inputBase;
+    if (!(inputBase instanceof PathoReport input))
+      throw new IllegalArgumentException("input must be a PathoReport");
     var result = super.mapBaseGrouper(input);
     result.setMeta(new Meta().setSource("#nexus-pathology"));
 

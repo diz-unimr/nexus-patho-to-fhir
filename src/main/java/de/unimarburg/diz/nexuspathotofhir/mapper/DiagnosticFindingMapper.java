@@ -18,14 +18,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DiagnosticFindingMapper extends ToFhirMapper {
-  private final Logger log = LoggerFactory.getLogger(PathoSpecimenMapper.class);
+  private final Logger log = LoggerFactory.getLogger(SpecimenMapper.class);
 
   public DiagnosticFindingMapper(FhirProperties fhirProperties) {
     super(fhirProperties);
   }
 
   @Override
-  public Observation map(PathoInputBase input) {
+  public Observation map(PathoInputBase inputBase) {
+    if (!(inputBase instanceof PathoReport input))
+      throw new IllegalArgumentException("input must be a PathoReport");
+
     var result = new Observation();
     return result.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(

@@ -31,7 +31,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
       FhirProperties.class,
       PathoFhirContext.class,
       FhirConfiguration.class,
-      PathoSpecimenMapper.class,
+      SpecimenMapper.class,
       SpecimenProcessor.class
     })
 public class SpecimenProcessorTest {

@@ -19,8 +19,12 @@ public class DiagnosticReportMapper extends ToFhirMapper {
   }
 
   @Override
-  public DiagnosticReport map(PathoInputBase input) {
+  public DiagnosticReport map(PathoInputBase inputBase) {
+    if (!(inputBase instanceof PathoReport input))
+      throw new IllegalArgumentException("input must be a PathoReport");
+
     var result = new DiagnosticReport();
+
     return result.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(
             input,

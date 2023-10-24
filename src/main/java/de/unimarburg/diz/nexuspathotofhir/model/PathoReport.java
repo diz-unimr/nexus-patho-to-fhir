@@ -156,4 +156,12 @@ public class PathoReport implements PathoInputBase {
   public String getUUID() {
     return getPathologieBefundId();
   }
+
+  @Override
+  @JsonIgnore
+  public boolean isBaseValid() {
+    return StringUtils.hasText(auftragnummer)
+        && StringUtils.hasText(fallnummer)
+        && StringUtils.hasText(patientennummer);
+  }
 }

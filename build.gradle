@@ -47,7 +47,7 @@ check.dependsOn integrationTest
 
 ext {
 	set('springCloudVersion', "2022.0.4")
-	set("hapiFhirVersion", "6.8.3")
+	set("hapiFhirVersion", "6.8.4")
 	set("kafka.version","3.5.1")
 }
 
@@ -75,9 +75,15 @@ dependencies {
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-base:$hapiFhirVersion"
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiFhirVersion"
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiFhirVersion"
+	implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r5:$hapiFhirVersion"
+
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-validation:$hapiFhirVersion"
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-validation-resources-r4:$hapiFhirVersion"
 	implementation 'org.miracum:kafka-fhir-serializer:1.0.4'
+
+	//	other
+	implementation 'com.opencsv:opencsv:5.8'
+
 
 	// unit tests
 	testImplementation 'org.springframework.cloud:spring-cloud-stream'
@@ -90,6 +96,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.assertj:assertj-core'
+	testImplementation 'org.json:json:20231013'
+
+	// needed for unit test initialization
+	testImplementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu2:$hapiFhirVersion"
 
 	// integration tests
 	intTestImplementation 'org.springframework.kafka:spring-kafka-test'
@@ -108,6 +118,8 @@ dependencyManagement {
 
 test {
 	useJUnitPlatform()
+	// increase ram if needed
+	// jvmArgs '-Xmx2g'
 }
 
 integrationTest {

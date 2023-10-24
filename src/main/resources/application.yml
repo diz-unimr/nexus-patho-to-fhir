@@ -41,7 +41,10 @@ fhir:
     assignerCode: "https://your-local-system/pathology/assignerCode"
     specimenRequestId: "https://your-local-system/pathology/specimenRequestId"
     diagnosticFindingId: "https://your-local-system/pathology/diagnosticFindingId"
-
+mapping:
+  location:
+    specimenType: "mappings/specimenType.csv"
+    specimenExtractionMethod: "mappings/specimenExtractionMethod.csv"
 management:
   server:
     port: 8080
