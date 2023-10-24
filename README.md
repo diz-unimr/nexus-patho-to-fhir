@@ -3,6 +3,17 @@ Kafka processor transforms Nexus pathology report data to FHIR resources meeting
 
 Details about applied MII FHIR profiles can be reviewed [Medizininformatik Initiative - Modul Pathologie](https://simplifier.net/MedizininformatikInitiative-ModulPathologie/~introduction)
 
+## Configuration
+We provide default code mapping, which is located at `resources/mappings` folder. 
+Mapping information is provided via CSV files, expected columns and order is `localCode, localShortName, snomedCode, snomedDisplayName`. 
+
+You may provide your own mappings:
+
+| Key                                       | Content                                |
+|-------------------------------------------|----------------------------------------|
+| mapping.location.specimenType             | extracted specimen with extraction method |
+| mapping.location.specimenExtractionMethod | extraction method                      |
+
 ## Workflow (TODO)
 
 * explain expected input

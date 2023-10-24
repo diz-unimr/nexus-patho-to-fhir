@@ -18,7 +18,8 @@ public class IntraoperativeGrouperMapper extends ToFhirMapper {
 
   @Override
   public Observation map(PathoInputBase inputBase) {
-    var input = (PathoReport) inputBase;
+    if (!(inputBase instanceof PathoReport input))
+      throw new IllegalArgumentException("input must be a PathoReport");
     var result = super.mapBaseGrouper(input);
 
     result.addIdentifier(

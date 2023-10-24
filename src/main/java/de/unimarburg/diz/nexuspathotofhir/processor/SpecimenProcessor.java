@@ -1,7 +1,7 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.processor;
 
-import de.unimarburg.diz.nexuspathotofhir.mapper.PathoSpecimenMapper;
+import de.unimarburg.diz.nexuspathotofhir.mapper.SpecimenMapper;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import java.util.function.Function;
@@ -14,15 +14,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SpecimenProcessor extends BaseProcessor {
-  private final PathoSpecimenMapper pathoSpecimenMapper;
+  private final SpecimenMapper specimenMapper;
 
   @Autowired
-  public SpecimenProcessor(PathoSpecimenMapper pathoSpecimenMapper) {
-    this.pathoSpecimenMapper = pathoSpecimenMapper;
+  public SpecimenProcessor(SpecimenMapper specimenMapper) {
+    this.specimenMapper = specimenMapper;
   }
 
   public Bundle processSpecimen(PathoInputBase inputBase) {
-    return getBasicBundle(inputBase).addEntry(pathoSpecimenMapper.apply(inputBase));
+    return getBasicBundle(inputBase).addEntry(specimenMapper.apply(inputBase));
   }
 
   @Bean
