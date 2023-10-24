@@ -90,6 +90,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.assertj:assertj-core'
+	testImplementation 'org.json:json:20231013'
+
+	// needed for unit test initialization
+	testImplementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu2:$hapiFhirVersion"
 
 	// integration tests
 	intTestImplementation 'org.springframework.kafka:spring-kafka-test'
