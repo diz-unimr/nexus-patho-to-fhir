@@ -25,13 +25,13 @@ public class SpecimenMapper extends ToFhirMapper {
 
   private final Logger log = LoggerFactory.getLogger(SpecimenMapper.class);
   private final Map<String, MappingEntry> specimentTypes;
-  private final Map<String, MappingEntry> specimenExtractionMethod;
+  private Map<String, MappingEntry> specimenExtractionMethod;
 
   @Autowired
   public SpecimenMapper(FhirProperties fhirProperties, CsvMappingReader csvMappingReader) {
     super(fhirProperties);
     try {
-      this.specimentTypes = csvMappingReader.specimentTypes();
+      this.specimentTypes = csvMappingReader.specimenTypes();
       this.specimenExtractionMethod = csvMappingReader.specimenExtractionMethod();
     } catch (Exception e) {
       throw new RuntimeException(e);

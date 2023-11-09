@@ -3,6 +3,7 @@ package de.unimarburg.diz.nexuspathotofhir.processor;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappingReader;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirConfiguration;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.configuration.PathoFhirContext;
@@ -31,6 +32,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
       FhirProperties.class,
       PathoFhirContext.class,
       FhirConfiguration.class,
+      CsvMappingReader.class,
       SpecimenMapper.class,
       SpecimenProcessor.class
     })

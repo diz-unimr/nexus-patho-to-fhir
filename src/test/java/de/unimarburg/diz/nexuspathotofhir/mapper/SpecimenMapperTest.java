@@ -24,8 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
     classes = {
       FhirConfiguration.class,
       FhirProperties.class,
+      CsvMappingReader.class,
       SpecimenMapper.class,
-      CsvMappingReader.class
     })
 class SpecimenMapperTest extends FhirValidationBase {
   private static final Logger log = LoggerFactory.getLogger(SpecimenMapperTest.class);
@@ -40,7 +40,7 @@ class SpecimenMapperTest extends FhirValidationBase {
   }
 
   @Test
-  void isFhirProfilevalid() {
+  void isFhirProfileValid() {
     validator.withResourcesFrom("node_modules", "*SpecimenCore*");
     var input = DummyDataUtil.getDummySpecimen();
     var result = fixture.map(input);
