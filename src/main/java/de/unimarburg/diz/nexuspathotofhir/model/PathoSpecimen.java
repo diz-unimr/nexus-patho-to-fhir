@@ -75,6 +75,12 @@ public class PathoSpecimen implements PathoInputBase {
   private String container;
 
   /**
+   * @see {@link de.unimarburg.diz.nexuspathotofhir.configuration.PathoLookUps}
+   */
+  @JsonProperty("ContainerType")
+  private Integer containerType;
+
+  /**
    * @apiNote value '-1' -> unknown size fixme: check unit - should be 'cm'
    */
   @JsonProperty("Probe_Laenge")

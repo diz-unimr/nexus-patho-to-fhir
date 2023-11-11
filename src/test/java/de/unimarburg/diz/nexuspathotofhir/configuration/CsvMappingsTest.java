@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = {CsvMappingReader.class})
-class CsvMappingReaderTest {
+@SpringBootTest(classes = {CsvMappings.class})
+class CsvMappingsTest {
 
-  @Autowired CsvMappingReader fixture;
+  @Autowired CsvMappings fixture;
 
   @Test
   void specimenTypes() throws Exception {

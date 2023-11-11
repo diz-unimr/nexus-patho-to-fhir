@@ -94,6 +94,7 @@ public class DummyDataUtil {
     pathoSpecimen.setProbeLaenge(5l);
     pathoSpecimen.setSpecimenCollectionDate(LocalDateTime.of(2023, 10, 12, 13, 44, 51, 0));
     pathoSpecimen.setProbemenge(1l);
+    pathoSpecimen.setContainerType(-4);
 
     return pathoSpecimen;
   }

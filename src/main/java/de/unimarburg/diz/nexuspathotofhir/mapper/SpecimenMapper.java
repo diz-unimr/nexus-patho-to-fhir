@@ -1,16 +1,14 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
-import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappingReader;
+import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
-import de.unimarburg.diz.nexuspathotofhir.model.MappingEntry;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang3.NotImplementedException;
 import org.hl7.fhir.r4.model.*;
 import org.jetbrains.annotations.NotNull;
@@ -24,18 +22,14 @@ import org.springframework.stereotype.Service;
 public class SpecimenMapper extends ToFhirMapper {
 
   private final Logger log = LoggerFactory.getLogger(SpecimenMapper.class);
-  private final Map<String, MappingEntry> specimentTypes;
-  private Map<String, MappingEntry> specimenExtractionMethod;
+
+  private final CsvMappings csvMappings;
 
   @Autowired
-  public SpecimenMapper(FhirProperties fhirProperties, CsvMappingReader csvMappingReader) {
+  public SpecimenMapper(FhirProperties fhirProperties, CsvMappings csvMappings) {
     super(fhirProperties);
-    try {
-      this.specimentTypes = csvMappingReader.specimenTypes();
-      this.specimenExtractionMethod = csvMappingReader.specimenExtractionMethod();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+
+    this.csvMappings = csvMappings;
   }
 
   @Override
@@ -43,7 +37,7 @@ public class SpecimenMapper extends ToFhirMapper {
     if (inputBase == null || !inputBase.isBaseValid()) return null;
     if (!(inputBase instanceof PathoSpecimen input))
       throw new IllegalArgumentException("input must be a PathoSpecimen");
-    if (specimentTypes == null || specimentTypes.isEmpty())
+    if (csvMappings.specimenTypes() == null || csvMappings.specimenTypes().isEmpty())
       throw new RuntimeException("specimentTypes mapping is missing");
     var result = new Specimen();
 
@@ -110,38 +104,34 @@ public class SpecimenMapper extends ToFhirMapper {
    */
   protected void mapContainer(Specimen result, PathoSpecimen input) {
 
-    // container(TODO) // Es ist noch zu entscheiden, welche Id wir hier nehmen soll
     List<Specimen.SpecimenContainerComponent> container = new ArrayList<>();
+
+    Coding typeCoding =
+        csvMappings
+            .specimenContainerType()
+            .getOrDefault(input.getContainerType().toString(), null)
+            .asFhirCoding();
+
     container.add(
         new Specimen.SpecimenContainerComponent()
-            .setType(
-                new CodeableConcept()
-                    .addCoding(
-                        new Coding()
-                            .setSystem(SNOMED_SYSTEM)
-                            .setCode("433472003")
-                            .setDisplay("Microscope slide coverslip (physical object)")))
+            .addIdentifier(
+                new Identifier()
+                    .setSystem(fhirProperties.getSystems().getSpecimenContainer())
+                    .setValue(input.getContainer()))
+            .setType(new CodeableConcept().addCoding(typeCoding))
             .setSpecimenQuantity(new Quantity().setValue(input.getProbemenge())));
 
     result.setContainer(container);
-    throw new NotImplementedException("mapContainer");
   }
 
   /**
    * Map input material name {@link PathoSpecimen#getProbename() to SNOMED coded version}
    *
    * @param specimen fhir resource to be modified
-   * @return specimen
    */
   protected void mapSpecimenType(Specimen specimen, PathoSpecimen input) {
-    var type = specimentTypes.get(input.getProbename());
-    specimen.setType(
-        new CodeableConcept()
-            .addCoding(
-                new Coding()
-                    .setSystem(SNOMED_SYSTEM)
-                    .setCode(type.getSnomedCode())
-                    .setDisplay(type.getSnomedDisplayName())));
+    var type = csvMappings.specimenTypes().get(input.getProbename());
+    specimen.setType(new CodeableConcept().addCoding(type.asFhirCoding()));
   }
 
   private void setMeta(Specimen specimen) {
