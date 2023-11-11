@@ -74,9 +74,6 @@ public class PathoSpecimen implements PathoInputBase {
   @JsonProperty("Container")
   private String container;
 
-  /**
-   * @see {@link de.unimarburg.diz.nexuspathotofhir.configuration.PathoLookUps}
-   */
   @JsonProperty("ContainerType")
   private Integer containerType;
 
