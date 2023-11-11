@@ -1,0 +1,12 @@
+localCode,localShortName,snomedCode,snomedDisplayName
+-1,,434746001,Specimen vial (physical object)
+-2,,434464009,Tissue cassette (physical object)
+-3,,434708008,Tissue cassette for microarray (physical object)
+-4,,433466003,Microscope slide (physical object)
+-5,,433453003,Specimen container component (physical object)
+-6,,430863003,Tissue embedding medium (substance)
+-7,,434533009,Electron microscopy grid (physical object)
+-8,,434822004,Specimen well (physical object)
+-9,,433472003,Microscope slide coverslip (physical object)
+-10,,430862008,Microscope slide mounting medium (substance)
+-11,,434473001,Specimen container lid (physical object)

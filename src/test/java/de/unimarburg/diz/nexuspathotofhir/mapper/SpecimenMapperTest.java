@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import ca.uhn.fhir.validation.ResultSeverityEnum;
 import ca.uhn.fhir.validation.SingleValidationMessage;
-import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappingReader;
+import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirConfiguration;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
@@ -24,7 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     classes = {
       FhirConfiguration.class,
       FhirProperties.class,
-      CsvMappingReader.class,
+      CsvMappings.class,
       SpecimenMapper.class,
     })
 class SpecimenMapperTest extends FhirValidationBase {
