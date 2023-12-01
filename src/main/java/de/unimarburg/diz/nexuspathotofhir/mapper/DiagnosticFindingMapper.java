@@ -115,8 +115,8 @@ public class DiagnosticFindingMapper extends ToFhirMapper {
     }
   }
 
-  public void setConditionalPathoFindingStatus(Observation pathofinding, String befundArt) {
-    /**
+  public void setConditionalPathoFindingStatus(Observation pathoFinding, String befundArt) {
+    /*
      * Find and set the status of the report.
      *
      * @param diagnosticReport The diagnostic report object.
@@ -136,20 +136,20 @@ public class DiagnosticFindingMapper extends ToFhirMapper {
       if (matcher.matches()) {
         switch (befundart) {
           case "Hauptbefund":
-            pathofinding.setStatus(Observation.ObservationStatus.FINAL);
+            pathoFinding.setStatus(Observation.ObservationStatus.FINAL);
           case "Nachbericht":
             // Need to check
-            pathofinding.setStatus(Observation.ObservationStatus.AMENDED);
+            pathoFinding.setStatus(Observation.ObservationStatus.AMENDED);
           case "Zusatzbericht":
-            pathofinding.setStatus(Observation.ObservationStatus.valueOf("zusatz"));
+            pathoFinding.setStatus(Observation.ObservationStatus.valueOf("zusatz"));
           case "Korrekturbericht":
-            pathofinding.setStatus(Observation.ObservationStatus.CORRECTED);
+            pathoFinding.setStatus(Observation.ObservationStatus.CORRECTED);
         }
       }
     }
   }
 
-  // TODO Add the information from AHD extration section
+  // TODO Add the information from AHD extraction section
 
   public Observation createPathFinding(
       PathoReport pathoReport,
@@ -167,7 +167,6 @@ public class DiagnosticFindingMapper extends ToFhirMapper {
                     new CanonicalType(
                         "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-finding"))));
     // setCategory
-
     setPathoFindingCategory(pathoReport, pathoFinding);
 
     // Set Identifier (TODO)
@@ -175,8 +174,10 @@ public class DiagnosticFindingMapper extends ToFhirMapper {
         pathoReport.getAuftragnummer()
             + pathoReport.getPatientennummer()
             + pathoReport.getFallnummer();
+
     // fixme
     // pathoFinding.setId(IdentifierHasher.hasher.apply(pathoFindingIdentifier));
+
     // Set Sepecimendate
     var probeEinnahmeDatum =
         Date.from(
@@ -185,8 +186,10 @@ public class DiagnosticFindingMapper extends ToFhirMapper {
                 .atZone(ZoneId.of("Europe/Berlin"))
                 .toInstant());
     pathoFinding.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
+
     // status
     setConditionalPathoFindingStatus(pathoFinding, pathoReport.getDocumentart());
+
     // code coding (TODO), Codes from the ADH Tool (LOINC CODE)
     pathoFinding.setCode(
         new CodeableConcept()
