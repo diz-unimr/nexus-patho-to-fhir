@@ -81,15 +81,18 @@ public class SpecimenMapper extends ToFhirMapper {
             .setValue(input.getProbeId())
             .setSystem(fhirProperties.getSystems().getSpecimenRequestId()));
   }
-
-  protected void mapCollection(Specimen result, PathoSpecimen input) {
+  /**
+   * Create {@link Specimen.SpecimenCollectionComponent} resource and assign it to specimen
+   * @param specimen specimen in container
+   */
+  protected void mapCollection(Specimen specimen, PathoSpecimen input) {
 
     // TODO: collection & collection method
     var specimenCollectionCode =
         new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
     var specimenCollectionMethod =
         new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
-    result.setCollection(
+    specimen.setCollection(
         // TODO method
         new Specimen.SpecimenCollectionComponent()
             .setMethod(new CodeableConcept())
@@ -100,9 +103,10 @@ public class SpecimenMapper extends ToFhirMapper {
   }
 
   /**
-   * @param result
+   * Create {@link Specimen.SpecimenContainerComponent} resource and assign it to specimen
+   * @param specimen specimen in container
    */
-  protected void mapContainer(Specimen result, PathoSpecimen input) {
+  protected void mapContainer(Specimen specimen, PathoSpecimen input) {
 
     List<Specimen.SpecimenContainerComponent> container = new ArrayList<>();
 
@@ -121,7 +125,7 @@ public class SpecimenMapper extends ToFhirMapper {
             .setType(new CodeableConcept().addCoding(typeCoding))
             .setSpecimenQuantity(new Quantity().setValue(input.getProbemenge())));
 
-    result.setContainer(container);
+    specimen.setContainer(container);
   }
 
   /**

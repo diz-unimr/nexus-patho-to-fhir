@@ -9,10 +9,12 @@ import org.springframework.util.StringUtils;
 public class IdentifierAndReferenceUtil {
 
   /**
-   * @param inputBase
-   * @param identType
-   * @param args
-   * @return
+   * Build identifier encounterNumber-journalNumber-arg1-arg2-...
+   * <p>exception is patient: only patient id is returned</p>
+   * @param inputBase input raw data
+   * @param identType target resource type
+   * @param args values from which we build identifiers
+   * @return identifier string
    */
   public static String getPathoIdentifierValue(
       PathoInputBase inputBase, PathologyIdentifierType identType, String[] args) {
