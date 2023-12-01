@@ -82,7 +82,7 @@ dependencies {
 	implementation 'org.miracum:kafka-fhir-serializer:1.0.4'
 
 	//	other
-	implementation 'com.opencsv:opencsv:5.8'
+	implementation 'com.opencsv:opencsv:5.9'
 
 
 	// unit tests
