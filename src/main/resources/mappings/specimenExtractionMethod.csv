@@ -1,0 +1,18 @@
+localCode,localShortName,snomedCode,snomedDisplayName
+Tumorektonie,TE,370612006,Excision of neoplasm (procedure),
+Stanzbiopsie,,68660007,Punch biopsy (procedure),
+Resektat,,439479000,Tissue specimen obtained by excision (specimen),
+Resektion,,65801008,Excision (procedure),
+Propeexzision,PE,65801008,Excision (procedure),
+Vakuumbiopsie,,786883001,Vacuum assisted biopsy (procedure),
+Inzisionsbopsie,,70871006,Incisional biopsy (procedure),
+Teilexzision,,38829003,Partial excision (procedure),
+Exzisionsbiopsie,,8889005,Excisional biopsy (procedure) ,
+Biopsienadel,,129249002,Needle biopsy (procedure),
+Biopsie mit feiner Nadel,,48635004,Fine needle biopsy (procedure) ,
+Aspiration,,14766002,Aspiration (procedure),
+Tupfer,,285570007,Taking of swab (procedure),
+Sekret/Speichel auftupfen,SS,225098009,Collection of sample of saliva (procedure),
+Konusbiopsie,,110469002,Cone biopsy (procedure) ,Technik Gebärmutter(hals)
+Lavage,,67889009,Irrigation (procedure),
+Polypektomie,,82035006,Resection of polyp (procedure),

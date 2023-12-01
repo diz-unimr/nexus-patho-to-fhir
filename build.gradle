@@ -75,9 +75,15 @@ dependencies {
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-base:$hapiFhirVersion"
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiFhirVersion"
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiFhirVersion"
+	implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r5:$hapiFhirVersion"
+
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-validation:$hapiFhirVersion"
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-validation-resources-r4:$hapiFhirVersion"
 	implementation 'org.miracum:kafka-fhir-serializer:1.0.4'
+
+	//	other
+	implementation 'com.opencsv:opencsv:5.8'
+
 
 	// unit tests
 	testImplementation 'org.springframework.cloud:spring-cloud-stream'
@@ -112,6 +118,8 @@ dependencyManagement {
 
 test {
 	useJUnitPlatform()
+	// increase ram if needed
+	// jvmArgs '-Xmx2g'
 }
 
 integrationTest {

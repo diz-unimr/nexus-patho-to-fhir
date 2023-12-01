@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 public class FhirProperties {
 
   @NestedConfigurationProperty private FhirSystems systems = new FhirSystems();
-  private String specimen;
 
   @Data
   public static class FhirSystems {
@@ -23,7 +22,9 @@ public class FhirProperties {
     private String encounterId;
     private String assignerId;
     private String assignerCode;
+    private String specimenId;
     private String specimenRequestId;
+    private String specimenContainer;
     private String diagnosticConclusionGrouperId;
     private String microscopicGrouperId;
     private String macroscopicGrouperId;
@@ -54,8 +55,14 @@ public class FhirProperties {
           + ", assignerCode='"
           + assignerCode
           + '\''
+          + ", specimenId='"
+          + specimenId
+          + '\''
           + ", specimenRequestId='"
           + specimenRequestId
+          + '\''
+          + ", specimenContainer='"
+          + specimenContainer
           + '\''
           + ", diagnosticConclusionGrouperId='"
           + diagnosticConclusionGrouperId

@@ -87,6 +87,15 @@ public class DummyDataUtil {
     pathoSpecimen.setFallnummer("5000001");
     pathoSpecimen.setAuftragnummer("H/20223/00001");
 
+    pathoSpecimen.setProbename("-1");
+    pathoSpecimen.setContainer("dummy-container-id");
+    pathoSpecimen.setProbename("Lunge PE");
+    pathoSpecimen.setItemOrder("1");
+    pathoSpecimen.setProbeLaenge(5l);
+    pathoSpecimen.setSpecimenCollectionDate(LocalDateTime.of(2023, 10, 12, 13, 44, 51, 0));
+    pathoSpecimen.setProbemenge(1l);
+    pathoSpecimen.setContainerType(-4);
+
     return pathoSpecimen;
   }
 

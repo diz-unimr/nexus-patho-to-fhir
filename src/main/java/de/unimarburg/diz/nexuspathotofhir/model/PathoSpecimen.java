@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 
 @Data
 public class PathoSpecimen implements PathoInputBase {
@@ -28,6 +29,14 @@ public class PathoSpecimen implements PathoInputBase {
   @JsonIgnore
   public String getUUID() {
     return getProbeId();
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isBaseValid() {
+    return StringUtils.hasText(auftragnummer)
+        && StringUtils.hasText(fallnummer)
+        && StringUtils.hasText(patientennummer);
   }
 
   /**
@@ -64,6 +73,9 @@ public class PathoSpecimen implements PathoInputBase {
    */
   @JsonProperty("Container")
   private String container;
+
+  @JsonProperty("ContainerType")
+  private Integer containerType;
 
   /**
    * @apiNote value '-1' -> unknown size fixme: check unit - should be 'cm'
