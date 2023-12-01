@@ -10,7 +10,9 @@ public class IdentifierAndReferenceUtil {
 
   /**
    * Build identifier encounterNumber-journalNumber-arg1-arg2-...
-   * <p>exception is patient: only patient id is returned</p>
+   *
+   * <p>exception is patient: only patient id is returned
+   *
    * @param inputBase input raw data
    * @param identType target resource type
    * @param args values from which we build identifiers

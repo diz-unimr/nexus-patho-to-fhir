@@ -81,8 +81,10 @@ public class SpecimenMapper extends ToFhirMapper {
             .setValue(input.getProbeId())
             .setSystem(fhirProperties.getSystems().getSpecimenRequestId()));
   }
+
   /**
    * Create {@link Specimen.SpecimenCollectionComponent} resource and assign it to specimen
+   *
    * @param specimen specimen in container
    */
   protected void mapCollection(Specimen specimen, PathoSpecimen input) {
@@ -104,6 +106,7 @@ public class SpecimenMapper extends ToFhirMapper {
 
   /**
    * Create {@link Specimen.SpecimenContainerComponent} resource and assign it to specimen
+   *
    * @param specimen specimen in container
    */
   protected void mapContainer(Specimen specimen, PathoSpecimen input) {
