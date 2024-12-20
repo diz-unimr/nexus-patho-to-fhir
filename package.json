@@ -8,7 +8,7 @@
   "dependencies": {
     "de.basisprofil.r4": "1.4.0",
     "de.medizininformatikinitiative.kerndatensatz.patho": "1.0.0",
-    "de.gematik.isik-basismodul": "2.0.5",
+    "de.gematik.isik-basismodul": "2.0.9",
     "de.medizininformatikinitiative.kerndatensatz.meta": "1.0.3",
     "de.medizininformatikinitiative.kerndatensatz.diagnose": "2.0.0-alpha3",
     "de.medizininformatikinitiative.kerndatensatz.biobank": "1.0.8",
