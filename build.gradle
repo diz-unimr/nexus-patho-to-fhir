@@ -1,10 +1,10 @@
 plugins {
-	id 'org.springframework.boot' version '3.2.0'
-	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.springframework.boot' version '3.4.0'
+	id 'io.spring.dependency-management' version '1.1.7'
 	id 'java'
 	id 'jacoco'
-	id "io.freefair.lombok" version "8.4"
-	id "com.diffplug.spotless" version "6.22.0"
+	id "io.freefair.lombok" version "8.11"
+	id "com.diffplug.spotless" version "6.25.0"
 
 }
 
@@ -12,8 +12,8 @@ group = 'de.unimarburg.diz'
 version = '0.0.2-SNAPSHOT'
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaLanguageVersion.of(21)
+	targetCompatibility = JavaLanguageVersion.of(21)
 }
 
 repositories {
@@ -46,9 +46,8 @@ tasks.register('integrationTest', Test) {
 check.dependsOn integrationTest
 
 ext {
-	set('springCloudVersion', "2022.0.4")
-	set("hapiFhirVersion", "6.10.0")
-	set("kafka.version","3.5.1")
+	set('springCloudVersion', "2024.0.0")
+	set("hapiFhirVersion", "7.6.0")
 }
 
 dependencies {
@@ -56,9 +55,6 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka-streams'
 	implementation 'org.springframework.cloud:spring-cloud-stream'
-	// added by for CVE-2022-1471
-	implementation 'org.yaml:snakeyaml:2.2'
-
 
 	// spring boot
 	implementation "org.springframework.boot:spring-boot-starter-web"
@@ -76,18 +72,19 @@ dependencies {
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiFhirVersion"
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiFhirVersion"
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r5:$hapiFhirVersion"
-
+	implementation "ca.uhn.hapi.fhir:hapi-fhir-caching-caffeine:${hapiFhirVersion}"
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-validation:$hapiFhirVersion"
 	implementation "ca.uhn.hapi.fhir:hapi-fhir-validation-resources-r4:$hapiFhirVersion"
 	implementation 'org.miracum:kafka-fhir-serializer:1.0.4'
 
 	//	other
 	implementation 'com.opencsv:opencsv:5.8'
+	implementation 'org.realityforge.org.jetbrains.annotations:org.jetbrains.annotations:1.7.0'
 
 
 	// unit tests
 	testImplementation 'org.springframework.cloud:spring-cloud-stream'
-	testImplementation 'org.apache.kafka:kafka-streams-test-utils:3.6.0'
+	testImplementation 'org.apache.kafka:kafka-streams-test-utils:3.9.0'
 	testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -107,7 +104,6 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	intTestImplementation 'org.assertj:assertj-core'
-
 }
 
 dependencyManagement {
@@ -161,7 +157,7 @@ spotless {
 
 tasks.named("bootBuildImage") {
 	imageName = "${project.name}"
-	environment["BP_JVM_VERSION"] = "17"
+	environment["BP_JVM_VERSION"] = "21"
 	environment["BP_OCI_SOURCE"]="https://github.com/DIZ-UNIMR/nexus-patho-to-fhir"
 	environment["BP_OCI_TITLE"]="nexus-patho-to-fhir"
 	environment["BP_OCI_VENDOR"]="https://github.com/diz-unimr"
