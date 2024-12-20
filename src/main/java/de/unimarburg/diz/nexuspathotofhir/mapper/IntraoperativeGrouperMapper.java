@@ -22,6 +22,8 @@ public class IntraoperativeGrouperMapper extends ToFhirMapper {
       throw new IllegalArgumentException("input must be a PathoReport");
     var result = super.mapBaseGrouper(input);
 
+    if (result == null) return null;
+
     result.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(
             input,

@@ -5,22 +5,21 @@ import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
+import de.unimarburg.diz.nexuspathotofhir.model.ReportDocType;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DiagnosticFindingMapper extends ToFhirMapper {
+public class FindingMapper extends ToFhirMapper {
   private final Logger log = LoggerFactory.getLogger(SpecimenMapper.class);
 
-  public DiagnosticFindingMapper(FhirProperties fhirProperties) {
+  public FindingMapper(FhirProperties fhirProperties) {
     super(fhirProperties);
   }
 
@@ -30,15 +29,24 @@ public class DiagnosticFindingMapper extends ToFhirMapper {
       throw new IllegalArgumentException("input must be a PathoReport");
 
     var result = new Observation();
-    return result.addIdentifier(
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierType.FINDING,
-            fhirProperties.getSystems().getDiagnosticFindingId(),
-            "TODO: specific per finding"));
+    final Observation observation =
+        result.addIdentifier(
+            IdentifierAndReferenceUtil.getIdentifier(
+                input,
+                PathologyIdentifierType.FINDING,
+                fhirProperties.getSystems().getDiagnosticFindingId(),
+                "TODO: specific per finding"));
+
+    return observation;
   }
 
-  public void setPathoFindingCategory(PathoReport pathoReport, Observation pathoFinding) {
+  public Collection<Resource> map(PathoInputBase input, int grouperType) {
+    var result = new ArrayList<Resource>();
+
+    return result;
+  }
+
+  protected void setPathoFindingCategory(PathoReport pathoReport, Observation pathoFinding) {
     /**
      * Find and set the category of pathoFinding of the report.
      *
@@ -115,43 +123,41 @@ public class DiagnosticFindingMapper extends ToFhirMapper {
     }
   }
 
-  public void setConditionalPathoFindingStatus(Observation pathoFinding, String befundArt) {
-    /*
-     * Find and set the status of the report.
-     *
-     * @param diagnosticReport The diagnostic report object.
-     * @param befundArt String The befund type as String.
-     * @return find and set the correct status of the report.
-     */
-    ArrayList<String> befundarte = new ArrayList<>();
-    befundarte.add("Hauptbefund");
-    befundarte.add("Nachbericht");
-    befundarte.add("Zusatzbericht");
-    befundarte.add("Korrekturbericht");
+  protected void setFindingStatus(Observation pathoFinding, ReportDocType befundArt) {
 
-    for (int i = 0; i < befundarte.size(); i++) {
-      String befundart = befundarte.get(i);
-      Pattern pattern = Pattern.compile(befundart);
-      Matcher matcher = pattern.matcher(befundArt);
-      if (matcher.matches()) {
-        switch (befundart) {
-          case "Hauptbefund":
-            pathoFinding.setStatus(Observation.ObservationStatus.FINAL);
-          case "Nachbericht":
-            // Need to check
-            pathoFinding.setStatus(Observation.ObservationStatus.AMENDED);
-          case "Zusatzbericht":
-            pathoFinding.setStatus(Observation.ObservationStatus.valueOf("zusatz"));
-          case "Korrekturbericht":
-            pathoFinding.setStatus(Observation.ObservationStatus.CORRECTED);
+    switch (befundArt) {
+      case MAIN_REPORT:
+        {
+          pathoFinding.setStatus(Observation.ObservationStatus.FINAL);
+          break;
         }
-      }
+      case CORRECTION1:
+      case CORRECTION2:
+      case CORRECTION3:
+      case CORRECTION4:
+      case CORRECTION5:
+      case CORRECTION6:
+        {
+          pathoFinding.setStatus(Observation.ObservationStatus.CORRECTED);
+          break;
+        }
+
+      case ADDITION1:
+      case ADDITION2:
+      case ADDITION3:
+        {
+          pathoFinding.setStatus(Observation.ObservationStatus.AMENDED);
+          break;
+        }
+      default:
+        // fixme Zusatzbericht?
+        pathoFinding.setStatus(Observation.ObservationStatus.UNKNOWN);
     }
   }
 
   // TODO Add the information from AHD extraction section
 
-  public Observation createPathFinding(
+  protected Observation createPathFinding(
       PathoReport pathoReport,
       PathoSpecimen pathoSpecimen,
       String pathoGrouperType,
@@ -188,7 +194,7 @@ public class DiagnosticFindingMapper extends ToFhirMapper {
     pathoFinding.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
 
     // status
-    setConditionalPathoFindingStatus(pathoFinding, pathoReport.getDocumentart());
+    setFindingStatus(pathoFinding, pathoReport.getDocType());
 
     // code coding (TODO), Codes from the ADH Tool (LOINC CODE)
     pathoFinding.setCode(

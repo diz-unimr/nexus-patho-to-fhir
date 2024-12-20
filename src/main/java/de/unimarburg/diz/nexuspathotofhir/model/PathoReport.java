@@ -18,7 +18,11 @@ public class PathoReport implements PathoInputBase {
   @JsonProperty("Index_ID")
   private Integer indexID;
 
-  /** is fixes for one diagnostic report episode (including report corrections and additions) */
+  /**
+   * is fixes for one diagnostic report episode (including report corrections and additions)
+   *
+   * @implNote also called 'Journal Nummer' in german
+   */
   @JsonProperty("Auftragnummer")
   private String auftragnummer;
 
@@ -63,7 +67,11 @@ public class PathoReport implements PathoInputBase {
   @JsonProperty("Pathologie_Befund_Id")
   private String pathologieBefundId;
 
-  /** document type is important for processing logic: initial content, update/replace */
+  /**
+   * document type is important for processing logic: initial content, update/replace
+   *
+   * @apiNote use {@link #getDocType()} instead
+   */
   @JsonProperty("Documentart")
   private String documentart;
 
