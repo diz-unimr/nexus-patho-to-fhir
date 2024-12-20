@@ -77,7 +77,7 @@ dependencies {
 	implementation 'org.miracum:kafka-fhir-serializer:1.0.4'
 
 	//	other
-	implementation 'com.opencsv:opencsv:5.9''
+	implementation 'com.opencsv:opencsv:5.9'
 	implementation 'org.realityforge.org.jetbrains.annotations:org.jetbrains.annotations:1.7.0'
 
 	// unit tests
