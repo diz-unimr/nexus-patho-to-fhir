@@ -5,7 +5,6 @@ plugins {
 	id 'jacoco'
 	id "io.freefair.lombok" version "8.11"
 	id "com.diffplug.spotless" version "6.25.0"
-
 }
 
 group = 'de.unimarburg.diz'
@@ -78,9 +77,8 @@ dependencies {
 	implementation 'org.miracum:kafka-fhir-serializer:1.0.4'
 
 	//	other
-	implementation 'com.opencsv:opencsv:5.8'
+	implementation 'com.opencsv:opencsv:5.9''
 	implementation 'org.realityforge.org.jetbrains.annotations:org.jetbrains.annotations:1.7.0'
-
 
 	// unit tests
 	testImplementation 'org.springframework.cloud:spring-cloud-stream'
@@ -123,7 +121,7 @@ integrationTest {
 }
 
 jacoco {
-	toolVersion = "0.8.11"
+	toolVersion = "0.8.12"
 	reportsDirectory = layout.buildDirectory.dir('jacoco-reports')
 }
 

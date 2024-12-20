@@ -18,7 +18,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2.9.0
+        uses: gradle/gradle-build-action@v2.12.0
 
       - name: Execute tests
         run: ./gradlew test
@@ -33,7 +33,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2.9.0
+        uses: gradle/gradle-build-action@v2.12.0
 
       - name: Execute integration tests
         run: ./gradlew integrationTest
