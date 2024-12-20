@@ -28,6 +28,8 @@ public class MicroscopicGrouperMapper extends ToFhirMapper {
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
     var result = super.mapBaseGrouper(input);
+    if (result == null) return null;
+
     result.setMeta(new Meta().setSource("#nexus-pathology"));
 
     result.addIdentifier(

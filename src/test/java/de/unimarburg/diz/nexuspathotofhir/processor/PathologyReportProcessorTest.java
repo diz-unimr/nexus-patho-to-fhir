@@ -31,7 +31,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
       PathoFhirContext.class,
       FhirConfiguration.class,
       DiagnosticConclusionGrouperMapper.class,
-      DiagnosticFindingMapper.class,
+      FindingMapper.class,
       DiagnosticReportMapper.class,
       IntraoperativeGrouperMapper.class,
       MacroscopicGrouperMapper.class,

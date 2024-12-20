@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service;
  * Represents german diagnostic report section named 'Diagnostische Schlussfolgerung' It is
  * referenced by its findings (observations)
  *
- * <p>FIXME: profile allows multiple grouper instance one per specimen referenced within a report -
- * FIXME check if multiple specimen references applicable to nexus
+ * <p>FIXME: profile allows/suggests multiple grouper instance one per specimen referenced within a
+ * report - FIXME check if multiple specimen references applicable to nexus
  */
 @Service
 public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
@@ -33,7 +33,7 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
       throw new IllegalArgumentException("input must be a PathoReport");
 
     var result = super.mapBaseGrouper(input);
-
+    if (result == null) return null;
     if (!hasDiagnosticConclusionData(input)) return null;
 
     result.addIdentifier(
