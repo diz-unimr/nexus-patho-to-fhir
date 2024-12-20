@@ -46,7 +46,7 @@ tasks.register('integrationTest', Test) {
 check.dependsOn integrationTest
 
 ext {
-	set('springCloudVersion', "2022.0.4")
+	set('springCloudVersion', "2022.0.5")
 	set("hapiFhirVersion", "6.10.0")
 	set("kafka.version","3.5.1")
 }
