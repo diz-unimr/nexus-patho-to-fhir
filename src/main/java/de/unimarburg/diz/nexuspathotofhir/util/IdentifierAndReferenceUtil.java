@@ -22,7 +22,7 @@ public class IdentifierAndReferenceUtil {
       PathoInputBase inputBase, PathologyIdentifierType identType, String[] args) {
     if (identType == null) throw new IllegalArgumentException("identType was null");
     if (inputBase == null) throw new IllegalArgumentException("inputBase was null");
-    if (!StringUtils.hasText(inputBase.getAuftragnummer()))
+    if (!StringUtils.hasText(inputBase.getAuftragsnummer()))
       throw new IllegalArgumentException("inputBase.Auftragnummer was null");
 
     var builder = new StringBuilder();
@@ -32,7 +32,7 @@ public class IdentifierAndReferenceUtil {
     } else {
       builder.append(inputBase.getFallnummer());
       builder.append("-");
-      builder.append(inputBase.getAuftragnummer());
+      builder.append(inputBase.getAuftragsnummer());
       builder.append("-");
       builder.append(identType.name());
     }

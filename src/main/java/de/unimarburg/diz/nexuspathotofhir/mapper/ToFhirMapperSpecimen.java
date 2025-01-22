@@ -11,34 +11,23 @@ import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Resource;
 
-public abstract class ToFhirMapper
+public abstract class ToFhirMapperSpecimen
     implements ValueMapper<PathoInputBase, Bundle.BundleEntryComponent> {
 
   public static final String SNOMED_SYSTEM = "http://snomed.info/sct";
 
+  public static final String MII_PR_Patho_Specimen =
+      "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-specimen";
   protected static final String META_SOURCE = "#nexus-pathology";
 
   protected final FhirProperties fhirProperties;
 
-  public ToFhirMapper(final FhirProperties fhirProperties) {
+  public ToFhirMapperSpecimen(final FhirProperties fhirProperties) {
     this.fhirProperties = fhirProperties;
   }
 
   public abstract Resource map(PathoInputBase input);
 
-  public Observation mapBaseGrouper(PathoReport input) {
-    if (input == null) return null;
-    final Observation result = new Observation();
-    result.setMeta(new Meta().setSource(META_SOURCE));
-    result.setEncounter(
-        IdentifierAndReferenceUtil.getReferenceTo(
-            "Encounter", input.getFallnummer(), fhirProperties.getSystems().getEncounterId()));
-
-    result.setSubject(
-        IdentifierAndReferenceUtil.getReferenceTo(
-            "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
-    return result;
-  }
 
   public abstract Bundle.BundleEntryComponent apply(PathoInputBase input);
 

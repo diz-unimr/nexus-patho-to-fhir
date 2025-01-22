@@ -6,10 +6,16 @@ import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Service;
+
+import static org.springframework.cloud.stream.binder.kafka.properties.KafkaConsumerProperties.StandardHeaders.timestamp;
 
 @Service
 public class DiagnosticReportMapper extends ToFhirMapper {
@@ -70,7 +76,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
         List.of(
             new Identifier()
                 .setType(identifierType)
-                .setValue(rawInput.getPathologieBefundId())
+                .setValue(rawInput.getBefundID())
                 .setSystem(fhirProperties.getSystems().getDiagnosticReportId())));
     // map based on
     diagnosticReport.addBasedOn(
@@ -82,7 +88,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
                 fhirProperties.getSystems().getServiceRequestId())));
 
     // map status
-    getConditionalReportStatus(diagnosticReport, rawInput.getDocumentart());
+    getConditionalReportStatus(diagnosticReport, rawInput.getBefundtyp());
     // map code
     diagnosticReport.setCode(
         new CodeableConcept()
@@ -105,7 +111,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
         .addResult()
         .setReference("Observation/ref-to-patho-diagnostic-conclusion-grouper");
     // map conclusion
-    diagnosticReport.setConclusion(rawInput.getDiagnose());
+    diagnosticReport.setConclusion(rawInput.getDiagnoseConclusion());
     // map conclusion code
     diagnosticReport.addConclusionCode(
         new CodeableConcept()
@@ -115,15 +121,13 @@ public class DiagnosticReportMapper extends ToFhirMapper {
                     .setDisplay("Snomed diagnose")
                     .setSystem("http://snomed.info/sct")));
     // map effectiveDateTime
-    // var probeEinnahmeDatum =
-    // Date.from(pathoSpecimen.getProbeeinnahmedatum().atZone(ZoneId.of("Europe/Berlin")).toInstant());
+
+
+     // var probeEinnahmeDatum = LocalDateTime.ofInstant(Instant.ofEpochMilli(rawInput.getBefundErstellungsdatum()), ZoneId.systemDefault());
     // Converting the long value to date
+      Date probeEinnahmeDatum = new Date(rawInput.getBefundErstellungsdatum());
     diagnosticReport.setEffective(
-        new DateTimeType().setValue(new Date(rawInput.getEingangsdatum())));
-    // Convert the zoned date time to the date (Can be used)
-    // diagnosticReport.setEffective(new
-    // DateTimeType().setValue(Date.from(rawInput.getLetzteBearbeitung().toInstant())));
-    //
+        new DateTimeType().setValue(probeEinnahmeDatum));
     return diagnosticReport;
   }
 

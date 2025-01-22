@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 
 // Kafka autoconfiguration can be disabled like this
-@EnableAutoConfiguration(exclude = {KafkaAutoConfiguration.class})
+//@EnableAutoConfiguration(exclude = {KafkaAutoConfiguration.class})
 class ApplicationTests {
 
   @Test

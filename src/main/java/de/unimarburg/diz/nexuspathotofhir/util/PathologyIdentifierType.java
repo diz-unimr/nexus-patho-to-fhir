@@ -25,7 +25,7 @@ public enum PathologyIdentifierType {
    * @implNote additional generation algorithm needed based on grouper and content (@fixme update
    *     and delete for npl needs cleanup process)
    */
-  FINDING,
+  PATHO_FINDING,
 
   /**
    * used multiple instances per SERVICE_REQUEST

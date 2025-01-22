@@ -18,40 +18,24 @@ public class DummyDataUtil {
 
     var report = new PathoReport();
     // meta data
-    report.setIndexID(1);
 
     // patient
-    report.setPatientGUID(UUID.randomUUID().toString());
     report.setPatientennummer("0000001");
     report.setFallnummer("5000001");
-    report.setNachname("Dummy_Surname");
-    report.setVorname("Dummy_Firstname");
-    report.setGeschlecht("1");
-    report.setGeburtsdatum(LocalDate.of(1973, 2, 4));
-    report.setIstVerstorben(1);
-    report.setSterbedatum(ZonedDateTime.of(2023, 7, 7, 11, 15, 19, 1234, zoneId).toInstant());
 
     // report meta
-    report.setAuftragnummer("H/20223/00001");
-    report.setEingangsdatum(LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
-    report.setPathologieBefundId(UUID.randomUUID().toString());
+    report.setAuftragsnummer("H/20223/00001");
+    report.setBefundErstellungsdatum(LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
+    report.setBefundID(UUID.randomUUID().toString());
     report.setBefunddatum(ZonedDateTime.of(2023, 1, 20, 23, 45, 59, 1234, zoneId).toInstant());
-    report.setLetzteBearbeitung(report.getBefunddatum().plus(14, ChronoUnit.DAYS));
+    report.setLetzteBearbeitungsdatum(LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
 
     // report clinical data
-    report.setTNM("pT1-3c N2a M1");
-    report.setMaterial_Lokalisation("L");
-    report.setBefundXML(
-        """
-                        <?xml version="1.0" encoding="UTF-8"?>
-                        <item>TODO</item>
-                """);
-    report.setMikroskopischer_Befund("dummy1");
-    report.setMakroskopischer_Befund("dummy2");
-    report.setDiagnose("C41.1");
-    report.setDocumentart("Hauptbefund");
-    report.setMaterial_Lokalisation("Brust L");
-
+    report.setTnm("pT1-3c N2a M1");
+    report.setMikroskopischerBefund("dummy1");
+    report.setMakroskopischerBefund("dummy2");
+    report.setDiagnoseConclusion("C41.1");
+    report.setBefundtyp("Hauptbefund");
     return report;
   }
 
@@ -63,18 +47,15 @@ public class DummyDataUtil {
     PathoReport mainReport = getDummyReport();
 
     PathoReport reportCorrection1 = getDummyReport();
-    reportCorrection1.setDocumentart("Korrekturbericht 1");
-    reportCorrection1.setIndexID(mainReport.getIndexID() + 1);
+    reportCorrection1.setBefundtyp("Korrekturbericht 1");
     reportCorrection1.setBefunddatum(mainReport.getBefunddatum().plus(2, ChronoUnit.DAYS));
 
     PathoReport reportCorrection2 = getDummyReport();
-    reportCorrection2.setDocumentart("Korrekturbericht 2");
-    reportCorrection2.setIndexID(reportCorrection1.getIndexID() + 1);
+    reportCorrection2.setBefundtyp("Korrekturbericht 2");
     reportCorrection2.setBefunddatum(reportCorrection1.getBefunddatum().plus(3, ChronoUnit.DAYS));
 
     PathoReport reportAddition = getDummyReport();
-    reportAddition.setDocumentart("Zusatzbefund 1");
-    reportAddition.setIndexID(reportCorrection2.getIndexID() + 1);
+    reportAddition.setBefundtyp("Zusatzbefund 1");
     reportAddition.setBefunddatum(reportCorrection2.getBefunddatum().plus(7, ChronoUnit.DAYS));
 
     return List.of(mainReport, reportCorrection1, reportCorrection2, reportAddition);
@@ -82,20 +63,15 @@ public class DummyDataUtil {
 
   public static PathoSpecimen getDummySpecimen() {
     final PathoSpecimen pathoSpecimen = new PathoSpecimen();
-    pathoSpecimen.setProbeId("specimen-dummy-id");
+    pathoSpecimen.setProbeID("specimen-dummy-id");
     pathoSpecimen.setPatientennummer("0000001");
     pathoSpecimen.setFallnummer("5000001");
-    pathoSpecimen.setAuftragnummer("H/20223/00001");
-
-    pathoSpecimen.setProbename("-1");
-    pathoSpecimen.setContainer("dummy-container-id");
-    pathoSpecimen.setProbename("Lunge PE");
-    pathoSpecimen.setItemOrder("1");
-    pathoSpecimen.setProbeLaenge(5l);
-    pathoSpecimen.setSpecimenCollectionDate(LocalDateTime.of(2023, 10, 12, 13, 44, 51, 0));
+    pathoSpecimen.setAuftragsnummer("H/20223/00001");
+    pathoSpecimen.setContainerGUID("dummy-container-id");
+    pathoSpecimen.setProbeName("Lunge PE");
+    pathoSpecimen.setProbeLaenge("5L");
+    pathoSpecimen.setProbeEinnahmedatum(LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
     pathoSpecimen.setProbemenge(1l);
-    pathoSpecimen.setContainerType(-4);
-
     return pathoSpecimen;
   }
 

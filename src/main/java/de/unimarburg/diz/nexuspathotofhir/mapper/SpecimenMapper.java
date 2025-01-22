@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SpecimenMapper extends ToFhirMapper {
+public class SpecimenMapper extends ToFhirMapperSpecimen {
 
   private final Logger log = LoggerFactory.getLogger(SpecimenMapper.class);
 
@@ -39,7 +39,7 @@ public class SpecimenMapper extends ToFhirMapper {
       throw new IllegalArgumentException("input must be a PathoSpecimen");
     if (csvMappings.specimenTypes() == null || csvMappings.specimenTypes().isEmpty())
       throw new RuntimeException("specimentTypes mapping is missing");
-    var result = new Specimen();
+    Specimen result = new Specimen();
 
     setMeta(result);
     setIdentifiers(result, input);
@@ -50,7 +50,7 @@ public class SpecimenMapper extends ToFhirMapper {
     result.addRequest(
         IdentifierAndReferenceUtil.getReferenceTo(
             "ServiceRequest",
-            input.getAuftragnummer(),
+            input.getAuftragsnummer(),
             fhirProperties.getSystems().getServiceRequestId()));
 
     mapSpecimenType(result, input);
@@ -60,7 +60,7 @@ public class SpecimenMapper extends ToFhirMapper {
     // FIXME: may depend on {@link PathoSpecimen#getProbemenge }
     result.setStatus(Specimen.SpecimenStatus.AVAILABLE);
 
-    mapCollection(result, input);
+    //mapCollection(result, input);
     return result;
   }
 
@@ -78,7 +78,7 @@ public class SpecimenMapper extends ToFhirMapper {
     // probe id
     result.setAccessionIdentifier(
         new Identifier()
-            .setValue(input.getProbeId())
+            .setValue(input.getContainerID())
             .setSystem(fhirProperties.getSystems().getSpecimenRequestId()));
   }
 
@@ -87,6 +87,7 @@ public class SpecimenMapper extends ToFhirMapper {
    *
    * @param specimen specimen in container
    */
+/*
   protected void mapCollection(Specimen specimen, PathoSpecimen input) {
 
     // TODO: collection & collection method
@@ -103,6 +104,7 @@ public class SpecimenMapper extends ToFhirMapper {
             .setMethod(new CodeableConcept(specimenCollectionMethod)));
     throw new NotImplementedException("collection & collection method");
   }
+*/
 
   /**
    * Create {@link Specimen.SpecimenContainerComponent} resource and assign it to specimen
@@ -113,19 +115,13 @@ public class SpecimenMapper extends ToFhirMapper {
 
     List<Specimen.SpecimenContainerComponent> container = new ArrayList<>();
 
-    Coding typeCoding =
-        csvMappings
-            .specimenContainerType()
-            .getOrDefault(input.getContainerType().toString(), null)
-            .asFhirCoding();
 
     container.add(
         new Specimen.SpecimenContainerComponent()
             .addIdentifier(
                 new Identifier()
                     .setSystem(fhirProperties.getSystems().getSpecimenContainer())
-                    .setValue(input.getContainer()))
-            .setType(new CodeableConcept().addCoding(typeCoding))
+                    .setValue(input.getContainerGUID()))
             .setSpecimenQuantity(new Quantity().setValue(input.getProbemenge())));
 
     specimen.setContainer(container);
@@ -137,15 +133,15 @@ public class SpecimenMapper extends ToFhirMapper {
    * @param specimen fhir resource to be modified
    */
   protected void mapSpecimenType(Specimen specimen, PathoSpecimen input) {
-    var type = csvMappings.specimenTypes().get(input.getProbename());
+    var type = csvMappings.specimenTypes().get(input.getProbeName());
     specimen.setType(new CodeableConcept().addCoding(type.asFhirCoding()));
   }
 
   private void setMeta(Specimen specimen) {
     specimen.setMeta(
         new Meta()
-            .setProfile(List.of(new CanonicalType(ToFhirMapper.MII_PR_Patho_Specimen)))
-            .setSource(ToFhirMapper.META_SOURCE));
+            .setProfile(List.of(new CanonicalType(ToFhirMapperSpecimen.MII_PR_Patho_Specimen)))
+            .setSource(ToFhirMapperSpecimen.META_SOURCE));
   }
 
   @Override

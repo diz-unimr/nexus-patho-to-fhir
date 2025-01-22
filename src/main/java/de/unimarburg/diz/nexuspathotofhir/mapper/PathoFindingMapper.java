@@ -16,10 +16,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FindingMapper extends ToFhirMapper {
-  private final Logger log = LoggerFactory.getLogger(SpecimenMapper.class);
+public class PathoFindingMapper extends ToFhirMapper {
+  private final Logger log = LoggerFactory.getLogger(PathoFindingMapper.class);
 
-  public FindingMapper(FhirProperties fhirProperties) {
+  public PathoFindingMapper(FhirProperties fhirProperties) {
     super(fhirProperties);
   }
 
@@ -29,15 +29,13 @@ public class FindingMapper extends ToFhirMapper {
       throw new IllegalArgumentException("input must be a PathoReport");
 
     var result = new Observation();
-    final Observation observation =
-        result.addIdentifier(
-            IdentifierAndReferenceUtil.getIdentifier(
-                input,
-                PathologyIdentifierType.FINDING,
-                fhirProperties.getSystems().getDiagnosticFindingId(),
-                "TODO: specific per finding"));
 
-    return observation;
+      return result.addIdentifier(
+          IdentifierAndReferenceUtil.getIdentifier(
+              input,
+              PathologyIdentifierType.PATHO_FINDING,
+              fhirProperties.getSystems().getDiagnosticFindingId(),
+              "TODO: specific per finding"));
   }
 
   public Collection<Resource> map(PathoInputBase input, int grouperType) {
@@ -62,9 +60,9 @@ public class FindingMapper extends ToFhirMapper {
     // Additional Specified Grouper: 100969-5 (In LOINC Org. nicht gefunden)
 
     HashMap<String, String> pathoBefundSection = new HashMap<String, String>();
-    pathoBefundSection.put("micro", pathoReport.getMikroskopischer_Befund());
-    pathoBefundSection.put("macro", pathoReport.getMakroskopischer_Befund());
-    pathoBefundSection.put("diagnose", pathoReport.getDiagnose());
+    pathoBefundSection.put("micro", pathoReport.getMikroskopischerBefund());
+    pathoBefundSection.put("macro", pathoReport.getMakroskopischerBefund());
+    pathoBefundSection.put("diagnoseConclusion", pathoReport.getDiagnoseConclusion());
 
     for (String i : pathoBefundSection.keySet()) {
       String befundSection = pathoBefundSection.get(i);
@@ -156,8 +154,9 @@ public class FindingMapper extends ToFhirMapper {
   }
 
   // TODO Add the information from AHD extraction section
+    // Use  the valueString for the firstVersion
 
-  protected Observation createPathFinding(
+  protected Observation createPathoFinding(
       PathoReport pathoReport,
       PathoSpecimen pathoSpecimen,
       String pathoGrouperType,
@@ -177,20 +176,15 @@ public class FindingMapper extends ToFhirMapper {
 
     // Set Identifier (TODO)
     var pathoFindingIdentifier =
-        pathoReport.getAuftragnummer()
+        pathoReport.getAuftragsnummer()
             + pathoReport.getPatientennummer()
             + pathoReport.getFallnummer();
 
     // fixme
     // pathoFinding.setId(IdentifierHasher.hasher.apply(pathoFindingIdentifier));
-
+      Date probeEinnahmeDatum = new Date(pathoSpecimen.getProbeEinnahmedatum());
     // Set Sepecimendate
-    var probeEinnahmeDatum =
-        Date.from(
-            pathoSpecimen
-                .getSpecimenCollectionDate()
-                .atZone(ZoneId.of("Europe/Berlin"))
-                .toInstant());
+
     pathoFinding.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
 
     // status

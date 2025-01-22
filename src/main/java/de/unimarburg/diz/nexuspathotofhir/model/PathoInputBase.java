@@ -8,7 +8,7 @@ public interface PathoInputBase extends Serializable {
 
   String getFallnummer();
 
-  String getAuftragnummer();
+  String getAuftragsnummer();
 
   String getUUID();
 

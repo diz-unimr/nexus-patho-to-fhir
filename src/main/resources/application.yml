@@ -11,25 +11,30 @@ spring:
       key-store-password: ${SSL_KEY_STORE_PASSWORD}
 
   cloud:
-    stream:
-      function.definition: processPathoReport,processPathoSpecimen
-      bindings:
-        process-in-0:
-          destination: input-patho-report
-        process-out-0:
-          destination: output-patho-report
-        process-in-1:
-          destination: input-patho-specimen
-        process-out-1:
-          destination: output-patho-specimen
-      kafka:
-        streams:
-          binder:
-            applicationId: nexus-patho-to-fhir
-            configuration:
-              compression.type: gzip
-              max.request.size: 5242880
-
+      function:
+        definition: processPathoSpecimen;processPathoReport
+      stream:
+        bindings:
+          processPathoSpecimen-in-0:
+            destination: patho-specimen
+          processPathoSpecimen-out-0:
+            destination: idat-patho-specimen
+          processPathoReport-in-0:
+            destination: patho-report
+          processPathoReport-out-0:
+            destination: idat-patho-report
+        kafka:
+          streams:
+            binder:
+              functions:
+                processPathoSpecimen:
+                  applicationId: nexus-patho-specimen-to-fhir
+                processPathoReport:
+                  applicationId: nexus-patho-report-to-fhir
+              configuration:
+                compression.type: gzip
+                max.request.size: 5242880
+                spring.json.use.type.headers: "false"
 fhir:
   systems:
     serviceRequestId: "https://your-local-system/pathology/serviceRequestId"

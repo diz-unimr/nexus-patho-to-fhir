@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
@@ -15,25 +17,33 @@ import org.springframework.util.StringUtils;
 public class PathoReport implements PathoInputBase {
 
   /** incremental number for this object instance to allow order */
-  @JsonProperty("Index_ID")
-  private Integer indexID;
 
+
+
+  @JsonProperty("BefundID")
+  private String befundID;
   /**
    * is fixes for one diagnostic report episode (including report corrections and additions)
    *
    * @implNote also called 'Journal Nummer' in german
    */
-  @JsonProperty("Auftragnummer")
-  private String auftragnummer;
-
-  @JsonProperty("Eingangsdatum")
   // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
   // private ZonedDateTime eingangsdatum;
-  private Long eingangsdatum;
+  @JsonProperty ("BefundErstellungsdatum")
+  private Long befundErstellungsdatum;
 
-  /** internal system identifier of patient @TODO: check if unique per report */
-  @JsonProperty("Patient_GUID")
-  private String patientGUID;
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    // private ZonedDateTime eingangsdatum;
+    /**
+     * last date time when report content has been modified
+     *
+     * <p>note that ou need consider {@link #getAuftragsnummer()}
+     */
+  @JsonProperty ("LetzteBearbeitungsdatum")
+  private Long LetzteBearbeitungsdatum;
+
+  @JsonProperty("Auftragsnummer")
+  private String auftragsnummer;
 
   /** has multiple report instances and service requests */
   @JsonProperty("Patientennummer")
@@ -43,88 +53,42 @@ public class PathoReport implements PathoInputBase {
   @JsonProperty("Fallnummer")
   private String fallnummer;
 
-  @JsonProperty("Nachname")
-  private String nachname;
-
-  @JsonProperty("Vorname")
-  private String vorname;
-
-  @JsonProperty("Geschlecht")
-  private String geschlecht;
-
-  @JsonProperty("Geburtsdatum")
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMdd")
-  private LocalDate geburtsdatum;
-
-  @JsonProperty("IstVerstorben")
-  private Integer istVerstorben;
-
-  @JsonProperty("Sterbedatum")
-  @JsonSerialize(using = InstantSerializer.class)
-  private Instant sterbedatum;
-
-  /** Unique UUID */
-  @JsonProperty("Pathologie_Befund_Id")
-  private String pathologieBefundId;
-
   /**
    * document type is important for processing logic: initial content, update/replace
    *
    * @apiNote use {@link #getDocType()} instead
    */
-  @JsonProperty("Documentart")
-  private String documentart;
+  @JsonProperty("Befundtyp")
+  private String befundtyp;
 
   /** Date time when DiagnosticReport has been initially created */
   @JsonProperty("befunddatum")
   @JsonSerialize(using = InstantSerializer.class)
   private Instant befunddatum;
 
-  /**
-   * last date time when report content has been modified
-   *
-   * <p>note that ou need consider {@link #getAuftragnummer()}
-   */
-  @JsonProperty("Letzte_Bearbeitung")
-  @JsonSerialize(using = InstantSerializer.class)
-  private Instant letzteBearbeitung;
+  @JsonProperty("Probe")
+  private String probe;
 
-  /** narrative */
-  @JsonProperty("Befund_XML")
-  private String befundXML;
+  @JsonProperty("MikroskopischerBefund")
+  private String mikroskopischerBefund;
 
-  /**
-   * subsection of {@link #getBefundXML()} if has value will need create a related macroscopic
-   * grouper
-   */
-  @JsonProperty("Makroskopischer_Befund")
-  private String makroskopischer_Befund;
-
-  /**
-   * subsection of {@link #getBefundXML()} if has value will need create a related microscopic
-   * grouper
-   */
-  @JsonProperty("Mikroskopischer_Befund")
-  private String mikroskopischer_Befund;
+  @JsonProperty("MakroskopischerBefund")
+  private String makroskopischerBefund;
 
   /** cancer icd-o diagnose code */
-  @JsonProperty("Diagnose")
-  private String diagnose;
-
-  /** specimen extraction location */
-  @JsonProperty("Material_Lokalisation")
-  private String material_Lokalisation;
+  @JsonProperty("DiagnoseConclusion")
+  private String diagnoseConclusion;
 
   /** tumor classification */
   @JsonProperty("TNM")
-  private String tNM;
+  private String tnm;
 
   @JsonIgnore
   public ReportDocType getDocType() throws IllegalStateException {
 
     ReportDocType result = ReportDocType.UNKNOWN;
-    if (StringUtils.hasText(getDocumentart())) {
-      var trimmed = getDocumentart().trim();
+    if (StringUtils.hasText(getBefundtyp())) {
+      var trimmed = getBefundtyp().trim();
       switch (trimmed) {
           // fixme: genau prüfen was da so kommen kann, ggf. mit regex arbeiten
         case "Hauptbefund":
@@ -156,19 +120,19 @@ public class PathoReport implements PathoInputBase {
       throw new IllegalStateException(
           String.format(
               "report id %s has an unexpected value at property 'Dokumentart': {%s}",
-              this.indexID, this.getDocumentart()));
+              this.befundID, this.getBefundtyp()));
     return result;
   }
 
   @JsonIgnore
   public String getUUID() {
-    return getPathologieBefundId();
+    return getBefundID();
   }
 
   @Override
   @JsonIgnore
   public boolean isBaseValid() {
-    return StringUtils.hasText(auftragnummer)
+    return StringUtils.hasText(auftragsnummer)
         && StringUtils.hasText(fallnummer)
         && StringUtils.hasText(patientennummer);
   }

@@ -4,6 +4,8 @@ package de.unimarburg.diz.nexuspathotofhir.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import lombok.Data;
 import org.springframework.util.StringUtils;
@@ -11,8 +13,47 @@ import org.springframework.util.StringUtils;
 @Data
 public class PathoSpecimen implements PathoInputBase {
 
-  @JsonProperty("Auftragnummer")
-  private String auftragnummer;
+
+
+  @JsonProperty("ContainerGUID")
+  private String containerGUID;
+
+  @JsonProperty("ContainerID")
+  private String containerID;
+
+  @JsonProperty("ContainerName")
+  private String containerName;
+
+  @JsonProperty("ProbeID")
+  private String probeID;
+
+  @JsonProperty("ProbeLaenge")
+  private String probeLaenge;
+
+  @JsonProperty("ParentContainer")
+  private String parentContainer;
+
+  @JsonProperty("Auftragsnummer")
+  private String auftragsnummer;
+
+    /**
+     * @apiNote value '-1' -> unknown size fixme: check unit - should be 'cm'
+     */
+
+    @JsonProperty("Probemenge")
+  private Long probemenge;
+
+  @JsonProperty("ProbeName")
+  private String probeName;
+
+  @JsonProperty("ProbeEinnahmedatum")
+  private Long probeEinnahmedatum;
+
+  @JsonProperty("ProbeGewinningsmethode")
+  private String probeGewinningsmethode;
+
+  @JsonProperty("Eingangsdatum")
+  private Long eingangsdatum;
 
   @JsonProperty("Patientennummer")
   private String patientennummer;
@@ -20,21 +61,20 @@ public class PathoSpecimen implements PathoInputBase {
   @JsonProperty("Fallnummer")
   private String fallnummer;
 
+
   /**
    * @apiNote it is a UUID
    */
-  @JsonProperty("Probe_id")
-  private String probeId;
 
   @JsonIgnore
   public String getUUID() {
-    return getProbeId();
+    return getContainerGUID();
   }
 
   @Override
   @JsonIgnore
   public boolean isBaseValid() {
-    return StringUtils.hasText(auftragnummer)
+    return StringUtils.hasText(auftragsnummer)
         && StringUtils.hasText(fallnummer)
         && StringUtils.hasText(patientennummer);
   }
@@ -61,33 +101,20 @@ public class PathoSpecimen implements PathoInputBase {
   @JsonProperty("Probename")
   private String probename;
 
-  /**
-   * @apiNote can be cast to Date since time component is empty
-   */
-  @JsonProperty("collection_date")
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmm")
-  private LocalDateTime specimenCollectionDate;
-
-  /**
-   * @apiNote it is a UUID
-   */
-  @JsonProperty("Container")
-  private String container;
-
-  @JsonProperty("ContainerType")
+//  /**
+//   * @apiNote can be cast to Date since time component is empty
+//   */
+//  @JsonProperty("collection_date")
+//  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmm")
+//  private LocalDateTime specimenCollectionDate;
+//
+//  /**
+//   * @apiNote it is a UUID
+//   */
+//  @JsonProperty("Container")
+//  private String container;
+//
+  @JsonProperty("ContainerTyp")
   private Integer containerType;
 
-  /**
-   * @apiNote value '-1' -> unknown size fixme: check unit - should be 'cm'
-   */
-  @JsonProperty("Probe_Laenge")
-  private Long probeLaenge;
-
-  /** fixme: what does this mean and do we need it? */
-  @JsonProperty("ItemOrder")
-  private String itemOrder;
-
-  /** fixme: what does value '-1' mean */
-  @JsonProperty("Probemenge")
-  private Long probemenge;
 }

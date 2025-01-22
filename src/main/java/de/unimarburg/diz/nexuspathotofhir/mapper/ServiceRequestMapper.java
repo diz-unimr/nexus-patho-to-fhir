@@ -25,7 +25,7 @@ public class ServiceRequestMapper extends ToFhirMapper {
     log.debug(
         String.format(
             "creating service_request '%s' from patho-guid '%s'",
-            input.getAuftragnummer(), input.getUUID()));
+            input.getAuftragsnummer(), input.getUUID()));
 
     ServiceRequest result = new ServiceRequest();
     result.setMeta(new Meta().setSource("#nexus-pathology"));
