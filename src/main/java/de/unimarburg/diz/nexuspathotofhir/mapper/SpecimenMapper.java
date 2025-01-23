@@ -3,13 +3,13 @@ package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
+import de.unimarburg.diz.nexuspathotofhir.model.MappingEntry;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.NotImplementedException;
 import org.hl7.fhir.r4.model.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class SpecimenMapper extends ToFhirMapperSpecimen {
@@ -60,7 +61,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     // FIXME: may depend on {@link PathoSpecimen#getProbemenge }
     result.setStatus(Specimen.SpecimenStatus.AVAILABLE);
 
-    //mapCollection(result, input);
+    // mapCollection(result, input);
     return result;
   }
 
@@ -87,24 +88,24 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
    *
    * @param specimen specimen in container
    */
-/*
-  protected void mapCollection(Specimen specimen, PathoSpecimen input) {
+  /*
+    protected void mapCollection(Specimen specimen, PathoSpecimen input) {
 
-    // TODO: collection & collection method
-    var specimenCollectionCode =
-        new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
-    var specimenCollectionMethod =
-        new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
-    specimen.setCollection(
-        // TODO method
-        new Specimen.SpecimenCollectionComponent()
-            .setMethod(new CodeableConcept())
-            .setCollector(new Reference().setReference("Practitioner/2346545"))
-            .setBodySite(new CodeableConcept().addCoding(specimenCollectionCode))
-            .setMethod(new CodeableConcept(specimenCollectionMethod)));
-    throw new NotImplementedException("collection & collection method");
-  }
-*/
+      // TODO: collection & collection method
+      var specimenCollectionCode =
+          new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
+      var specimenCollectionMethod =
+          new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
+      specimen.setCollection(
+          // TODO method
+          new Specimen.SpecimenCollectionComponent()
+              .setMethod(new CodeableConcept())
+              .setCollector(new Reference().setReference("Practitioner/2346545"))
+              .setBodySite(new CodeableConcept().addCoding(specimenCollectionCode))
+              .setMethod(new CodeableConcept(specimenCollectionMethod)));
+      throw new NotImplementedException("collection & collection method");
+    }
+  */
 
   /**
    * Create {@link Specimen.SpecimenContainerComponent} resource and assign it to specimen
@@ -114,7 +115,6 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   protected void mapContainer(Specimen specimen, PathoSpecimen input) {
 
     List<Specimen.SpecimenContainerComponent> container = new ArrayList<>();
-
 
     container.add(
         new Specimen.SpecimenContainerComponent()
@@ -128,13 +128,38 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   }
 
   /**
-   * Map input material name {@link PathoSpecimen#getProbename() to SNOMED coded version}
+   * Map input material name {@link PathoSpecimen#getProbeName() to SNOMED coded version}
    *
    * @param specimen fhir resource to be modified
    */
   protected void mapSpecimenType(Specimen specimen, PathoSpecimen input) {
+    final CodeableConcept specimentTypeCoding = new CodeableConcept();
+
+    addGeneralizedTypeCoding(input, specimentTypeCoding);
+
     var type = csvMappings.specimenTypes().get(input.getProbeName());
-    specimen.setType(new CodeableConcept().addCoding(type.asFhirCoding()));
+
+    specimentTypeCoding.addCoding(type.asFhirCoding());
+    specimen.setType(specimentTypeCoding);
+  }
+
+  private static void addGeneralizedTypeCoding(
+      PathoSpecimen input, CodeableConcept specimentTypeCoding) {
+    if (StringUtils.endsWithIgnoreCase(input.getProbeName(), " ZY")) {
+      specimentTypeCoding
+          .addCoding()
+          .setCode("258433009")
+          .setDisplay("Smear specimen (specimen)")
+          .setSystem(MappingEntry.SNOMED_SYSTEM)
+          .setVersion(MappingEntry.SNOMED_VERSION);
+    } else {
+      specimentTypeCoding
+          .addCoding()
+          .setCode("441652008")
+          .setDisplay("Formalin-fixed paraffin-embedded tissue specimen")
+          .setSystem(MappingEntry.SNOMED_SYSTEM)
+          .setVersion("http://snomed.info/sct/900000000000207008/version/20240501");
+    }
   }
 
   private void setMeta(Specimen specimen) {

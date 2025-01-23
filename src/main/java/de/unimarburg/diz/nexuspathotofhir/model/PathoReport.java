@@ -1,15 +1,11 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
@@ -17,11 +13,9 @@ import org.springframework.util.StringUtils;
 public class PathoReport implements PathoInputBase {
 
   /** incremental number for this object instance to allow order */
-
-
-
   @JsonProperty("BefundID")
   private String befundID;
+
   /**
    * is fixes for one diagnostic report episode (including report corrections and additions)
    *
@@ -29,17 +23,17 @@ public class PathoReport implements PathoInputBase {
    */
   // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
   // private ZonedDateTime eingangsdatum;
-  @JsonProperty ("BefundErstellungsdatum")
+  @JsonProperty("BefundErstellungsdatum")
   private Long befundErstellungsdatum;
 
-    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    // private ZonedDateTime eingangsdatum;
-    /**
-     * last date time when report content has been modified
-     *
-     * <p>note that ou need consider {@link #getAuftragsnummer()}
-     */
-  @JsonProperty ("LetzteBearbeitungsdatum")
+  // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+  // private ZonedDateTime eingangsdatum;
+  /**
+   * last date time when report content has been modified
+   *
+   * <p>note that ou need consider {@link #getAuftragsnummer()}
+   */
+  @JsonProperty("LetzteBearbeitungsdatum")
   private Long LetzteBearbeitungsdatum;
 
   @JsonProperty("Auftragsnummer")

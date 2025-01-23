@@ -12,6 +12,8 @@ public class MappingEntry {
   private String localShortName;
 
   public static final String SNOMED_SYSTEM = "http://snomed.info/sct";
+  public static final String SNOMED_VERSION =
+      "http://snomed.info/sct/900000000000207008/version/20250101";
 
   public MappingEntry(
       String localCode, String localShortName, String snomedCode, String snomedDisplayName) {
@@ -22,6 +24,8 @@ public class MappingEntry {
   }
 
   public Coding asFhirCoding() {
-    return new Coding(SNOMED_SYSTEM, this.snomedCode, this.snomedDisplayName);
+    var coding = new Coding(SNOMED_SYSTEM, this.snomedCode, this.snomedDisplayName);
+    coding.setVersion(SNOMED_VERSION);
+    return coding;
   }
 }

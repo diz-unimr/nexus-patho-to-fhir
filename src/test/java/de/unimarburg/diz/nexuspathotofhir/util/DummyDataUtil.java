@@ -25,10 +25,12 @@ public class DummyDataUtil {
 
     // report meta
     report.setAuftragsnummer("H/20223/00001");
-    report.setBefundErstellungsdatum(LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
+    report.setBefundErstellungsdatum(
+        LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
     report.setBefundID(UUID.randomUUID().toString());
     report.setBefunddatum(ZonedDateTime.of(2023, 1, 20, 23, 45, 59, 1234, zoneId).toInstant());
-    report.setLetzteBearbeitungsdatum(LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
+    report.setLetzteBearbeitungsdatum(
+        LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
 
     // report clinical data
     report.setTnm("pT1-3c N2a M1");
@@ -70,7 +72,8 @@ public class DummyDataUtil {
     pathoSpecimen.setContainerGUID("dummy-container-id");
     pathoSpecimen.setProbeName("Lunge PE");
     pathoSpecimen.setProbeLaenge("5L");
-    pathoSpecimen.setProbeEinnahmedatum(LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
+    pathoSpecimen.setProbeEinnahmedatum(
+        LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
     pathoSpecimen.setProbemenge(1l);
     return pathoSpecimen;
   }

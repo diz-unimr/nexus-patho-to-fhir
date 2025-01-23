@@ -6,16 +6,10 @@ import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Service;
-
-import static org.springframework.cloud.stream.binder.kafka.properties.KafkaConsumerProperties.StandardHeaders.timestamp;
 
 @Service
 public class DiagnosticReportMapper extends ToFhirMapper {
@@ -122,12 +116,12 @@ public class DiagnosticReportMapper extends ToFhirMapper {
                     .setSystem("http://snomed.info/sct")));
     // map effectiveDateTime
 
-
-     // var probeEinnahmeDatum = LocalDateTime.ofInstant(Instant.ofEpochMilli(rawInput.getBefundErstellungsdatum()), ZoneId.systemDefault());
+    // var probeEinnahmeDatum =
+    // LocalDateTime.ofInstant(Instant.ofEpochMilli(rawInput.getBefundErstellungsdatum()),
+    // ZoneId.systemDefault());
     // Converting the long value to date
-      Date probeEinnahmeDatum = new Date(rawInput.getBefundErstellungsdatum());
-    diagnosticReport.setEffective(
-        new DateTimeType().setValue(probeEinnahmeDatum));
+    Date probeEinnahmeDatum = new Date(rawInput.getBefundErstellungsdatum());
+    diagnosticReport.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
     return diagnosticReport;
   }
 

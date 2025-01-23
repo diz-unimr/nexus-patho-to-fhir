@@ -8,7 +8,6 @@ import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import de.unimarburg.diz.nexuspathotofhir.model.ReportDocType;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
-import java.time.ZoneId;
 import java.util.*;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
@@ -30,12 +29,12 @@ public class PathoFindingMapper extends ToFhirMapper {
 
     var result = new Observation();
 
-      return result.addIdentifier(
-          IdentifierAndReferenceUtil.getIdentifier(
-              input,
-              PathologyIdentifierType.PATHO_FINDING,
-              fhirProperties.getSystems().getDiagnosticFindingId(),
-              "TODO: specific per finding"));
+    return result.addIdentifier(
+        IdentifierAndReferenceUtil.getIdentifier(
+            input,
+            PathologyIdentifierType.PATHO_FINDING,
+            fhirProperties.getSystems().getDiagnosticFindingId(),
+            "TODO: specific per finding"));
   }
 
   public Collection<Resource> map(PathoInputBase input, int grouperType) {
@@ -154,7 +153,7 @@ public class PathoFindingMapper extends ToFhirMapper {
   }
 
   // TODO Add the information from AHD extraction section
-    // Use  the valueString for the firstVersion
+  // Use  the valueString for the firstVersion
 
   protected Observation createPathoFinding(
       PathoReport pathoReport,
@@ -182,7 +181,7 @@ public class PathoFindingMapper extends ToFhirMapper {
 
     // fixme
     // pathoFinding.setId(IdentifierHasher.hasher.apply(pathoFindingIdentifier));
-      Date probeEinnahmeDatum = new Date(pathoSpecimen.getProbeEinnahmedatum());
+    Date probeEinnahmeDatum = new Date(pathoSpecimen.getProbeEinnahmedatum());
     // Set Sepecimendate
 
     pathoFinding.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));

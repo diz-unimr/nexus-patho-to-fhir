@@ -3,12 +3,8 @@ package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
-import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
-import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import org.apache.kafka.streams.kstream.ValueMapper;
 import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Meta;
-import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Resource;
 
 public abstract class ToFhirMapperSpecimen
@@ -27,7 +23,6 @@ public abstract class ToFhirMapperSpecimen
   }
 
   public abstract Resource map(PathoInputBase input);
-
 
   public abstract Bundle.BundleEntryComponent apply(PathoInputBase input);
 
