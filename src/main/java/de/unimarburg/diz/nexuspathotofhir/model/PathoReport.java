@@ -19,7 +19,6 @@ public class PathoReport implements PathoInputBase {
   /** incremental number for this object instance to allow order */
 
 
-
   @JsonProperty("BefundID")
   private String befundID;
   /**
@@ -66,22 +65,33 @@ public class PathoReport implements PathoInputBase {
   @JsonSerialize(using = InstantSerializer.class)
   private Instant befunddatum;
 
-  @JsonProperty("Probe")
-  private String probe;
 
-  @JsonProperty("MikroskopischerBefund")
+  @JsonProperty("ProbeEinnahmedatum")
+  private Long probeEinnahmedatum;
+
+
+    @JsonProperty("MikroskopischerBefund")
   private String mikroskopischerBefund;
 
   @JsonProperty("MakroskopischerBefund")
   private String makroskopischerBefund;
 
   /** cancer icd-o diagnose code */
-  @JsonProperty("DiagnoseConclusion")
+  @JsonProperty("DiagnoseConclusionBefund")
   private String diagnoseConclusion;
 
   /** tumor classification */
   @JsonProperty("TNM")
   private String tnm;
+
+    @JsonProperty("ProbeID")
+    private String probeID;
+
+    @JsonProperty("Probename")
+  private String probeName;
+
+    @JsonProperty("AuftragsgeberFAB")
+    private String auftragsgeberFAB;
 
   @JsonIgnore
   public ReportDocType getDocType() throws IllegalStateException {

@@ -2,8 +2,7 @@
 package de.unimarburg.diz.nexuspathotofhir.util;
 
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.util.StringUtils;
 
 public class IdentifierAndReferenceUtil {
@@ -19,7 +18,7 @@ public class IdentifierAndReferenceUtil {
    * @return identifier string
    */
   public static String getPathoIdentifierValue(
-      PathoInputBase inputBase, PathologyIdentifierType identType, String[] args) {
+      PathoInputBase inputBase, PathologyIdentifierResourceType identType, String[] args) {
     if (identType == null) throw new IllegalArgumentException("identType was null");
     if (inputBase == null) throw new IllegalArgumentException("inputBase was null");
     if (!StringUtils.hasText(inputBase.getAuftragsnummer()))
@@ -27,9 +26,12 @@ public class IdentifierAndReferenceUtil {
 
     var builder = new StringBuilder();
 
-    if (identType == PathologyIdentifierType.PATIENT) {
-      return inputBase.getPatientennummer();
-    } else {
+    if (identType == PathologyIdentifierResourceType.PATIENT) {
+        return inputBase.getPatientennummer();
+    } else if (identType == PathologyIdentifierResourceType.SERVICE_REQUEST) {
+        return inputBase.getAuftragsnummer();
+    }
+    else {
       builder.append(inputBase.getFallnummer());
       builder.append("-");
       builder.append(inputBase.getAuftragsnummer());
@@ -42,19 +44,51 @@ public class IdentifierAndReferenceUtil {
     return builder.toString();
   }
 
-  public static Identifier getIdentifier(
-      PathoInputBase inputBase, PathologyIdentifierType identType, String system, String... args) {
+
+    public static Identifier getIdentifier(
+      PathoInputBase inputBase, PathologyIdentifierResourceType identType, String system, String... args) {
     return new Identifier()
         .setSystem(system)
         .setValue(getPathoIdentifierValue(inputBase, identType, args));
   }
 
-  public static Identifier getIdentifier(
-      PathoInputBase inputBase, PathologyIdentifierType identType, String system) {
-    return new Identifier()
-        .setSystem(system)
-        .setValue(getPathoIdentifierValue(inputBase, identType, null));
-  }
+    public static Identifier getIdentifierWithType(
+        PathoInputBase inputBase, PathologyIdentifierType pathologyIdentifierType, PathologyIdentifierResourceType identType, String system, String... args) {
+
+        Identifier identifier = new Identifier();
+        identifier.setValue(getPathoIdentifierValue(inputBase, identType, args));
+        identifier.setSystem(system);
+        // Type
+        CodeableConcept codeableConceptIdType = new CodeableConcept();
+        switch (pathologyIdentifierType) {
+                    case PLAC:
+                        codeableConceptIdType.addCoding(new Coding().setSystem(
+                                "http://terminology.hl7.org/CodeSystem/v2-0203")
+                            .setCode("PLAC"));
+                        break;
+                    case FILL:
+                        codeableConceptIdType.addCoding(new Coding().setSystem(
+                                "http://terminology.hl7.org/CodeSystem/v2-0203")
+                            .setCode("FILL"));
+                        break;
+                    case ACSN:
+                        codeableConceptIdType.addCoding(new Coding().setSystem(
+                                "http://terminology.hl7.org/CodeSystem/v2-0203")
+                            .setCode("ACSN"));
+                        break;
+                };
+        identifier.setType(codeableConceptIdType);
+        return identifier;
+    }
+
+
+    public static Identifier getIdentifier(
+        PathoInputBase inputBase, PathologyIdentifierResourceType identType, String system) {
+        return new Identifier()
+            .setSystem(system)
+            .setValue(getPathoIdentifierValue(inputBase, identType, null));
+    }
+
 
   public static Reference getReferenceTo(String resourceR4Name, Identifier identifier) {
     return new Reference(

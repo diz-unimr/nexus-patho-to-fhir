@@ -46,8 +46,10 @@ fhir:
     assignerCode: "https://your-local-system/pathology/assignerCode"
     specimenRequestId: "https://your-local-system/pathology/specimenRequestId"
     diagnosticFindingId: "https://your-local-system/pathology/diagnosticFindingId"
+    diagnosticFindingGrouperId: "https://your-local-system/pathology/diagnosticFindingGrouperId"
     specimenContainer: "https://your-local-system/pathology/specimenContainer"
     specimenId: "https://your-local-system/pathology/specimenId"
+    performerId: "https://your-local-system/pathology/performerId"
 mapping:
   location:
     specimenType: "mappings/specimenType.csv"

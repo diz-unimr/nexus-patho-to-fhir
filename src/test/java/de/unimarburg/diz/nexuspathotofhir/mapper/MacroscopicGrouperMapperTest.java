@@ -1,7 +1,7 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
+import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 
 class MacroscopicGrouperMapperTest<T extends ToFhirMapper> extends BasePathoGrouperMapperTest<T> {
 
@@ -12,6 +12,6 @@ class MacroscopicGrouperMapperTest<T extends ToFhirMapper> extends BasePathoGrou
 
   @Override
   public void setBaseIdentifierType() {
-    super.baseIdentifierType = PathologyIdentifierType.MACROSCOPIC_GROUPER;
+    super.baseIdentifierType = PathologyIdentifierResourceType.MACROSCOPIC_GROUPER;
   }
 }

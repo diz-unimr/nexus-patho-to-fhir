@@ -6,10 +6,10 @@ import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
+import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.NotImplementedException;
+
 import org.hl7.fhir.r4.model.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,7 +71,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     result.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(
             input,
-            PathologyIdentifierType.SPECIMEN,
+            PathologyIdentifierResourceType.SPECIMEN,
             fhirProperties.getSystems().getSpecimenRequestId(),
             "TODO: specific per specimen"));
 
@@ -134,7 +134,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
    */
   protected void mapSpecimenType(Specimen specimen, PathoSpecimen input) {
     var type = csvMappings.specimenTypes().get(input.getProbeName());
-    specimen.setType(new CodeableConcept().addCoding(type.asFhirCoding()));
+    specimen.getType().addCoding(type.asFhirCoding());
   }
 
   private void setMeta(Specimen specimen) {

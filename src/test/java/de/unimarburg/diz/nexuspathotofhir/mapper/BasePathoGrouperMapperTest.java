@@ -8,7 +8,7 @@ import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
+import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.lang.reflect.InvocationTargetException;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Reference;
@@ -21,7 +21,7 @@ import org.mockito.MockitoAnnotations;
 public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
   private final Class<T> fixtureClass;
   private final String dummyGrouperSystemName = "DummyGrouperSystemName";
-  public PathologyIdentifierType baseIdentifierType = null;
+  public PathologyIdentifierResourceType baseIdentifierType = null;
   @Mock public FhirProperties fhirProperties;
   @Mock public FhirProperties.FhirSystems fhirSystems = new FhirProperties.FhirSystems();
   protected T fixture;
