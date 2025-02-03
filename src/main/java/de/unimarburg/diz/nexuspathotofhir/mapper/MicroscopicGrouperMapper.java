@@ -36,7 +36,7 @@ public class MicroscopicGrouperMapper extends ToFhirMapper {
           IdentifierAndReferenceUtil.getIdentifier(
               input,
               PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
-              fhirProperties.getSystems().getMicroscopicGrouperId(),"-", input.getBefundtyp(), input.getBefundID()));
+              fhirProperties.getSystems().getDiagnosticFindingGrouperId(),"-", input.getBefundtyp(), input.getBefundID()));
 
       // Add Meta: source, profile
       pathoFindingGrouper.setMeta(new Meta()
@@ -52,7 +52,7 @@ public class MicroscopicGrouperMapper extends ToFhirMapper {
       Identifier identifier = IdentifierAndReferenceUtil.getIdentifier(
           input,
           PathologyIdentifierResourceType.PATHO_FINDING,
-          fhirProperties.getSystems().getDiagnosticFindingId(), "-", input.getBefundtyp(), input.getBefundID());
+          fhirProperties.getSystems().getDiagnosticFindingId(), "-", input.getBefundtyp(), input.getBefundID(), "MICRO");
       hasMembers.add(IdentifierAndReferenceUtil.getReferenceTo("Observation", identifier));
       pathoFindingGrouper.setHasMember(hasMembers);
 
