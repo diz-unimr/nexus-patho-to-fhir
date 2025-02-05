@@ -181,7 +181,7 @@ public class PathoFindingMapper extends ToFhirMapper {
 
     // fixme
     // pathoFinding.setId(IdentifierHasher.hasher.apply(pathoFindingIdentifier));
-    Date probeEinnahmeDatum = new Date(pathoSpecimen.getProbeEinnahmedatum());
+    Date probeEinnahmeDatum = new Date(pathoSpecimen.getProbeEntnahmedatum());
     // Set Sepecimendate
 
     pathoFinding.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));

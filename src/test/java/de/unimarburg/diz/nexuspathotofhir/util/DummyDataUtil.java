@@ -72,7 +72,7 @@ public class DummyDataUtil {
     pathoSpecimen.setContainerGUID("dummy-container-id");
     pathoSpecimen.setProbeName("Lunge PE");
     pathoSpecimen.setProbeLaenge("5L");
-    pathoSpecimen.setProbeEinnahmedatum(
+    pathoSpecimen.setProbeEntnahmedatum(
         LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
     pathoSpecimen.setProbemenge(1l);
     return pathoSpecimen;

@@ -39,8 +39,8 @@ public class PathoSpecimen implements PathoInputBase {
   @JsonProperty("ProbeName")
   private String probeName;
 
-  @JsonProperty("ProbeEinnahmedatum")
-  private Long probeEinnahmedatum;
+  @JsonProperty("ProbeEntnahmedatum")
+  private Long probeEntnahmedatum;
 
   @JsonProperty("ProbeGewinningsmethode")
   private String probeGewinningsmethode;

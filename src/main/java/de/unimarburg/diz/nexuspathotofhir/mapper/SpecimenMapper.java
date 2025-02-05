@@ -59,21 +59,18 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     mapSpecimenType(result, input);
     mapContainer(result, input);
 
-    // add Status
-
+    // set Status
     if (0 > input.getProbemenge()) result.setStatus(Specimen.SpecimenStatus.UNAVAILABLE);
     else result.setStatus(Specimen.SpecimenStatus.AVAILABLE);
 
-    var collection = mapSpecimenCollection(input);
-
-    result.setCollection(collection);
+    mapSpecimenCollection(result, input);
 
     return result;
   }
 
   @NotNull(
       "specimen FHIR profile has mandatory collection information, therefore result is never null")
-  private Specimen.SpecimenCollectionComponent mapSpecimenCollection(PathoSpecimen input) {
+  private Specimen mapSpecimenCollection(Specimen target, PathoSpecimen input) {
     final Specimen.SpecimenCollectionComponent collection =
         new Specimen.SpecimenCollectionComponent();
 
@@ -81,7 +78,11 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     minimum mandatory collection date
     */
     collection.setCollected(
-        new DateTimeType(Date.from(Instant.ofEpochMilli(input.getProbeEinnahmedatum()))));
+        new DateTimeType(Date.from(Instant.ofEpochMilli(input.getProbeEntnahmedatum()))));
+    /*
+     * mandatory from patho profile
+     */
+    collection.setMethod(new CodeableConcept().addCoding(getExtractionMethodCoding(input)));
 
     /*
     optional body site
@@ -89,7 +90,20 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     var bodySite = mapBodySite(input);
     collection.setBodySite(bodySite);
 
-    return collection;
+    target.setCollection(collection);
+    return target;
+  }
+
+  private Coding getExtractionMethodCoding(PathoSpecimen input) {
+
+    /*
+    großer schnitt
+    kleiner schnitt
+    Abstrich
+    biopsie
+     */
+    // TODO
+    return null;
   }
 
   private CodeableConcept mapBodySite(PathoSpecimen input) {
@@ -109,6 +123,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
             "TODO: specific per specimen"));
 
     // probe id
+    // fixme kläre was hier rein soll
     result.setAccessionIdentifier(
         new Identifier()
             .setValue(input.getContainerID())
@@ -139,8 +154,15 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   }
 
   private CodeableConcept mapContainerTyp(PathoSpecimen input) {
+    // fixme
+    var dummytype = csvMappings.specimenContainerType().get("0");
 
-    return null;
+    final CodeableConcept codeableConcept = new CodeableConcept();
+    codeableConcept
+        .addCoding()
+        .setCode(dummytype.getSnomedCode())
+        .setSystem(ToFhirMapperSpecimen.SNOMED_SYSTEM);
+    return codeableConcept;
   }
 
   /**
@@ -149,14 +171,14 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
    * @param specimen fhir resource to be modified
    */
   protected void mapSpecimenType(Specimen specimen, PathoSpecimen input) {
-    final CodeableConcept specimentTypeCoding = new CodeableConcept();
+    final CodeableConcept specimenTypeCoding = new CodeableConcept();
 
-    addGeneralizedTypeCoding(input, specimentTypeCoding);
+    addGeneralizedTypeCoding(input, specimenTypeCoding);
 
     var type = csvMappings.specimenTypes().get(input.getProbeName());
 
-    specimentTypeCoding.addCoding(type.asFhirCoding());
-    specimen.setType(specimentTypeCoding);
+    specimenTypeCoding.addCoding(type.asFhirCoding());
+    specimen.setType(specimenTypeCoding);
   }
 
   private static void addGeneralizedTypeCoding(
@@ -179,10 +201,12 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   }
 
   private void setMeta(Specimen specimen) {
-    // todo:  set Biobank specimen profile
     specimen.setMeta(
         new Meta()
-            .setProfile(List.of(new CanonicalType(ToFhirMapperSpecimen.MII_PR_Patho_Specimen)))
+            .setProfile(
+                List.of(
+                    new CanonicalType(ToFhirMapperSpecimen.MII_Biobank_Specimen),
+                    new CanonicalType(ToFhirMapperSpecimen.MII_PR_Patho_Specimen)))
             .setSource(ToFhirMapperSpecimen.META_SOURCE));
   }
 
