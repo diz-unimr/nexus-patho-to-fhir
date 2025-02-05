@@ -8,7 +8,9 @@ import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.hl7.fhir.r4.model.*;
 import org.jetbrains.annotations.NotNull;
@@ -58,17 +60,47 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     mapContainer(result, input);
 
     // add Status
-    // FIXME: may depend on {@link PathoSpecimen#getProbemenge }
-    result.setStatus(Specimen.SpecimenStatus.AVAILABLE);
 
-    // mapCollection(result, input);
+    if (0 > input.getProbemenge()) result.setStatus(Specimen.SpecimenStatus.UNAVAILABLE);
+    else result.setStatus(Specimen.SpecimenStatus.AVAILABLE);
+
+    var collection = mapSpecimenCollection(input);
+
+    result.setCollection(collection);
+
     return result;
+  }
+
+  @NotNull(
+      "specimen FHIR profile has mandatory collection information, therefore result is never null")
+  private Specimen.SpecimenCollectionComponent mapSpecimenCollection(PathoSpecimen input) {
+    final Specimen.SpecimenCollectionComponent collection =
+        new Specimen.SpecimenCollectionComponent();
+
+    /*
+    minimum mandatory collection date
+    */
+    collection.setCollected(
+        new DateTimeType(Date.from(Instant.ofEpochMilli(input.getProbeEinnahmedatum()))));
+
+    /*
+    optional body site
+     */
+    var bodySite = mapBodySite(input);
+    collection.setBodySite(bodySite);
+
+    return collection;
+  }
+
+  private CodeableConcept mapBodySite(PathoSpecimen input) {
+    // todo: map organ/tissue to SNOMED CT code
+    return null;
   }
 
   private void setIdentifiers(Specimen result, PathoSpecimen input) {
     // fixme: should setAccessionIdentifier and main identifier have different values ? why?
 
-    // main resoruce identifier
+    // main resource identifier
     result.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(
             input,
@@ -84,30 +116,6 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   }
 
   /**
-   * Create {@link Specimen.SpecimenCollectionComponent} resource and assign it to specimen
-   *
-   * @param specimen specimen in container
-   */
-  /*
-    protected void mapCollection(Specimen specimen, PathoSpecimen input) {
-
-      // TODO: collection & collection method
-      var specimenCollectionCode =
-          new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
-      var specimenCollectionMethod =
-          new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
-      specimen.setCollection(
-          // TODO method
-          new Specimen.SpecimenCollectionComponent()
-              .setMethod(new CodeableConcept())
-              .setCollector(new Reference().setReference("Practitioner/2346545"))
-              .setBodySite(new CodeableConcept().addCoding(specimenCollectionCode))
-              .setMethod(new CodeableConcept(specimenCollectionMethod)));
-      throw new NotImplementedException("collection & collection method");
-    }
-  */
-
-  /**
    * Create {@link Specimen.SpecimenContainerComponent} resource and assign it to specimen
    *
    * @param specimen specimen in container
@@ -116,15 +124,23 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
 
     List<Specimen.SpecimenContainerComponent> container = new ArrayList<>();
 
-    container.add(
+    final Specimen.SpecimenContainerComponent specimenContainerComponent =
         new Specimen.SpecimenContainerComponent()
             .addIdentifier(
                 new Identifier()
                     .setSystem(fhirProperties.getSystems().getSpecimenContainer())
                     .setValue(input.getContainerGUID()))
-            .setSpecimenQuantity(new Quantity().setValue(input.getProbemenge())));
+            .setSpecimenQuantity(new Quantity().setValue(input.getProbemenge()));
+
+    specimenContainerComponent.setType(mapContainerTyp(input));
+    container.add(specimenContainerComponent);
 
     specimen.setContainer(container);
+  }
+
+  private CodeableConcept mapContainerTyp(PathoSpecimen input) {
+
+    return null;
   }
 
   /**
@@ -163,6 +179,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   }
 
   private void setMeta(Specimen specimen) {
+    // todo:  set Biobank specimen profile
     specimen.setMeta(
         new Meta()
             .setProfile(List.of(new CanonicalType(ToFhirMapperSpecimen.MII_PR_Patho_Specimen)))

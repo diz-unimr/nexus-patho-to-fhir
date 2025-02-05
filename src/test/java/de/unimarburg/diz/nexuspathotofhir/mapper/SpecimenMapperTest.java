@@ -14,7 +14,6 @@ import java.util.List;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Specimen;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +40,12 @@ class SpecimenMapperTest extends FhirValidationBase {
   }
 
   @Test
-  @Disabled(
-      "expert knowledge needed before specimen can be finished - meanwhile we disable this test.")
   void isFhirProfileValid() {
     // FIXME
-    validator.withResourcesFrom("node_modules", "*SpecimenCore*");
+    validator.withResourcesFrom("node_modules", "*specimen*.json");
+    validator.withResourcesFrom("node_modules", "*biobank*.json");
+    validator.withResourcesFrom("node_modules", "*container*.json");
+    validator.withResourcesFrom("node_modules", "*collection-method*.json");
 
     var input = DummyDataUtil.getDummySpecimen();
     var result = fixture.map(input);
