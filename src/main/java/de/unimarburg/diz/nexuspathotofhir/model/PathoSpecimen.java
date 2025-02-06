@@ -1,19 +1,13 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
 @Data
 public class PathoSpecimen implements PathoInputBase {
-
-
 
   @JsonProperty("ContainerGUID")
   private String containerGUID;
@@ -36,11 +30,10 @@ public class PathoSpecimen implements PathoInputBase {
   @JsonProperty("Auftragsnummer")
   private String auftragsnummer;
 
-    /**
-     * @apiNote value '-1' -> unknown size fixme: check unit - should be 'cm'
-     */
-
-    @JsonProperty("Probemenge")
+  /**
+   * @apiNote value '-1' -> unknown size fixme: check unit - should be 'cm'
+   */
+  @JsonProperty("Probemenge")
   private Long probemenge;
 
   @JsonProperty("ProbeName")
@@ -61,11 +54,9 @@ public class PathoSpecimen implements PathoInputBase {
   @JsonProperty("Fallnummer")
   private String fallnummer;
 
-
   /**
    * @apiNote it is a UUID
    */
-
   @JsonIgnore
   public String getUUID() {
     return getContainerGUID();
@@ -101,20 +92,19 @@ public class PathoSpecimen implements PathoInputBase {
   @JsonProperty("Probename")
   private String probename;
 
-//  /**
-//   * @apiNote can be cast to Date since time component is empty
-//   */
-//  @JsonProperty("collection_date")
-//  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmm")
-//  private LocalDateTime specimenCollectionDate;
-//
-//  /**
-//   * @apiNote it is a UUID
-//   */
-//  @JsonProperty("Container")
-//  private String container;
-//
+  //  /**
+  //   * @apiNote can be cast to Date since time component is empty
+  //   */
+  //  @JsonProperty("collection_date")
+  //  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmm")
+  //  private LocalDateTime specimenCollectionDate;
+  //
+  //  /**
+  //   * @apiNote it is a UUID
+  //   */
+  //  @JsonProperty("Container")
+  //  private String container;
+  //
   @JsonProperty("ContainerTyp")
   private Integer containerType;
-
 }

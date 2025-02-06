@@ -36,34 +36,31 @@ public class IntraoperativeGrouperMapper extends ToFhirMapper {
     return result;
   }
 
-    @Override
-    @Nullable
-    public Bundle.BundleEntryComponent apply(PathoInputBase value) {
-        var mapped = map(value);
-        if (mapped == null) return null;
+  @Override
+  @Nullable public Bundle.BundleEntryComponent apply(PathoInputBase value) {
+    var mapped = map(value);
+    if (mapped == null) return null;
 
-        final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();
-        return buildBundleComponent(mapped, identifierFirstRep);
-    }
+    final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();
+    return buildBundleComponent(mapped, identifierFirstRep);
+  }
 
-    @NotNull
-    protected Bundle.BundleEntryComponent buildBundleComponent(
-        Observation mapped, Identifier identifierFirstRep) {
-        final Bundle.BundleEntryComponent bundleEntryComponent =
-            new Bundle.BundleEntryComponent()
-                .setResource(mapped)
-                .setRequest(buildPutRequest(mapped, identifierFirstRep.getSystem()));
+  @NotNull protected Bundle.BundleEntryComponent buildBundleComponent(
+      Observation mapped, Identifier identifierFirstRep) {
+    final Bundle.BundleEntryComponent bundleEntryComponent =
+        new Bundle.BundleEntryComponent()
+            .setResource(mapped)
+            .setRequest(buildPutRequest(mapped, identifierFirstRep.getSystem()));
 
-        bundleEntryComponent.setRequest(
-            new Bundle.BundleEntryRequestComponent()
-                .setMethod(Bundle.HTTPVerb.PUT)
-                .setUrl(
-                    String.format(
-                        "%s?identifier=%s|%s",
-                        mapped.fhirType(),
-                        identifierFirstRep.getSystem(),
-                        identifierFirstRep.getValue())));
-        return bundleEntryComponent;
-    }
-
+    bundleEntryComponent.setRequest(
+        new Bundle.BundleEntryRequestComponent()
+            .setMethod(Bundle.HTTPVerb.PUT)
+            .setUrl(
+                String.format(
+                    "%s?identifier=%s|%s",
+                    mapped.fhirType(),
+                    identifierFirstRep.getSystem(),
+                    identifierFirstRep.getValue())));
+    return bundleEntryComponent;
+  }
 }

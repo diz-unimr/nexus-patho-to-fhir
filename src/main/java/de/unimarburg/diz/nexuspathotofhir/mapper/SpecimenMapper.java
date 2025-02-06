@@ -9,7 +9,6 @@ import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.hl7.fhir.r4.model.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +59,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     // FIXME: may depend on {@link PathoSpecimen#getProbemenge }
     result.setStatus(Specimen.SpecimenStatus.AVAILABLE);
 
-    //mapCollection(result, input);
+    // mapCollection(result, input);
     return result;
   }
 
@@ -87,24 +86,24 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
    *
    * @param specimen specimen in container
    */
-/*
-  protected void mapCollection(Specimen specimen, PathoSpecimen input) {
+  /*
+    protected void mapCollection(Specimen specimen, PathoSpecimen input) {
 
-    // TODO: collection & collection method
-    var specimenCollectionCode =
-        new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
-    var specimenCollectionMethod =
-        new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
-    specimen.setCollection(
-        // TODO method
-        new Specimen.SpecimenCollectionComponent()
-            .setMethod(new CodeableConcept())
-            .setCollector(new Reference().setReference("Practitioner/2346545"))
-            .setBodySite(new CodeableConcept().addCoding(specimenCollectionCode))
-            .setMethod(new CodeableConcept(specimenCollectionMethod)));
-    throw new NotImplementedException("collection & collection method");
-  }
-*/
+      // TODO: collection & collection method
+      var specimenCollectionCode =
+          new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
+      var specimenCollectionMethod =
+          new Coding().setSystem("UKMR").setCode("ABCD").setVersion("1").setDisplay("Lunge");
+      specimen.setCollection(
+          // TODO method
+          new Specimen.SpecimenCollectionComponent()
+              .setMethod(new CodeableConcept())
+              .setCollector(new Reference().setReference("Practitioner/2346545"))
+              .setBodySite(new CodeableConcept().addCoding(specimenCollectionCode))
+              .setMethod(new CodeableConcept(specimenCollectionMethod)));
+      throw new NotImplementedException("collection & collection method");
+    }
+  */
 
   /**
    * Create {@link Specimen.SpecimenContainerComponent} resource and assign it to specimen
@@ -114,7 +113,6 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   protected void mapContainer(Specimen specimen, PathoSpecimen input) {
 
     List<Specimen.SpecimenContainerComponent> container = new ArrayList<>();
-
 
     container.add(
         new Specimen.SpecimenContainerComponent()

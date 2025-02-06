@@ -6,17 +6,13 @@ import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.util.DecideStatusOfBefund;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
-import org.apache.kafka.streams.kstream.ValueMapper;
-import org.hl7.fhir.r4.model.*;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.kafka.streams.kstream.ValueMapper;
+import org.hl7.fhir.r4.model.*;
 
 public abstract class ToFhirMapper
-
     implements ValueMapper<PathoInputBase, Bundle.BundleEntryComponent> {
 
   public static final String SNOMED_SYSTEM = "http://snomed.info/sct";
@@ -32,71 +28,78 @@ public abstract class ToFhirMapper
   }
 
   public abstract Resource map(PathoInputBase input);
+
   // PathoFinding Grouper
   public Observation mapBaseGrouper(PathoReport input) {
     if (input == null) return null;
     final Observation observationGrouper = new Observation();
     // Encounter
-      observationGrouper.setEncounter(
+    observationGrouper.setEncounter(
         IdentifierAndReferenceUtil.getReferenceTo(
             "Encounter", input.getFallnummer(), fhirProperties.getSystems().getEncounterId()));
 
     // Patient
-      observationGrouper.setSubject(
+    observationGrouper.setSubject(
         IdentifierAndReferenceUtil.getReferenceTo(
             "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
 
     // ServiceRequestIdentifier
-      ArrayList<Reference> basedOnRef= new ArrayList<>();
-      basedOnRef.add(IdentifierAndReferenceUtil.getReferenceTo("ServiceRequest", input.getAuftragsnummer(),fhirProperties.getSystems().getServiceRequestId()));
-      observationGrouper.setBasedOn(basedOnRef);
+    ArrayList<Reference> basedOnRef = new ArrayList<>();
+    basedOnRef.add(
+        IdentifierAndReferenceUtil.getReferenceTo(
+            "ServiceRequest",
+            input.getAuftragsnummer(),
+            fhirProperties.getSystems().getServiceRequestId()));
+    observationGrouper.setBasedOn(basedOnRef);
 
     // EffectiveDate
-      Date probeEinnahmeDatum = new Date(input.getProbeEinnahmedatum());
-      observationGrouper.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
+    Date probeEinnahmeDatum = new Date(input.getProbeEntnahmedatum());
+    observationGrouper.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
 
-     // Status
-      DecideStatusOfBefund.setFindingStatus(observationGrouper, input.getDocType());
-      // Specimen
+    // Status
+    DecideStatusOfBefund.setFindingStatus(observationGrouper, input.getDocType());
+    // Specimen
 
     return observationGrouper;
   }
 
-
-// PathoFinding
+  // PathoFinding
   public Observation mapBasePathoFinding(PathoReport input) {
-        if (input == null) return null;
-        final Observation observationFinding = new Observation();
-        // Encounter
-        observationFinding.setEncounter(
-            IdentifierAndReferenceUtil.getReferenceTo(
-                "Encounter", input.getFallnummer(), fhirProperties.getSystems().getEncounterId()));
-        // Subject/Patient
-        observationFinding.setSubject(
-            IdentifierAndReferenceUtil.getReferenceTo(
-                "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
-        // Metadata: Profile and Source
-        observationFinding.setMeta(
-          new Meta()
-              .setProfile(
-                  List.of(
-                      new CanonicalType(
-                          "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-finding")))
-              .setSource(META_SOURCE)
-        );
-      // EffectiveDate
-      Date probeEinnahmeDatum = new Date(input.getProbeEinnahmedatum());
-      observationFinding.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
+    if (input == null) return null;
+    final Observation observationFinding = new Observation();
+    // Encounter
+    observationFinding.setEncounter(
+        IdentifierAndReferenceUtil.getReferenceTo(
+            "Encounter", input.getFallnummer(), fhirProperties.getSystems().getEncounterId()));
+    // Subject/Patient
+    observationFinding.setSubject(
+        IdentifierAndReferenceUtil.getReferenceTo(
+            "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
+    // Metadata: Profile and Source
+    observationFinding.setMeta(
+        new Meta()
+            .setProfile(
+                List.of(
+                    new CanonicalType(
+                        "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-finding")))
+            .setSource(META_SOURCE));
+    // EffectiveDate
+    Date probeEinnahmeDatum = new Date(input.getProbeEntnahmedatum());
+    observationFinding.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
 
-      // ServiceRequestIdentifier
-      ArrayList<Reference> basedOnRef= new ArrayList<>();
-      basedOnRef.add(IdentifierAndReferenceUtil.getReferenceTo("ServiceRequest", input.getAuftragsnummer(),fhirProperties.getSystems().getServiceRequestId()));
-      observationFinding.setBasedOn(basedOnRef);
+    // ServiceRequestIdentifier
+    ArrayList<Reference> basedOnRef = new ArrayList<>();
+    basedOnRef.add(
+        IdentifierAndReferenceUtil.getReferenceTo(
+            "ServiceRequest",
+            input.getAuftragsnummer(),
+            fhirProperties.getSystems().getServiceRequestId()));
+    observationFinding.setBasedOn(basedOnRef);
 
-      // status
-      DecideStatusOfBefund.setFindingStatus(observationFinding, input.getDocType());
-        return observationFinding;
-    }
+    // status
+    DecideStatusOfBefund.setFindingStatus(observationFinding, input.getDocType());
+    return observationFinding;
+  }
 
   public abstract Bundle.BundleEntryComponent apply(PathoInputBase input);
 

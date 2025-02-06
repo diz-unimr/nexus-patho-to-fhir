@@ -9,5 +9,4 @@ public enum PathologyIdentifierType {
   FILL,
   // Type: ACSN
   ACSN
-
 }

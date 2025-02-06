@@ -7,10 +7,8 @@ import org.hl7.fhir.r4.model.Meta;
 
 public class BaseProcessor {
 
-    protected static Bundle getBasicBundle(PathoInputBase report) {
+  protected static Bundle getBasicBundle(PathoInputBase report) {
     return (Bundle)
         new Bundle().setId(report.getUUID()).setMeta(new Meta().setSource("#nexus-pathology"));
   }
-
-
 }
