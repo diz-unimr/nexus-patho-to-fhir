@@ -10,7 +10,5 @@ public interface PathoInputBase extends Serializable {
 
   String getAuftragsnummer();
 
-  String getUUID();
-
   boolean isBaseValid();
 }

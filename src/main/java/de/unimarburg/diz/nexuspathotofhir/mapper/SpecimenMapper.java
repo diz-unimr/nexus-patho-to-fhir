@@ -47,6 +47,20 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     setMeta(result);
     setIdentifiers(result, input);
 
+    // ProbenID name aus Nexus z.b. H202500123S1 - muss pseudonymisiert werden!
+    result.setAccessionIdentifier(
+        new Identifier()
+            .setValue(input.getProbeID())
+            .setSystem(fhirProperties.getSystems().getAssignerId()));
+
+    /*
+     * fixme: result.addParent() Referenz auf die Parent Probe
+     *
+     * Aufbau:
+     * Root Specimen: Behälter Ebene
+     * Blattebene - Referenz auf Root - hier werden die Färbungen abgebildet
+     */
+
     result.setSubject(
         IdentifierAndReferenceUtil.getReferenceTo(
             "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
@@ -57,11 +71,16 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
             fhirProperties.getSystems().getServiceRequestId()));
 
     mapSpecimenType(result, input);
+    // fixme: never null since profile mandatory value > error topic?
+    final boolean isInvalidResource = result.getType().getCoding().getFirst().getCode() != null;
+    log.error(
+        "resource cannot be processed since we hav no type mapping for current input: '%s'", input);
+    assert isInvalidResource;
+
     mapContainer(result, input);
 
     // set Status
-    if (0 > input.getProbemenge()) result.setStatus(Specimen.SpecimenStatus.UNAVAILABLE);
-    else result.setStatus(Specimen.SpecimenStatus.AVAILABLE);
+    result.setStatus(Specimen.SpecimenStatus.AVAILABLE);
 
     mapSpecimenCollection(result, input);
 
@@ -115,6 +134,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     // fixme: should setAccessionIdentifier and main identifier have different values ? why?
 
     // main resource identifier
+    // FIXME: get container GUID
     result.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(
             input,
@@ -126,7 +146,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     // fixme kläre was hier rein soll
     result.setAccessionIdentifier(
         new Identifier()
-            .setValue(input.getContainerID())
+            .setValue(input.getProbeID())
             .setSystem(fhirProperties.getSystems().getSpecimenRequestId()));
   }
 
@@ -144,8 +164,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
             .addIdentifier(
                 new Identifier()
                     .setSystem(fhirProperties.getSystems().getSpecimenContainer())
-                    .setValue(input.getContainerGUID()))
-            .setSpecimenQuantity(new Quantity().setValue(input.getProbemenge()));
+                    .setValue(input.getProbeID()));
 
     specimenContainerComponent.setType(mapContainerTyp(input));
     container.add(specimenContainerComponent);
@@ -154,50 +173,72 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   }
 
   private CodeableConcept mapContainerTyp(PathoSpecimen input) {
-    // fixme
-    var dummytype = csvMappings.specimenContainerType().get("0");
 
     final CodeableConcept codeableConcept = new CodeableConcept();
-    codeableConcept
-        .addCoding()
-        .setCode(dummytype.getSnomedCode())
-        .setSystem(ToFhirMapperSpecimen.SNOMED_SYSTEM);
+    addContainerType(input, codeableConcept, 3);
+
     return codeableConcept;
   }
 
   /**
-   * Map input material name {@link PathoSpecimen#getProbeName() to SNOMED coded version}
-   *
    * @param specimen fhir resource to be modified
    */
   protected void mapSpecimenType(Specimen specimen, PathoSpecimen input) {
     final CodeableConcept specimenTypeCoding = new CodeableConcept();
 
-    addGeneralizedTypeCoding(input, specimenTypeCoding);
-
-    var type = csvMappings.specimenTypes().get(input.getProbeName());
-
+    var type = csvMappings.specimenTypes().get(input.getProbeGewinningsmethode());
     specimenTypeCoding.addCoding(type.asFhirCoding());
+
     specimen.setType(specimenTypeCoding);
   }
 
-  private static void addGeneralizedTypeCoding(
-      PathoSpecimen input, CodeableConcept specimentTypeCoding) {
-    if (StringUtils.endsWithIgnoreCase(input.getProbeName(), " ZY")) {
-      specimentTypeCoding
-          .addCoding()
-          .setCode("258433009")
-          .setDisplay("Smear specimen (specimen)")
-          .setSystem(MappingEntry.SNOMED_SYSTEM)
-          .setVersion(MappingEntry.SNOMED_VERSION);
-    } else {
-      specimentTypeCoding
-          .addCoding()
-          .setCode("441652008")
-          .setDisplay("Formalin-fixed paraffin-embedded tissue specimen")
-          .setSystem(MappingEntry.SNOMED_SYSTEM)
-          .setVersion("http://snomed.info/sct/900000000000207008/version/20240501");
+  /**
+   * nexus container type = 1 has only 2 specimen types cytology vial and formalin-fixed
+   * paraffin-embedded block container type = 3 is parent specimen container type = 2 are microscope
+   * slides (433466003,Microscope slide (physical object))
+   *
+   * @param input
+   * @param specimentTypeCoding
+   */
+  private static void addContainerType(
+      PathoSpecimen input, CodeableConcept specimentTypeCoding, int nexusContainerTyp) {
+
+    // alternativ kann man den namen der Probe prüfen '-0-X' ist Zytologie Proeb und '-1-X' sind
+    // Gewebe Proben
+    switch (nexusContainerTyp) {
+      case 1:
+        {
+          if (StringUtils.endsWithIgnoreCase(input.getProbeGewinningsmethode(), " ZY")) {
+            specimentTypeCoding
+                .addCoding()
+                .setCode("1331905008")
+                .setDisplay(
+                    "Cytology specimen vial containing preservative fluid (physical object)")
+                .setSystem(MappingEntry.SNOMED_SYSTEM)
+                .setVersion(MappingEntry.SNOMED_VERSION);
+          } else {
+            specimentTypeCoding
+                .addCoding()
+                .setCode("441652008")
+                .setDisplay("Formalin-fixed paraffin-embedded tissue specimen")
+                .setSystem(MappingEntry.SNOMED_SYSTEM)
+                .setVersion("http://snomed.info/sct/900000000000207008/version/20240501");
+          }
+          break;
+        }
+      case 2:
+        {
+          // todo: Objektträger gefärbt oder auch nicht
+          break;
+        }
+      case 3:
+        {
+          throw new IllegalArgumentException(
+              "unspecific parent container of nexus typ 3 should not be created here. It represents the specimen as a whole resource.");
+        }
     }
+    // FIXME: wir haben noch Objektträger mit und ohne Färbung, Probe hat dann in Nexus den
+    // Containertyp = 2
   }
 
   private void setMeta(Specimen specimen) {
@@ -205,8 +246,8 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
         new Meta()
             .setProfile(
                 List.of(
-                    new CanonicalType(ToFhirMapperSpecimen.MII_Biobank_Specimen),
-                    new CanonicalType(ToFhirMapperSpecimen.MII_PR_Patho_Specimen)))
+                    new CanonicalType(ToFhirMapperSpecimen.MII_PR_Patho_Specimen),
+                    new CanonicalType(ToFhirMapperSpecimen.MII_Biobank_Specimen)))
             .setSource(ToFhirMapperSpecimen.META_SOURCE));
   }
 

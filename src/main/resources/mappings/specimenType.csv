@@ -5,7 +5,7 @@ Mamma,,127456000,Specimen from breast (specimen)
 Mamma links,,735198008,Specimen from left breast (specimen)
 Mamma rechts,,735197003,Specimen from right breast (specimen)
 Mamma PE,,397199005,Specimen from breast obtained by excision (specimen)
-GBG-Pallas Resektat,,,
+GBG-Pallas Resektat,,127456000,Specimen from breast (specimen)
 Ösophagus PE,,127463000,Specimen from esophagus obtained by incisional biopsy (specimen)
 Lymphknoten,,258589002,Lymph node specimen (specimen)
 Kolon PE,,309225009,Colonic biopsy specimen (specimen)
@@ -23,7 +23,7 @@ Rektum PE,,309264007,Excised rectum specimen (specimen)
 Ileum PE,,122641005,Specimen from ileum obtained by segmental resection (specimen)
 Sigma PE,,309260003,Sigmoid colon biopsy specimen (specimen)
 Kolon,,119382000,Specimen from colon (specimen)
-GBG-Pallas Stanze,,,
+GBG-Pallas Stanze,,397199005,Specimen from breast obtained by excision (specimen)
 Uterus,,127479004,Specimen from uterus (specimen)
 Weichteilgewebe,,309072003,Soft tissue specimen (specimen)
 Pleura ZY,,110913002,Pleural cytologic material (specimen)
@@ -74,7 +74,7 @@ Vulva,,397129002,Specimen from vulva (specimen)
 Pankreas PE,,309206006,Pancreas biopsy specimen (specimen)
 GBG-GeparOcto Stanze,,,
 Schilddrüse ZY,,116160003,Thyroid cytologic material (specimen)
-Kiefer,,,
+Kiefer,,1335924000 | Specimen from head (specimen)
 Zunge,,430249001,Specimen from tongue (specimen)
 Lunge,,127458004,Specimen from lung (specimen)
 Fuß,,167876002,Foot joint synovial fluid (specimen)
@@ -215,7 +215,7 @@ GBG-Penelope Lymphknoten,,,
 Knochen HNO,,,
 Hypophyse,,309154006,Pituitary specimen (specimen)
 Nebenhoden,,309140003,Epididymis specimen (specimen)
-Exenteration männlich,,65111004,"Pelvic exenteration, male (procedure)"
-Exenteration weiblich,,55853002,"Pelvic exenteration, female (procedure)"
+Exenteration männlich,,65111004,Pelvic exenteration, male (procedure)
+Exenteration weiblich,,55853002,Pelvic exenteration, female (procedure)
 Ductus deferns TE,,110939004,Vas deferens cytologic material (specimen)
 Ductus choledochus,,446129006,Bile specimen from common bile duct (specimen)
