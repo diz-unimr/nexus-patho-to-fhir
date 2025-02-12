@@ -5,9 +5,12 @@ import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
+import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Observation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,16 +30,40 @@ public class IntraoperativeGrouperMapper extends ToFhirMapper {
     result.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(
             input,
-            PathologyIdentifierType.INTERAOPERATIVE_GROUPER,
-            fhirProperties.getSystems().getInteroperativeGrouperId()));
+            PathologyIdentifierResourceType.INTERAOPERATIVE_GROUPER,
+            fhirProperties.getSystems().getDiagnosticFindingGrouperId()));
+
     return result;
   }
 
-  @Override
-  public Bundle.BundleEntryComponent apply(PathoInputBase value) {
-    var mapped = map(value);
-    return new Bundle.BundleEntryComponent()
-        .setResource(mapped)
-        .setRequest(buildPutRequest(mapped, mapped.getIdentifierFirstRep().getSystem()));
-  }
+    @Override
+    @Nullable
+    public Bundle.BundleEntryComponent apply(PathoInputBase value) {
+        var mapped = map(value);
+        if (mapped == null) return null;
+
+        final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();
+        return buildBundleComponent(mapped, identifierFirstRep);
+    }
+
+    @NotNull
+    protected Bundle.BundleEntryComponent buildBundleComponent(
+        Observation mapped, Identifier identifierFirstRep) {
+        final Bundle.BundleEntryComponent bundleEntryComponent =
+            new Bundle.BundleEntryComponent()
+                .setResource(mapped)
+                .setRequest(buildPutRequest(mapped, identifierFirstRep.getSystem()));
+
+        bundleEntryComponent.setRequest(
+            new Bundle.BundleEntryRequestComponent()
+                .setMethod(Bundle.HTTPVerb.PUT)
+                .setUrl(
+                    String.format(
+                        "%s?identifier=%s|%s",
+                        mapped.fhirType(),
+                        identifierFirstRep.getSystem(),
+                        identifierFirstRep.getValue())));
+        return bundleEntryComponent;
+    }
+
 }

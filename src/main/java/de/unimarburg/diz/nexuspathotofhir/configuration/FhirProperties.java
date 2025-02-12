@@ -30,6 +30,8 @@ public class FhirProperties {
     private String macroscopicGrouperId;
     private String interoperativeGrouperId;
     private String diagnosticFindingId;
+    private String diagnosticFindingGrouperId;
+    private String performerId;
 
     @Override
     public String toString() {
@@ -78,6 +80,10 @@ public class FhirProperties {
           + '\''
           + ", diagnosticFindingId='"
           + diagnosticFindingId
+          + '\''
+          + diagnosticFindingGrouperId
+          + '\''
+          + performerId
           + '\''
           + '}';
     }

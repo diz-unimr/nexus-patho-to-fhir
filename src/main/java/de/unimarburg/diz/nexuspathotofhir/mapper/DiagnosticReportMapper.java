@@ -4,11 +4,18 @@ package de.unimarburg.diz.nexuspathotofhir.mapper;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
+import de.unimarburg.diz.nexuspathotofhir.util.DecideStatusOfBefund;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
+import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
 import org.hl7.fhir.r4.model.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,14 +30,110 @@ public class DiagnosticReportMapper extends ToFhirMapper {
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
 
-    var result = new DiagnosticReport();
+    var diagnosticReport = new DiagnosticReport();
 
-    return result.addIdentifier(
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierType.DIAGNOSTIC_REPORT,
-            fhirProperties.getSystems().getDiagnosticReportId()));
+      // map meta
+      diagnosticReport.setMeta(
+          new Meta()
+              .setProfile(
+                  List.of(
+                      new CanonicalType(
+                          "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-report")))
+              .setSource(META_SOURCE));
+
+      // identifier
+      diagnosticReport.addIdentifier(
+          IdentifierAndReferenceUtil.getIdentifierWithType(
+              input, PathologyIdentifierType.ACSN,
+              PathologyIdentifierResourceType.DIAGNOSTIC_REPORT,
+              fhirProperties.getSystems().getDiagnosticReportId()));
+
+      // map based on
+      diagnosticReport.addBasedOn(
+          IdentifierAndReferenceUtil.getReferenceTo(
+              "ServiceRequest",
+              IdentifierAndReferenceUtil.getIdentifier(
+                  input,
+                  PathologyIdentifierResourceType.SERVICE_REQUEST,
+                  fhirProperties.getSystems().getServiceRequestId())));
+
+      // map status
+      getConditionalReportStatus(diagnosticReport, input.getBefundtyp());
+
+      // map code
+      diagnosticReport.setCode(
+          new CodeableConcept()
+              .addCoding(
+                  new Coding()
+                      .setCode("60568-3")
+                      .setSystem("http://loinc.org")
+                      .setDisplay("Pathology Synoptic report")));
+      // TODO map performer
+
+      // Encounter
+      diagnosticReport.setEncounter(
+          IdentifierAndReferenceUtil.getReferenceTo(
+              "Encounter", input.getFallnummer(), fhirProperties.getSystems().getEncounterId()));
+
+      // Patient
+      diagnosticReport.setSubject(
+          IdentifierAndReferenceUtil.getReferenceTo(
+              "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
+
+
+      // map result (TODO)
+
+      ArrayList<Reference> resultRefereces = new ArrayList<>();
+      // Create Reference ID MicroBefundGrouper
+      Identifier idPathoFindingGrouperMicro =  IdentifierAndReferenceUtil.getIdentifier(
+          input,
+          PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
+          fhirProperties.getSystems().getDiagnosticFindingGrouperId(),"-", input.getBefundtyp(), input.getBefundID());
+
+
+      // Create Reference ID MacroBefundGrouper
+      Identifier idPathoFindingGrouperMacro =  IdentifierAndReferenceUtil.getIdentifier(
+          input,
+          PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
+          fhirProperties.getSystems().getDiagnosticFindingGrouperId(), "-", input.getBefundtyp(), input.getBefundID());
+
+      // Create Reference ID DiagnoseConclusionGrouper
+
+      Identifier idPathoFindingGrouperDiagConclusion  =  IdentifierAndReferenceUtil.getIdentifier(
+          input,
+          PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER,
+          fhirProperties.getSystems().getDiagnosticFindingGrouperId(), "-", input.getBefundtyp(), input.getBefundID());
+
+      // Add each references to result array
+      resultRefereces.add(IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMicro));
+      resultRefereces.add(IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMacro));
+      resultRefereces.add(IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperDiagConclusion));
+      diagnosticReport.setResult(resultRefereces);
+
+      // map conclusion code
+      // Need to be mapped
+      // vlt. die Krebs Diagnosis
+      diagnosticReport.addConclusionCode(
+          new CodeableConcept()
+              .addCoding(
+                  new Coding()
+                      .setCode("1234")
+                      .setDisplay("Snomed diagnose")
+                      .setSystem("http://snomed.info/sct")));
+      // map effectiveDateTime
+      Date probeEinnahmeDatum = new Date(input.getProbeEinnahmedatum());
+      diagnosticReport.setEffective(
+          new DateTimeType().setValue(probeEinnahmeDatum));
+
+      // Performer
+      ArrayList<Reference> performer = new ArrayList<>();
+      var organizationRef  =  IdentifierAndReferenceUtil.getReferenceTo("Organization", PERFORMER, fhirProperties.getSystems().getPerformerId());
+      performer.add(organizationRef);
+      diagnosticReport.setPerformer(performer);
+
+    return diagnosticReport;
   }
+
 
   public static void getConditionalReportStatus(
       DiagnosticReport diagnosticReport, String befundArt) {
@@ -45,91 +148,36 @@ public class DiagnosticReportMapper extends ToFhirMapper {
     }
   }
 
-  public DiagnosticReport createDiagnosticReport(PathoReport rawInput) {
-    var diagnosticReport = new DiagnosticReport();
 
-    var identifierType =
-        new CodeableConcept()
-            .addCoding(
-                new Coding()
-                    .setSystem("http://terminology.hl7.org/CodeSystem/v2-0203")
-                    .setCode("ACSN")
-                    .setDisplay("Accession ID"));
+    @Override
+    @Nullable
+    public Bundle.BundleEntryComponent apply(PathoInputBase value) {
+        var mapped = map(value);
+        if (mapped == null) return null;
 
-    // map meta
-    diagnosticReport.setMeta(
-        new Meta()
-            .setProfile(
-                List.of(
-                    new CanonicalType(
-                        "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-report")))
-            .setSource("#nexus-pathology"));
+        final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();
+        return buildBundleComponent(mapped, identifierFirstRep);
+    }
 
-    // map identifier
-    diagnosticReport.setIdentifier(
-        List.of(
-            new Identifier()
-                .setType(identifierType)
-                .setValue(rawInput.getBefundID())
-                .setSystem(fhirProperties.getSystems().getDiagnosticReportId())));
-    // map based on
-    diagnosticReport.addBasedOn(
-        IdentifierAndReferenceUtil.getReferenceTo(
-            "ServiceRequest",
-            IdentifierAndReferenceUtil.getIdentifier(
-                rawInput,
-                PathologyIdentifierType.SERVICE_REQUEST,
-                fhirProperties.getSystems().getServiceRequestId())));
+    @NotNull
+    protected Bundle.BundleEntryComponent buildBundleComponent(
+        DiagnosticReport mapped, Identifier identifierFirstRep) {
+        final Bundle.BundleEntryComponent bundleEntryComponent =
 
-    // map status
-    getConditionalReportStatus(diagnosticReport, rawInput.getBefundtyp());
-    // map code
-    diagnosticReport.setCode(
-        new CodeableConcept()
-            .addCoding(
-                new Coding()
-                    .setCode("60568-3")
-                    .setSystem("http://loinc.org")
-                    .setDisplay("Pathology Synoptic report")));
-    // TODO map performer
+            new Bundle.BundleEntryComponent()
+                .setResource(mapped)
+                .setRequest(buildPutRequest(mapped, identifierFirstRep.getSystem()));
 
-    // map encounter
-    diagnosticReport.setEncounter(
-        IdentifierAndReferenceUtil.getReferenceTo(
-            "Encounter", fhirProperties.getSystems().getEncounterId(), rawInput.getFallnummer()));
+        bundleEntryComponent.setRequest(
+            new Bundle.BundleEntryRequestComponent()
+                .setMethod(Bundle.HTTPVerb.PUT)
+                .setUrl(
+                    String.format(
+                        "%s?identifier=%s|%s",
+                        mapped.fhirType(),
+                        identifierFirstRep.getSystem(),
+                        identifierFirstRep.getValue())));
+        return bundleEntryComponent;
+    }
 
-    // map result (TODO)
-    diagnosticReport.addResult().setReference("Observation/ref-to-patho-macro-grouper-b");
-    diagnosticReport.addResult().setReference("Observation/ref-to-mii-exa-patho-micro-grouper-a");
-    diagnosticReport
-        .addResult()
-        .setReference("Observation/ref-to-patho-diagnostic-conclusion-grouper");
-    // map conclusion
-    diagnosticReport.setConclusion(rawInput.getDiagnoseConclusion());
-    // map conclusion code
-    diagnosticReport.addConclusionCode(
-        new CodeableConcept()
-            .addCoding(
-                new Coding()
-                    .setCode("1234")
-                    .setDisplay("Snomed diagnose")
-                    .setSystem("http://snomed.info/sct")));
-    // map effectiveDateTime
-
-    // var probeEinnahmeDatum =
-    // LocalDateTime.ofInstant(Instant.ofEpochMilli(rawInput.getBefundErstellungsdatum()),
-    // ZoneId.systemDefault());
-    // Converting the long value to date
-    Date probeEinnahmeDatum = new Date(rawInput.getBefundErstellungsdatum());
-    diagnosticReport.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
-    return diagnosticReport;
-  }
-
-  @Override
-  public Bundle.BundleEntryComponent apply(PathoInputBase value) {
-    var mapped = map(value);
-    return new Bundle.BundleEntryComponent()
-        .setResource(mapped)
-        .setRequest(buildPutRequest(mapped, mapped.getIdentifierFirstRep().getSystem()));
-  }
 }
