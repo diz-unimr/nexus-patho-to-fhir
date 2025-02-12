@@ -27,11 +27,10 @@ public class IdentifierAndReferenceUtil {
     var builder = new StringBuilder();
 
     if (identType == PathologyIdentifierResourceType.PATIENT) {
-        return inputBase.getPatientennummer();
+      return inputBase.getPatientennummer();
     } else if (identType == PathologyIdentifierResourceType.SERVICE_REQUEST) {
-        return inputBase.getAuftragsnummer();
-    }
-    else {
+      return inputBase.getAuftragsnummer();
+    } else {
       builder.append(inputBase.getFallnummer());
       builder.append("-");
       builder.append(inputBase.getAuftragsnummer());
@@ -44,51 +43,59 @@ public class IdentifierAndReferenceUtil {
     return builder.toString();
   }
 
-
-    public static Identifier getIdentifier(
-      PathoInputBase inputBase, PathologyIdentifierResourceType identType, String system, String... args) {
+  public static Identifier getIdentifier(
+      PathoInputBase inputBase,
+      PathologyIdentifierResourceType identType,
+      String system,
+      String... args) {
     return new Identifier()
         .setSystem(system)
         .setValue(getPathoIdentifierValue(inputBase, identType, args));
   }
 
-    public static Identifier getIdentifierWithType(
-        PathoInputBase inputBase, PathologyIdentifierType pathologyIdentifierType, PathologyIdentifierResourceType identType, String system, String... args) {
+  public static Identifier getIdentifierWithType(
+      PathoInputBase inputBase,
+      PathologyIdentifierType pathologyIdentifierType,
+      PathologyIdentifierResourceType identType,
+      String system,
+      String... args) {
 
-        Identifier identifier = new Identifier();
-        identifier.setValue(getPathoIdentifierValue(inputBase, identType, args));
-        identifier.setSystem(system);
-        // Type
-        CodeableConcept codeableConceptIdType = new CodeableConcept();
-        switch (pathologyIdentifierType) {
-                    case PLAC:
-                        codeableConceptIdType.addCoding(new Coding().setSystem(
-                                "http://terminology.hl7.org/CodeSystem/v2-0203")
-                            .setCode("PLAC"));
-                        break;
-                    case FILL:
-                        codeableConceptIdType.addCoding(new Coding().setSystem(
-                                "http://terminology.hl7.org/CodeSystem/v2-0203")
-                            .setCode("FILL"));
-                        break;
-                    case ACSN:
-                        codeableConceptIdType.addCoding(new Coding().setSystem(
-                                "http://terminology.hl7.org/CodeSystem/v2-0203")
-                            .setCode("ACSN"));
-                        break;
-                };
-        identifier.setType(codeableConceptIdType);
-        return identifier;
+    Identifier identifier = new Identifier();
+    identifier.setValue(getPathoIdentifierValue(inputBase, identType, args));
+    identifier.setSystem(system);
+    // Type
+    CodeableConcept codeableConceptIdType = new CodeableConcept();
+    switch (pathologyIdentifierType) {
+      case PLAC:
+        codeableConceptIdType.addCoding(
+            new Coding()
+                .setSystem("http://terminology.hl7.org/CodeSystem/v2-0203")
+                .setCode("PLAC"));
+        break;
+      case FILL:
+        codeableConceptIdType.addCoding(
+            new Coding()
+                .setSystem("http://terminology.hl7.org/CodeSystem/v2-0203")
+                .setCode("FILL"));
+        break;
+      case ACSN:
+        codeableConceptIdType.addCoding(
+            new Coding()
+                .setSystem("http://terminology.hl7.org/CodeSystem/v2-0203")
+                .setCode("ACSN"));
+        break;
     }
+    ;
+    identifier.setType(codeableConceptIdType);
+    return identifier;
+  }
 
-
-    public static Identifier getIdentifier(
-        PathoInputBase inputBase, PathologyIdentifierResourceType identType, String system) {
-        return new Identifier()
-            .setSystem(system)
-            .setValue(getPathoIdentifierValue(inputBase, identType, null));
-    }
-
+  public static Identifier getIdentifier(
+      PathoInputBase inputBase, PathologyIdentifierResourceType identType, String system) {
+    return new Identifier()
+        .setSystem(system)
+        .setValue(getPathoIdentifierValue(inputBase, identType, null));
+  }
 
   public static Reference getReferenceTo(String resourceR4Name, Identifier identifier) {
     return new Reference(

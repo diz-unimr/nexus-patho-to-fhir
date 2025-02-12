@@ -7,15 +7,14 @@ import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
+import java.util.ArrayList;
+import java.util.List;
 import org.hl7.fhir.r4.model.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class ServiceRequestMapper extends ToFhirMapper {
@@ -27,90 +26,101 @@ public class ServiceRequestMapper extends ToFhirMapper {
 
   @Override
   public ServiceRequest map(PathoInputBase inputBase) {
-      if (!(inputBase instanceof PathoReport input))
-          throw new IllegalArgumentException("input must be a PathoReport");
+    if (!(inputBase instanceof PathoReport input))
+      throw new IllegalArgumentException("input must be a PathoReport");
 
-      log.debug("creating service_request '{}' from patho-guid '{}'", input.getAuftragsnummer(), input.getUUID());
+    log.debug(
+        "creating service_request '{}' from patho-guid '{}'",
+        input.getAuftragsnummer(),
+        input.getUUID());
 
     ServiceRequest serviceRequest = new ServiceRequest();
 
     // Meta
-    serviceRequest.setMeta(new Meta().setSource("#nexus-pathology")
-        .setProfile(List.of(
-            new CanonicalType(
-                "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-service-request"))));
+    serviceRequest.setMeta(
+        new Meta()
+            .setSource("#nexus-pathology")
+            .setProfile(
+                List.of(
+                    new CanonicalType(
+                        "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-service-request"))));
 
     // identifier
-      serviceRequest.addIdentifier(
-          IdentifierAndReferenceUtil.getIdentifierWithType(
-              input, PathologyIdentifierType.FILL,
-              PathologyIdentifierResourceType.SERVICE_REQUEST,
-              fhirProperties.getSystems().getServiceRequestId()));
+    serviceRequest.addIdentifier(
+        IdentifierAndReferenceUtil.getIdentifierWithType(
+            input,
+            PathologyIdentifierType.FILL,
+            PathologyIdentifierResourceType.SERVICE_REQUEST,
+            fhirProperties.getSystems().getServiceRequestId()));
 
     // encounter refefence
-      serviceRequest.setEncounter(
-          IdentifierAndReferenceUtil.getReferenceTo(
-              "Encounter", input.getFallnummer(), fhirProperties.getSystems().getEncounterId()));
+    serviceRequest.setEncounter(
+        IdentifierAndReferenceUtil.getReferenceTo(
+            "Encounter", input.getFallnummer(), fhirProperties.getSystems().getEncounterId()));
     // subject refefence
-      serviceRequest.setSubject(
-          IdentifierAndReferenceUtil.getReferenceTo(
-              "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
+    serviceRequest.setSubject(
+        IdentifierAndReferenceUtil.getReferenceTo(
+            "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
 
-      // TODO: Add multiple specimen
-      ArrayList<Reference>  specimenRef= new ArrayList<>();
-      specimenRef.add(IdentifierAndReferenceUtil.getReferenceTo("Specimen", input.getProbeID(), fhirProperties.getSystems().getSpecimenId()));
-      serviceRequest.setSpecimen(specimenRef);
+    // TODO: Add multiple specimen
+    ArrayList<Reference> specimenRef = new ArrayList<>();
+    specimenRef.add(
+        IdentifierAndReferenceUtil.getReferenceTo(
+            "Specimen", input.getProbeID(), fhirProperties.getSystems().getSpecimenId()));
+    serviceRequest.setSpecimen(specimenRef);
 
     // status
-      serviceRequest.setStatus(ServiceRequest.ServiceRequestStatus.COMPLETED);
+    serviceRequest.setStatus(ServiceRequest.ServiceRequestStatus.COMPLETED);
     ///  Fixedvalue
     // intent
-      serviceRequest.setIntent(ServiceRequest.ServiceRequestIntent.ORDER);
+    serviceRequest.setIntent(ServiceRequest.ServiceRequestIntent.ORDER);
 
     // requester / Organization/ FAB
-      serviceRequest.setRequester(IdentifierAndReferenceUtil.getReferenceTo("Organization", input.getAuftragsgeberFAB(), fhirProperties.getSystems().getAssignerCode()));
+    serviceRequest.setRequester(
+        IdentifierAndReferenceUtil.getReferenceTo(
+            "Organization",
+            input.getAuftragsgeberFAB(),
+            fhirProperties.getSystems().getAssignerCode()));
     // category - Fixed value: 726007
-      serviceRequest.setCategory(
-              List.of(
-                  new CodeableConcept()
-                      .setCoding(
-                          List.of(
-                              new Coding()
-                                  .setCode("726007")
-                                  .setSystem(
-                                      "http://snomed.info/sct")
-                                  .setDisplay("Pathology consultation, comprehensive, records and specimen with report (procedure)")
-                          ))));
+    serviceRequest.setCategory(
+        List.of(
+            new CodeableConcept()
+                .setCoding(
+                    List.of(
+                        new Coding()
+                            .setCode("726007")
+                            .setSystem("http://snomed.info/sct")
+                            .setDisplay(
+                                "Pathology consultation, comprehensive, records and specimen with report (procedure)")))));
 
-      return serviceRequest;
+    return serviceRequest;
   }
-    @Override
-    @Nullable
-    public Bundle.BundleEntryComponent apply(PathoInputBase value) {
-        var mapped = map(value);
-        if (mapped == null) return null;
 
-        final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();
-        return buildBundleComponent(mapped, identifierFirstRep);
-    }
+  @Override
+  @Nullable public Bundle.BundleEntryComponent apply(PathoInputBase value) {
+    var mapped = map(value);
+    if (mapped == null) return null;
 
-    @NotNull
-    protected Bundle.BundleEntryComponent buildBundleComponent(
-        ServiceRequest mapped, Identifier identifierFirstRep) {
-        final Bundle.BundleEntryComponent bundleEntryComponent =
-            new Bundle.BundleEntryComponent()
-                .setResource(mapped)
-                .setRequest(buildPutRequest(mapped, identifierFirstRep.getSystem()));
+    final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();
+    return buildBundleComponent(mapped, identifierFirstRep);
+  }
 
-        bundleEntryComponent.setRequest(
-            new Bundle.BundleEntryRequestComponent()
-                .setMethod(Bundle.HTTPVerb.PUT)
-                .setUrl(
-                    String.format(
-                        "%s?identifier=%s|%s",
-                        mapped.fhirType(),
-                        identifierFirstRep.getSystem(),
-                        identifierFirstRep.getValue())));
-        return bundleEntryComponent;
-    }
+  @NotNull protected Bundle.BundleEntryComponent buildBundleComponent(
+      ServiceRequest mapped, Identifier identifierFirstRep) {
+    final Bundle.BundleEntryComponent bundleEntryComponent =
+        new Bundle.BundleEntryComponent()
+            .setResource(mapped)
+            .setRequest(buildPutRequest(mapped, identifierFirstRep.getSystem()));
+
+    bundleEntryComponent.setRequest(
+        new Bundle.BundleEntryRequestComponent()
+            .setMethod(Bundle.HTTPVerb.PUT)
+            .setUrl(
+                String.format(
+                    "%s?identifier=%s|%s",
+                    mapped.fhirType(),
+                    identifierFirstRep.getSystem(),
+                    identifierFirstRep.getValue())));
+    return bundleEntryComponent;
+  }
 }
