@@ -3,6 +3,8 @@ package de.unimarburg.diz.nexuspathotofhir.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import lombok.Data;
@@ -41,8 +43,15 @@ public class PathoSpecimen implements PathoInputBase {
    *
    * <p>e.g.: 1,1.1, 1.1-1-FE,1.1-2-HE
    */
-  @JsonProperty("ContainerName")
-  private String containerName;
+  @JsonProperty("ContainerNames")
+  private String containerNames;
+
+
+  @JsonIgnore
+  public int getRootIndex() {
+    var rootIndex=  Arrays.stream(containerNames.split(",")).toList().indexOf("3");
+    return rootIndex;
+  }
 
   /**
    * specimen guid list of parent container guids. Root element has no parent therefore it has value
@@ -94,8 +103,8 @@ public class PathoSpecimen implements PathoInputBase {
    *
    * <p>e.g. Zuschnitt Klein
    */
-  @JsonProperty("ProbeGewinningsmethode")
-  private String probeGewinningsmethode;
+  @JsonProperty("probeGewinnungsmethode")
+  private String probeGewinnungsmethode;
 
   /**
    * list of sub container names, created from this parent container
@@ -123,5 +132,10 @@ public class PathoSpecimen implements PathoInputBase {
     return StringUtils.hasText(auftragsnummer)
         && StringUtils.hasText(fallnummer)
         && StringUtils.hasText(patientennummer);
+  }
+
+  @Override
+  public String getUUID() {
+    return containerGUIDs.split(",")[getRootIndex()];
   }
 }

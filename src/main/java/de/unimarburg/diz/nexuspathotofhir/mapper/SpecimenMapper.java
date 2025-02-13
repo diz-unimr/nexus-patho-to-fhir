@@ -7,6 +7,7 @@ import de.unimarburg.diz.nexuspathotofhir.model.MappingEntry;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
+import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     result.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(
             input,
-            PathologyIdentifierType.SPECIMEN,
+            PathologyIdentifierResourceType.SPECIMEN,
             fhirProperties.getSystems().getSpecimenRequestId(),
             "TODO: specific per specimen"));
 
@@ -186,7 +187,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   protected void mapSpecimenType(Specimen specimen, PathoSpecimen input) {
     final CodeableConcept specimenTypeCoding = new CodeableConcept();
 
-    var type = csvMappings.specimenTypes().get(input.getProbeGewinningsmethode());
+    var type = csvMappings.specimenTypes().get(input.getProbeGewinnungsmethode());
     specimenTypeCoding.addCoding(type.asFhirCoding());
 
     specimen.setType(specimenTypeCoding);
@@ -208,7 +209,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     switch (nexusContainerTyp) {
       case 1:
         {
-          if (StringUtils.endsWithIgnoreCase(input.getProbeGewinningsmethode(), " ZY")) {
+          if (StringUtils.endsWithIgnoreCase(input.getProbeGewinnungsmethode(), " ZY")) {
             specimentTypeCoding
                 .addCoding()
                 .setCode("1331905008")
