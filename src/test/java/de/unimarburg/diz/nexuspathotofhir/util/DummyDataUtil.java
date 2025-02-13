@@ -70,9 +70,19 @@ public class DummyDataUtil {
     pathoSpecimen.setFallnummer("5000001");
     pathoSpecimen.setAuftragsnummer("H/20223/00001");
     pathoSpecimen.setProbeID("dummy-container-id");
-    pathoSpecimen.setProbeGewinningsmethode("Lunge PE");
+    pathoSpecimen.setProbeGewinnungsmethode("Lunge PE");
     pathoSpecimen.setProbeEntnahmedatum(
         LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
+    pathoSpecimen.setContainerParents(
+        "NA,fdlkhj3459+0346uß, 359027354+dsgkjhdgf,fdlkhj3459+0346uß,fdlkhj3459+0346uß");
+    pathoSpecimen.setContainerGUIDs(
+        "359027354+dsgkjhdgf,3240349f+dgdfsg,fdlkhj3459+0346uß,235264dsfdsgdfsh+3,ldhas345636jl");
+
+    pathoSpecimen.setContainerNames("1, 1.1-1-p 40, 1.1, 1.1-3, 1.1-2-HE|AFP");
+    pathoSpecimen.setContainerLabels(
+        "specimen-dummy-id, specimen-dummy-id-1-1-1, specimen-dummy-id-1-1, specimen-dummy-id-1-1-3, specimen-dummy-id-1-1-2");
+    pathoSpecimen.setContainerTypes("3, 2, 1, 2, 2");
+
     return pathoSpecimen;
   }
 

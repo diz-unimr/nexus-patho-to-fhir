@@ -40,7 +40,9 @@ public class PathoSpecimen implements PathoInputBase {
    * specimen name list assigned with specimen IMPORTANT: here we have applied postprocessing codes
    * as suffix (ordered list)
    *
-   * <p>e.g.: 1,1.1, 1.1-1-FE,1.1-2-HE
+   * <p>note: '|' is separator in case of multiple postprocessing
+   *
+   * <p>e.g.: 1,1.1, 1.1-1-FE,1.1-2-HE|AFP
    */
   @JsonProperty("ContainerNames")
   private String containerNames;
@@ -50,6 +52,17 @@ public class PathoSpecimen implements PathoInputBase {
     var rootIndex = Arrays.stream(containerNames.split(",")).toList().indexOf("3");
     return rootIndex;
   }
+
+  /**
+   * Container storage types which are currently used.
+   *
+   * <p>e.g. 1,2,2,3
+   * <li>3 -> root container (virtual)
+   * <li>2 -> microscopic slide
+   * <li>1 -> sub container from which slides are created
+   */
+  @JsonProperty("containerTypes")
+  private String containerTypes;
 
   /**
    * specimen guid list of parent container guids. Root element has no parent therefore it has value
@@ -89,9 +102,11 @@ public class PathoSpecimen implements PathoInputBase {
   private String patientennummer;
 
   /**
-   * local organ name if available
+   * local organ name of which specimen has been extracted
    *
-   * <p>e.g. 'Gyn'
+   * <p>if available
+   *
+   * <p>e.g. 'Lung'
    */
   @JsonProperty("organ")
   private String organ;
@@ -99,7 +114,7 @@ public class PathoSpecimen implements PathoInputBase {
   /**
    * Method of specimen extraction
    *
-   * <p>e.g. Zuschnitt Klein
+   * <p>e.g. Lunge PE
    */
   @JsonProperty("probeGewinnungsmethode")
   private String probeGewinnungsmethode;
