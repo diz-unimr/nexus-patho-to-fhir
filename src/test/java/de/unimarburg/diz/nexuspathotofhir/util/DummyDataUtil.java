@@ -70,7 +70,9 @@ public class DummyDataUtil {
     pathoSpecimen.setFallnummer("5000001");
     pathoSpecimen.setAuftragsnummer("H/20223/00001");
     pathoSpecimen.setProbeID("dummy-container-id");
-    pathoSpecimen.setProbeGewinnungsmethode("Lunge PE");
+    pathoSpecimen.setProbeGewinnungsmethode("Biopsien");
+    pathoSpecimen.setProbeName("Lunge PE");
+    pathoSpecimen.setOrgan("Lunge");
     pathoSpecimen.setProbeEntnahmedatum(
         LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
     pathoSpecimen.setContainerParents(

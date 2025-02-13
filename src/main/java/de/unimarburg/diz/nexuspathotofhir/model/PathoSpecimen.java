@@ -102,6 +102,14 @@ public class PathoSpecimen implements PathoInputBase {
   private String patientennummer;
 
   /**
+   * Specimen type/name
+   *
+   * <p>e.g. Lunge PE
+   */
+  @JsonProperty("probeName")
+  private String probeName;
+
+  /**
    * local organ name of which specimen has been extracted
    *
    * <p>if available
@@ -114,7 +122,7 @@ public class PathoSpecimen implements PathoInputBase {
   /**
    * Method of specimen extraction
    *
-   * <p>e.g. Lunge PE
+   * <p>e.g. Biopsie
    */
   @JsonProperty("probeGewinnungsmethode")
   private String probeGewinnungsmethode;
