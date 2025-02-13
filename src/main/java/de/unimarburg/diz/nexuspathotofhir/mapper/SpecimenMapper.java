@@ -8,7 +8,6 @@ import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;

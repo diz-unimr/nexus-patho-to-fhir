@@ -3,7 +3,6 @@ package de.unimarburg.diz.nexuspathotofhir.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +45,9 @@ public class PathoSpecimen implements PathoInputBase {
   @JsonProperty("ContainerNames")
   private String containerNames;
 
-
   @JsonIgnore
   public int getRootIndex() {
-    var rootIndex=  Arrays.stream(containerNames.split(",")).toList().indexOf("3");
+    var rootIndex = Arrays.stream(containerNames.split(",")).toList().indexOf("3");
     return rootIndex;
   }
 
