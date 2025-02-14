@@ -38,7 +38,7 @@ public class PathoFindingMacroMapper extends ToFhirMapper {
             input,
             PathologyIdentifierResourceType.PATHO_FINDING,
             fhirProperties.getSystems().getDiagnosticFindingId(),
-            "-",
+            "",
             input.getBefundtyp(),
             input.getBefundID(),
             "MACRO"));

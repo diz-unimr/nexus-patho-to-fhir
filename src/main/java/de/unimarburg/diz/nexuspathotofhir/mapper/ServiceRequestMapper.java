@@ -79,7 +79,7 @@ public class ServiceRequestMapper extends ToFhirMapper {
     serviceRequest.setRequester(
         IdentifierAndReferenceUtil.getReferenceTo(
             "Organization",
-            input.getAuftragsgeberFAB(),
+            input.getAuftragsgeberFABCode(),
             fhirProperties.getSystems().getAssignerCode()));
     // category - Fixed value: 726007
     serviceRequest.setCategory(

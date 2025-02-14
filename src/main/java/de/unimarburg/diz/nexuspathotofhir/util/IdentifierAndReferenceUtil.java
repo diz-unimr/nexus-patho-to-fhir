@@ -37,9 +37,7 @@ public class IdentifierAndReferenceUtil {
       builder.append("-");
       builder.append(identType.name());
     }
-
     if (args != null && args.length > 0) builder.append(String.join("-", args));
-
     return builder.toString();
   }
 

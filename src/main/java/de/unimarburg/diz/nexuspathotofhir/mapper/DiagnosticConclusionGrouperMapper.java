@@ -44,7 +44,7 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
             input,
             PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER,
             fhirProperties.getSystems().getDiagnosticFindingGrouperId(),
-            "-",
+            "",
             input.getBefundtyp(),
             input.getBefundID()));
 
@@ -81,7 +81,7 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
             input,
             PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
             fhirProperties.getSystems().getDiagnosticFindingGrouperId(),
-            "-",
+            "",
             input.getBefundtyp(),
             input.getBefundID());
 
@@ -91,7 +91,7 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
             input,
             PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
             fhirProperties.getSystems().getDiagnosticFindingGrouperId(),
-            "-",
+            "",
             input.getBefundtyp(),
             input.getBefundID());
     derievedFrom.add(

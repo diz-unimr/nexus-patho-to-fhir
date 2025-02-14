@@ -3,17 +3,16 @@ package de.unimarburg.diz.nexuspathotofhir.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
-import java.time.Instant;
 import lombok.Data;
 import org.springframework.util.StringUtils;
+
+import javax.annotation.Nullable;
 
 @Data
 public class PathoReport implements PathoInputBase {
 
   /** incremental number for this object instance to allow order */
-  @JsonProperty("BefundID")
+  @JsonProperty("befundID")
   private String befundID;
 
   /**
@@ -21,9 +20,7 @@ public class PathoReport implements PathoInputBase {
    *
    * @implNote also called 'Journal Nummer' in german
    */
-  // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-  // private ZonedDateTime eingangsdatum;
-  @JsonProperty("BefundErstellungsdatum")
+  @JsonProperty("befundErstellungsdatum")
   private Long befundErstellungsdatum;
 
   // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -33,18 +30,18 @@ public class PathoReport implements PathoInputBase {
    *
    * <p>note that ou need consider {@link #getAuftragsnummer()}
    */
-  @JsonProperty("LetzteBearbeitungsdatum")
-  private Long LetzteBearbeitungsdatum;
+  @JsonProperty("letzteBearbeitungsdatum")
+  private Long letzteBearbeitungsdatum;
 
-  @JsonProperty("Auftragsnummer")
+  @JsonProperty("auftragsnummer")
   private String auftragsnummer;
 
   /** has multiple report instances and service requests */
-  @JsonProperty("Patientennummer")
+  @JsonProperty("patientennummer")
   private String patientennummer;
 
   /** Encounter number may be used over multiple diagnostic report instances */
-  @JsonProperty("Fallnummer")
+  @JsonProperty("fallnummer")
   private String fallnummer;
 
   /**
@@ -52,43 +49,48 @@ public class PathoReport implements PathoInputBase {
    *
    * @apiNote use {@link #getDocType()} instead
    */
-  @JsonProperty("Befundtyp")
+  @JsonProperty("befundtyp")
   private String befundtyp;
 
-  /** Date time when DiagnosticReport has been initially created */
-  @JsonProperty("befunddatum")
-  @JsonSerialize(using = InstantSerializer.class)
-  private Instant befunddatum;
-
-  @JsonProperty("ProbeEntnahmedatum")
-  private Long probeEntnahmedatum;
-
-  @JsonProperty("MikroskopischerBefund")
+  @Nullable
+  @JsonProperty("mikroskopischerBefund")
   private String mikroskopischerBefund;
 
-  @JsonProperty("MakroskopischerBefund")
+  @Nullable
+  @JsonProperty("makroskopischerBefund")
   private String makroskopischerBefund;
 
   /** cancer icd-o diagnose code */
-  @JsonProperty("DiagnoseConclusionBefund")
+  @Nullable
+  @JsonProperty("diagnoseConclusionBefund")
   private String diagnoseConclusion;
 
   /** tumor classification */
-  @JsonProperty("TNM")
+  @Nullable
+  @JsonProperty("tNM")
   private String tnm;
 
-  @JsonProperty("ProbeID")
-  private String probeID;
+  @Nullable
+  @JsonProperty("sonstigesBefund")
+  private String sonstigesBefund;
 
-  @JsonProperty("Probename")
+  @Nullable
+  @JsonProperty("probename")
   private String probeName;
 
-  @JsonProperty("AuftragsgeberFAB")
-  private String auftragsgeberFAB;
+  @Nullable
+  @JsonProperty("probeID")
+  private String probeID;
+
+  @Nullable
+  @JsonProperty("probeEntnahmedatum")
+  private Long probeEntnahmedatum;
+
+  @JsonProperty("auftragsgeberFABCode")
+  private String auftragsgeberFABCode;
 
   @JsonIgnore
   public ReportDocType getDocType() throws IllegalStateException {
-
     ReportDocType result = ReportDocType.UNKNOWN;
     if (StringUtils.hasText(getBefundtyp())) {
       var trimmed = getBefundtyp().trim();
@@ -99,20 +101,81 @@ public class PathoReport implements PathoInputBase {
             result = ReportDocType.MAIN_REPORT;
             break;
           }
-        case "Korrekturbericht 1":
+          case "Korrekturbericht 1":
           {
             result = ReportDocType.CORRECTION1;
             break;
           }
-        case "Korrekturbericht 2":
+          case "Korrekturbericht 2":
           {
             result = ReportDocType.CORRECTION2;
             break;
           }
-        case "Zusatzbefund 1":
+          case "Korrekturbericht 3":
+          {
+              result = ReportDocType.CORRECTION3;
+              break;
+          }
+          case "Korrekturbericht 4":
+          {
+              result = ReportDocType.CORRECTION4;
+              break;
+          }
+
+          case "Korrekturbericht 5":
+          {
+              result = ReportDocType.CORRECTION5;
+              break;
+          }
+          case "Zusatzbefund 1":
           {
             result = ReportDocType.ADDITION1;
             break;
+          }
+          case "Zusatzbefund 2":
+          {
+              result = ReportDocType.ADDITION2;
+              break;
+          }
+          case "Zusatzbefund 3":
+          {
+              result = ReportDocType.ADDITION3;
+              break;
+          }
+          case "Zusatzbefund 4":
+          {
+              result = ReportDocType.ADDITION4;
+              break;
+          }
+          case "Zusatzbefund 5":
+          {
+              result = ReportDocType.ADDITION5;
+              break;
+          }
+          case "Zusatzbefund 6":
+          {
+              result = ReportDocType.ADDITION6;
+              break;
+          }
+          case "Zusatzbefund 7":
+          {
+              result = ReportDocType.ADDITION7;
+              break;
+          }
+          case "Zusatzbefund 8":
+          {
+              result = ReportDocType.ADDITION8;
+              break;
+          }
+          case "Zusatzbefund 9":
+          {
+              result = ReportDocType.ADDITION9;
+              break;
+          }
+          case "Zusatzbefund 10":
+          {
+              result = ReportDocType.ADDITION10;
+              break;
           }
         default:
           return ReportDocType.UNKNOWN;
