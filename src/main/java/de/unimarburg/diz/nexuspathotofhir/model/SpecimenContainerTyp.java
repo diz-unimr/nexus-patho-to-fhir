@@ -5,9 +5,10 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum SpecimenContainerTyp {
-  ROOT_CONTAINER(3),
   SUB_CONTAINER(1),
-  MICROSCOPE_SLIDE(2);
+  MICROSCOPE_SLIDE(2),
+  ROOT_CONTAINER(3);
+
   private final int value;
 
   SpecimenContainerTyp(int value) {

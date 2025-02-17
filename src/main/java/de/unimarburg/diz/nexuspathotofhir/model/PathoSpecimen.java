@@ -49,7 +49,7 @@ public class PathoSpecimen implements PathoInputBase {
 
   @JsonIgnore
   public int getRootIndex() {
-    var rootIndex = Arrays.stream(containerNames.split(",")).toList().indexOf("3");
+    var rootIndex = Arrays.stream(containerTypes.split(",")).toList().indexOf("3");
     return rootIndex;
   }
 
@@ -155,8 +155,28 @@ public class PathoSpecimen implements PathoInputBase {
         && StringUtils.hasText(patientennummer);
   }
 
+  @JsonIgnore
   @Override
   public String getUUID() {
     return containerGUIDs.split(",")[getRootIndex()];
+  }
+
+  public String[] getContainerGUIDsArray() {
+    return Arrays.stream(this.getContainerGUIDs().split(","))
+        .map(a -> a.trim())
+        .toArray(String[]::new);
+  }
+
+  public String[] getSubContainerIds() {
+    return Arrays.stream(this.getContainerParents().split(","))
+        .map(a -> a.trim())
+        .filter(a -> !"NA".equals(a))
+        .toArray(String[]::new);
+  }
+
+  public String[] getContainerTypesArray() {
+    return Arrays.stream(this.getContainerTypes().split(","))
+        .map(a -> a.trim())
+        .toArray(String[]::new);
   }
 }

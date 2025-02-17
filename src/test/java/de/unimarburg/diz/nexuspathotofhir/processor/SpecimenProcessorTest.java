@@ -75,7 +75,8 @@ public class SpecimenProcessorTest {
           testDriver.createOutputTopic(
               OUTPUT_TOPIC, new StringDeserializer(), new FhirDeserializer<>(Bundle.class));
 
-      inputTopic.pipeInput("key1", DummyDataUtil.getDummySpecimen());
+      final PathoSpecimen dummySpecimen = DummyDataUtil.getDummySpecimen();
+      inputTopic.pipeInput("key1", dummySpecimen);
 
       var result = outputTopic.readRecordsToList();
 

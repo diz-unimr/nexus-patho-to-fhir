@@ -53,7 +53,7 @@ public class CsvMappings {
   public static Map<String, MappingEntry> readLineByLine(Path filePath) {
     var map = new HashMap<String, MappingEntry>();
 
-    log.info(String.format("Reading mapping csv from '%s'", filePath));
+    CsvMappings.log.info("Reading mapping csv from '{}'", filePath);
 
     try (Reader reader = Files.newBufferedReader(filePath)) {
       try (CSVReader csvReader = new CSVReader(reader)) {
@@ -64,14 +64,23 @@ public class CsvMappings {
                 String.format(
                     "mapping file '%s' has duplicate key '%s', please cleanup your mapping definition.",
                     filePath, line[0]));
-          map.put(line[0], new MappingEntry(line[0], line[1], line[2], line[3]));
+          try {
+            map.put(line[0], new MappingEntry(line[0], line[1], line[2], line[3]));
+          } catch (Exception unexpectedArrayLength) {
+            CsvMappings.log.error(
+                "line length unexpected: '{}'", String.join(",", line), unexpectedArrayLength);
+            throw unexpectedArrayLength;
+          }
         }
       } catch (CsvValidationException e) {
+        CsvMappings.log.error("csv format invalid", e);
         throw new RuntimeException(e);
       }
     } catch (IOException e) {
+      CsvMappings.log.error("could not read csv", e);
       throw new RuntimeException(e);
     }
+
     return map;
   }
 

@@ -41,11 +41,17 @@ class SpecimenMapperTest extends FhirValidationBase {
 
   @Test
   void isFhirProfileValid() {
-    // FIXME
-    validator.withResourcesFrom("node_modules", "*specimen*.json");
-    validator.withResourcesFrom("node_modules", "*biobank*.json");
-    validator.withResourcesFrom("node_modules", "*container*.json");
-    validator.withResourcesFrom("node_modules", "*collection-method*.json");
+
+    validator.withResourcesFrom(
+        "node_modules//de.medizininformatikinitiative.kerndatensatz.biobank", "*.json");
+    validator.withResourcesFrom(
+        "node_modules//de.medizininformatikinitiative.kerndatensatz.patho//StructureDefinition-mii-pr-patho-specimen.json");
+    validator.withResourcesFrom(
+        "node_modules//de.medizininformatikinitiative.kerndatensatz.patho//ValueSet-mii-vs-patho-container-type-snomed-ct.json");
+    validator.withResourcesFrom(
+        "node_modules//de.medizininformatikinitiative.kerndatensatz.patho//ValueSet-mii-vs-patho-collection-method-snomed-ct.json");
+    validator.withResourcesFrom(
+        "node_modules//de.medizininformatikinitiative.kerndatensatz.patho//ValueSet-mii-vs-patho-processing-procedure-snomed-ct.json");
 
     var input = DummyDataUtil.getDummySpecimen();
     var result = fixture.map(input);

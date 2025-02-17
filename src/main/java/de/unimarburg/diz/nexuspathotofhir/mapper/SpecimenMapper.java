@@ -6,6 +6,7 @@ import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.MappingEntry;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
+import de.unimarburg.diz.nexuspathotofhir.model.SpecimenContainerTyp;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.time.Instant;
@@ -55,7 +56,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
 
     /*
      * fixme: result.addParent() Referenz auf die Parent Probe
-     *
+     * TOdo: entscheiden ob man das überhaupt macht oder alle container in der container property sammelt
      * Aufbau:
      * Root Specimen: Behälter Ebene
      * Blattebene - Referenz auf Root - hier werden die Färbungen abgebildet
@@ -74,7 +75,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     // fixme: never null since profile mandatory value > error topic?
     final boolean isInvalidResource = result.getType().getCoding().getFirst().getCode() != null;
     log.error(
-        "resource cannot be processed since we hav no type mapping for current input: '%s'", input);
+        "resource cannot be processed since we hav no type mapping for current input: '{}'", input);
     assert isInvalidResource;
 
     mapContainer(result, input);
@@ -101,7 +102,9 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     /*
      * mandatory from patho profile
      */
-    collection.setMethod(new CodeableConcept().addCoding(getExtractionMethodCoding(input)));
+    final Coding extractionMethodCoding = getExtractionMethodCoding(input);
+    if (extractionMethodCoding != null)
+      collection.setMethod(new CodeableConcept().addCoding(extractionMethodCoding));
 
     /*
     optional body site
@@ -115,14 +118,12 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
 
   private Coding getExtractionMethodCoding(PathoSpecimen input) {
 
-    /*
-    großer schnitt
-    kleiner schnitt
-    Abstrich
-    biopsie
-     */
-    // TODO
-    return null;
+    if (!csvMappings.specimenExtractionMethod().containsKey(input.getProbeGewinnungsmethode()))
+      return null;
+    else {
+      var method = csvMappings.specimenExtractionMethod().get(input.getProbeGewinnungsmethode());
+      return method.asFhirCoding();
+    }
   }
 
   private CodeableConcept mapBodySite(PathoSpecimen input) {
@@ -159,25 +160,33 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
 
     List<Specimen.SpecimenContainerComponent> container = new ArrayList<>();
 
-    final Specimen.SpecimenContainerComponent specimenContainerComponent =
-        new Specimen.SpecimenContainerComponent()
-            .addIdentifier(
-                new Identifier()
-                    .setSystem(fhirProperties.getSystems().getSpecimenContainer())
-                    .setValue(input.getProbeID()));
+    // hier brauchen wir alle Container
+    var guis = input.getContainerGUIDsArray();
+    var containerTypes = input.getContainerTypesArray();
+    for (int i = 0; i < guis.length; i++) {
+      // skip root container
+      if (i == input.getRootIndex()) continue;
 
-    specimenContainerComponent.setType(mapContainerTyp(input));
-    container.add(specimenContainerComponent);
+      var subContainerGuid = guis[i];
+      var subContainerType = Integer.valueOf(containerTypes[i]);
+      var mappedType = SpecimenContainerTyp.valueOf(subContainerType);
 
+      final Specimen.SpecimenContainerComponent specimenContainerComponent =
+          new Specimen.SpecimenContainerComponent()
+              .addIdentifier(
+                  new Identifier()
+                      .setSystem(fhirProperties.getSystems().getSpecimenContainer())
+                      .setValue(input.getProbeID()));
+
+      specimenContainerComponent
+          .addIdentifier()
+          .setValue(subContainerGuid)
+          .setSystem(fhirProperties.getSystems().getSpecimenContainer());
+      var containerType = addContainerType(input, mappedType);
+      specimenContainerComponent.setType(new CodeableConcept(containerType));
+      container.add(specimenContainerComponent);
+    }
     specimen.setContainer(container);
-  }
-
-  private CodeableConcept mapContainerTyp(PathoSpecimen input) {
-
-    final CodeableConcept codeableConcept = new CodeableConcept();
-    addContainerType(input, codeableConcept, 3);
-
-    return codeableConcept;
   }
 
   /**
@@ -186,7 +195,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   protected void mapSpecimenType(Specimen specimen, PathoSpecimen input) {
     final CodeableConcept specimenTypeCoding = new CodeableConcept();
 
-    var type = csvMappings.specimenTypes().get(input.getProbeGewinnungsmethode());
+    var type = csvMappings.specimenTypes().get(input.getProbeName());
     specimenTypeCoding.addCoding(type.asFhirCoding());
 
     specimen.setType(specimenTypeCoding);
@@ -198,47 +207,61 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
    * slides (433466003,Microscope slide (physical object))
    *
    * @param input
-   * @param specimentTypeCoding
    */
-  private static void addContainerType(
-      PathoSpecimen input, CodeableConcept specimentTypeCoding, int nexusContainerTyp) {
+  private static Coding addContainerType(
+      PathoSpecimen input, SpecimenContainerTyp nexusContainerTyp) {
+    var typeCoding = new Coding();
+    /*
+    brauchen container-ID für
+     */
 
     // alternativ kann man den namen der Probe prüfen '-0-X' ist Zytologie Proeb und '-1-X' sind
     // Gewebe Proben
     switch (nexusContainerTyp) {
-      case 1:
+      case SUB_CONTAINER:
         {
           if (StringUtils.endsWithIgnoreCase(input.getProbeGewinnungsmethode(), " ZY")) {
-            specimentTypeCoding
-                .addCoding()
-                .setCode("1331905008")
-                .setDisplay(
-                    "Cytology specimen vial containing preservative fluid (physical object)")
+            typeCoding
+                .setCode("434746001")
+                .setDisplay("Specimen vial (physical object)")
                 .setSystem(MappingEntry.SNOMED_SYSTEM)
                 .setVersion(MappingEntry.SNOMED_VERSION);
+            /**
+             * specimenTypeCoding .addCoding() .setCode("434746001") .setDisplay( "Cytology specimen
+             * vial containing preservative fluid (physical object)")
+             * .setSystem(MappingEntry.SNOMED_SYSTEM) .setVersion(MappingEntry.SNOMED_VERSION);*
+             */
           } else {
-            specimentTypeCoding
-                .addCoding()
-                .setCode("441652008")
-                .setDisplay("Formalin-fixed paraffin-embedded tissue specimen")
-                .setSystem(MappingEntry.SNOMED_SYSTEM)
-                .setVersion("http://snomed.info/sct/900000000000207008/version/20240501");
+            typeCoding
+                .setCode("434464009")
+                .setDisplay("Tissue cassette (physical object)")
+                .setSystem(MappingEntry.SNOMED_SYSTEM);
+            // .setVersion("http://snomed.info/sct/900000000000207008/version/20240501");
+            /**
+             * specimenTypeCoding .addCoding() .setCode("441652008") .setDisplay("Formalin-fixed
+             * paraffin-embedded tissue specimen") .setSystem(MappingEntry.SNOMED_SYSTEM)
+             * .setVersion("http://snomed.info/sct/900000000000207008/version/20240501");*
+             */
           }
           break;
         }
-      case 2:
+      case MICROSCOPE_SLIDE:
         {
-          // todo: Objektträger gefärbt oder auch nicht
+          typeCoding
+              .setCode("433466003")
+              .setDisplay("Microscope slide (physical object)")
+              .setSystem(MappingEntry.SNOMED_SYSTEM)
+              .setVersion("http://snomed.info/sct/900000000000207008/version/20240501");
           break;
         }
-      case 3:
+      case ROOT_CONTAINER:
         {
           throw new IllegalArgumentException(
               "unspecific parent container of nexus typ 3 should not be created here. It represents the specimen as a whole resource.");
         }
     }
-    // FIXME: wir haben noch Objektträger mit und ohne Färbung, Probe hat dann in Nexus den
-    // Containertyp = 2
+
+    return typeCoding;
   }
 
   private void setMeta(Specimen specimen) {
@@ -246,8 +269,8 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
         new Meta()
             .setProfile(
                 List.of(
-                    new CanonicalType(ToFhirMapperSpecimen.MII_PR_Patho_Specimen),
-                    new CanonicalType(ToFhirMapperSpecimen.MII_Biobank_Specimen)))
+                    new CanonicalType(ToFhirMapperSpecimen.MII_Biobank_Specimen),
+                    new CanonicalType(ToFhirMapperSpecimen.MII_PR_Patho_Specimen)))
             .setSource(ToFhirMapperSpecimen.META_SOURCE));
   }
 
