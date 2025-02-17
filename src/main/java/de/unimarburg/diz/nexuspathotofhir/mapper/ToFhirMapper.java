@@ -1,6 +1,7 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
+import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
@@ -11,9 +12,13 @@ import java.util.Date;
 import java.util.List;
 import org.apache.kafka.streams.kstream.ValueMapper;
 import org.hl7.fhir.r4.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 public abstract class ToFhirMapper
     implements ValueMapper<PathoInputBase, Bundle.BundleEntryComponent> {
+  private final Logger log = LoggerFactory.getLogger(ToFhirMapper.class);
 
   public static final String SNOMED_SYSTEM = "http://snomed.info/sct";
 
@@ -23,8 +28,11 @@ public abstract class ToFhirMapper
 
   protected final FhirProperties fhirProperties;
 
-  public ToFhirMapper(final FhirProperties fhirProperties) {
+  private final CsvMappings csvMappings;
+
+  public ToFhirMapper(final FhirProperties fhirProperties, final CsvMappings csvMappings) {
     this.fhirProperties = fhirProperties;
+    this.csvMappings = csvMappings;
   }
 
   public abstract Resource map(PathoInputBase input);
@@ -66,6 +74,9 @@ public abstract class ToFhirMapper
   // PathoFinding
   public Observation mapBasePathoFinding(PathoReport input) {
     if (input == null) return null;
+    if (csvMappings.specimenTypes() == null || csvMappings.specimenTypes().isEmpty())
+      // throw new RuntimeException("specimentTypes mapping is missing");
+      log.error("specimentTypes mapping is missing");
     final Observation observationFinding = new Observation();
     // Encounter
     observationFinding.setEncounter(
@@ -96,9 +107,37 @@ public abstract class ToFhirMapper
             fhirProperties.getSystems().getServiceRequestId()));
     observationFinding.setBasedOn(basedOnRef);
 
+    //
+    mapProbeNameToCode(observationFinding, input);
+
     // status
     DecideStatusOfBefund.setFindingStatus(observationFinding, input.getDocType());
+
     return observationFinding;
+  }
+
+  protected void mapProbeNameToCode(Observation observation, PathoReport input) {
+    if (StringUtils.hasText(input.getProbeName())) {
+      log.debug("ProbeName is present");
+      // Split the String by ','
+      if (input.getProbeName().contains(",")) {
+        ArrayList<Coding> coding = new ArrayList<>();
+        log.debug("Contains multiple Probe");
+        String[] arrayProbeName = input.getProbeName().split(",");
+        for (String probeName : arrayProbeName) {
+          var code = csvMappings.specimenTypes().get(probeName);
+          log.debug("Code is {}", code);
+          coding.add(code.asFhirCoding());
+        }
+        observation.setCode(new CodeableConcept().setCoding(coding));
+      } else {
+        log.debug("Contains single ProbeID");
+        var code = csvMappings.specimenTypes().get(input.getProbeName());
+        observation.setCode(new CodeableConcept().addCoding(code.asFhirCoding()));
+      }
+    } else {
+      log.error("The Probename is not valid");
+    }
   }
 
   public abstract Bundle.BundleEntryComponent apply(PathoInputBase input);

@@ -1,6 +1,7 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
+import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
@@ -19,8 +20,8 @@ import org.springframework.stereotype.Service;
 public class MacroscopicGrouperMapper extends ToFhirMapper {
   private final Logger log = LoggerFactory.getLogger(MacroscopicGrouperMapper.class);
 
-  public MacroscopicGrouperMapper(FhirProperties fhirProperties) {
-    super(fhirProperties);
+  public MacroscopicGrouperMapper(FhirProperties fhirProperties, CsvMappings csvMappings) {
+    super(fhirProperties, csvMappings);
   }
 
   @Override

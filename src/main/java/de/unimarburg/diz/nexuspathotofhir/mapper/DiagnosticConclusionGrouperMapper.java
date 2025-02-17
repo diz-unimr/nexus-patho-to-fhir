@@ -1,6 +1,7 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
+import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
@@ -27,8 +28,8 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
 
   private final Logger log = LoggerFactory.getLogger(DiagnosticConclusionGrouperMapper.class);
 
-  public DiagnosticConclusionGrouperMapper(FhirProperties fhirProperties) {
-    super(fhirProperties);
+  public DiagnosticConclusionGrouperMapper(FhirProperties fhirProperties, CsvMappings csvMappings) {
+    super(fhirProperties, csvMappings);
   }
 
   @Override

@@ -3,10 +3,9 @@ package de.unimarburg.diz.nexuspathotofhir.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.annotation.Nullable;
 import lombok.Data;
 import org.springframework.util.StringUtils;
-
-import javax.annotation.Nullable;
 
 @Data
 public class PathoReport implements PathoInputBase {
@@ -52,37 +51,29 @@ public class PathoReport implements PathoInputBase {
   @JsonProperty("befundtyp")
   private String befundtyp;
 
-  @Nullable
-  @JsonProperty("mikroskopischerBefund")
+  @Nullable @JsonProperty("mikroskopischerBefund")
   private String mikroskopischerBefund;
 
-  @Nullable
-  @JsonProperty("makroskopischerBefund")
+  @Nullable @JsonProperty("makroskopischerBefund")
   private String makroskopischerBefund;
 
   /** cancer icd-o diagnose code */
-  @Nullable
-  @JsonProperty("diagnoseConclusionBefund")
+  @Nullable @JsonProperty("diagnoseConclusionBefund")
   private String diagnoseConclusion;
 
   /** tumor classification */
-  @Nullable
-  @JsonProperty("tNM")
+  @Nullable @JsonProperty("tNM")
   private String tnm;
 
-  @Nullable
-  @JsonProperty("sonstigesBefund")
+  @Nullable @JsonProperty("sonstigesBefund")
   private String sonstigesBefund;
 
-  @Nullable
   @JsonProperty("probename")
   private String probeName;
 
-  @Nullable
   @JsonProperty("probeID")
   private String probeID;
 
-  @Nullable
   @JsonProperty("probeEntnahmedatum")
   private Long probeEntnahmedatum;
 
@@ -101,81 +92,81 @@ public class PathoReport implements PathoInputBase {
             result = ReportDocType.MAIN_REPORT;
             break;
           }
-          case "Korrekturbericht 1":
+        case "Korrekturbericht 1":
           {
             result = ReportDocType.CORRECTION1;
             break;
           }
-          case "Korrekturbericht 2":
+        case "Korrekturbericht 2":
           {
             result = ReportDocType.CORRECTION2;
             break;
           }
-          case "Korrekturbericht 3":
+        case "Korrekturbericht 3":
           {
-              result = ReportDocType.CORRECTION3;
-              break;
+            result = ReportDocType.CORRECTION3;
+            break;
           }
-          case "Korrekturbericht 4":
+        case "Korrekturbericht 4":
           {
-              result = ReportDocType.CORRECTION4;
-              break;
+            result = ReportDocType.CORRECTION4;
+            break;
           }
 
-          case "Korrekturbericht 5":
+        case "Korrekturbericht 5":
           {
-              result = ReportDocType.CORRECTION5;
-              break;
+            result = ReportDocType.CORRECTION5;
+            break;
           }
-          case "Zusatzbefund 1":
+        case "Zusatzbefund 1":
           {
             result = ReportDocType.ADDITION1;
             break;
           }
-          case "Zusatzbefund 2":
+        case "Zusatzbefund 2":
           {
-              result = ReportDocType.ADDITION2;
-              break;
+            result = ReportDocType.ADDITION2;
+            break;
           }
-          case "Zusatzbefund 3":
+        case "Zusatzbefund 3":
           {
-              result = ReportDocType.ADDITION3;
-              break;
+            result = ReportDocType.ADDITION3;
+            break;
           }
-          case "Zusatzbefund 4":
+        case "Zusatzbefund 4":
           {
-              result = ReportDocType.ADDITION4;
-              break;
+            result = ReportDocType.ADDITION4;
+            break;
           }
-          case "Zusatzbefund 5":
+        case "Zusatzbefund 5":
           {
-              result = ReportDocType.ADDITION5;
-              break;
+            result = ReportDocType.ADDITION5;
+            break;
           }
-          case "Zusatzbefund 6":
+        case "Zusatzbefund 6":
           {
-              result = ReportDocType.ADDITION6;
-              break;
+            result = ReportDocType.ADDITION6;
+            break;
           }
-          case "Zusatzbefund 7":
+        case "Zusatzbefund 7":
           {
-              result = ReportDocType.ADDITION7;
-              break;
+            result = ReportDocType.ADDITION7;
+            break;
           }
-          case "Zusatzbefund 8":
+        case "Zusatzbefund 8":
           {
-              result = ReportDocType.ADDITION8;
-              break;
+            result = ReportDocType.ADDITION8;
+            break;
           }
-          case "Zusatzbefund 9":
+        case "Zusatzbefund 9":
           {
-              result = ReportDocType.ADDITION9;
-              break;
+            result = ReportDocType.ADDITION9;
+            break;
           }
-          case "Zusatzbefund 10":
+        case "Zusatzbefund 10":
           {
-              result = ReportDocType.ADDITION10;
-              break;
+            result = ReportDocType.ADDITION10;
+            break;
           }
         default:
           return ReportDocType.UNKNOWN;

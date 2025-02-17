@@ -18,22 +18,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class PathoFindingDiagConclusionMapper extends ToFhirMapper {
   private final Logger log = LoggerFactory.getLogger(PathoFindingDiagConclusionMapper.class);
-  private final CsvMappings csvMappings;
 
   public PathoFindingDiagConclusionMapper(FhirProperties fhirProperties, CsvMappings csvMappings) {
-    super(fhirProperties);
-    this.csvMappings = csvMappings;
+    super(fhirProperties, csvMappings);
   }
 
   @Override
   public Observation map(PathoInputBase inputBase) {
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
-    if (csvMappings.specimenTypes() == null || csvMappings.specimenTypes().isEmpty())
-      throw new RuntimeException("specimentTypes mapping is missing");
-
     var pathoFinding = super.mapBasePathoFinding(input);
-
     // Add identifier TODO: For multiple observations
     // Add Numbers after befundtype
     pathoFinding.addIdentifier(
@@ -60,11 +54,6 @@ public class PathoFindingDiagConclusionMapper extends ToFhirMapper {
                 .setCoding(
                     List.of(new Coding().setCode("22637-3").setSystem("http://loinc.org")))));
 
-    // code
-    // This is set for only one sample
-    // Todo for multiple specimen
-    mapSpecimenType(pathoFinding, input);
-
     // valueCodeableConcept (TODO) SNOMED CODE for the diagnose
     /*      pathoFinding
     .getValueCodeableConcept()
@@ -81,17 +70,6 @@ public class PathoFindingDiagConclusionMapper extends ToFhirMapper {
     pathoFinding.getValueStringType().setValueAsString(input.getDiagnoseConclusion());
     return pathoFinding;
   }
-
-  // TODO: Handle for multiple Probe
-  protected void mapSpecimenType(Observation observation, PathoReport input) {
-    var type = csvMappings.specimenTypes().get(input.getProbeName());
-    observation.setCode(new CodeableConcept().addCoding(type.asFhirCoding()));
-  }
-
-  // Actual not in use
-  // public Collection<Resource> map(PathoInputBase input, int grouperType) {
-  //     return new ArrayList<Resource>();
-  // }
 
   @Override
   @Nullable public Bundle.BundleEntryComponent apply(PathoInputBase value) {
