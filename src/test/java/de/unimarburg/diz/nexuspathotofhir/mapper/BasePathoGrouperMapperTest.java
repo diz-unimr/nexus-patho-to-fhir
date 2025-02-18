@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
-import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtil;
+import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtilTest;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.lang.reflect.InvocationTargetException;
@@ -67,7 +67,7 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
 
   @Test
   void map_minimal() {
-    final PathoReport input = DummyDataUtil.getDummyReport();
+    final PathoReport input = DummyDataUtilTest.getDummyReport();
 
     var result = fixture.map(input);
 

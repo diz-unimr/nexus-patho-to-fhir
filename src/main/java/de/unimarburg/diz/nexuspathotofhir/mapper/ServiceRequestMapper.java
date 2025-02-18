@@ -100,7 +100,7 @@ public class ServiceRequestMapper extends ToFhirMapper {
         IdentifierAndReferenceUtil.getReferenceTo(
             "Organization",
             input.getAuftragsgeberFABCode(),
-            fhirProperties.getSystems().getAssignerCode()));
+            fhirProperties.getSystems().getOrganizationId()));
     // category - Fixed value: 726007
     serviceRequest.setCategory(
         List.of(
@@ -112,7 +112,6 @@ public class ServiceRequestMapper extends ToFhirMapper {
                             .setSystem("http://snomed.info/sct")
                             .setDisplay(
                                 "Pathology consultation, comprehensive, records and specimen with report (procedure)")))));
-
     return serviceRequest;
   }
 

@@ -18,10 +18,9 @@ public class FhirProperties {
     private String serviceRequestId;
     private String diagnosticReportId;
     private String observationId;
+    private String organizationId;
     private String patientId;
     private String encounterId;
-    private String assignerId;
-    private String assignerCode;
     private String specimenId;
     private String specimenRequestId;
     private String specimenContainer;
@@ -51,11 +50,8 @@ public class FhirProperties {
           + ", encounterId='"
           + encounterId
           + '\''
-          + ", assignerId='"
-          + assignerId
-          + '\''
-          + ", assignerCode='"
-          + assignerCode
+          + ", organizationId='"
+          + organizationId
           + '\''
           + ", specimenId='"
           + specimenId

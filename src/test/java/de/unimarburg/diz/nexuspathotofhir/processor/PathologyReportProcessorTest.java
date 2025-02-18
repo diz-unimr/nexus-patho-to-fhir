@@ -10,7 +10,7 @@ import de.unimarburg.diz.nexuspathotofhir.mapper.*;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.serde.FhirDeserializer;
 import de.unimarburg.diz.nexuspathotofhir.serde.FhirSerializer;
-import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtil;
+import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtilTest;
 import java.util.Properties;
 import org.apache.kafka.common.serialization.*;
 import org.apache.kafka.streams.*;
@@ -75,7 +75,7 @@ public class PathologyReportProcessorTest {
           testDriver.createOutputTopic(
               OUTPUT_TOPIC, new StringDeserializer(), new FhirDeserializer<>(Bundle.class));
 
-      inputTopic.pipeInput("key1", DummyDataUtil.getDummyReport());
+      inputTopic.pipeInput("key1", DummyDataUtilTest.getDummyReport());
 
       var result = outputTopic.readRecordsToList();
 
