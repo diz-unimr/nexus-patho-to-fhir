@@ -77,6 +77,7 @@ public class SpecimenProcessorTest {
 
       final PathoSpecimen dummySpecimen = DummyDataUtilTest.getDummySpecimen();
       inputTopic.pipeInput("key1", dummySpecimen);
+      inputTopic.pipeInput("key2", DummyDataUtilTest.getDummySpecimen(true));
 
       var result = outputTopic.readRecordsToList();
 

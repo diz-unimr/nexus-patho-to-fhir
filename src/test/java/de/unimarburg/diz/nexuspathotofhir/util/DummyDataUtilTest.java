@@ -94,6 +94,39 @@ public class DummyDataUtilTest {
     return pathoSpecimen;
   }
 
+  public String getRandomValue(DummyValueType targetType) {
+    return "";
+  }
+
+  public static PathoSpecimen getRandomDummySpecimen() {
+    // double additiv is a rare use case - usually only one additiv is applied
+
+    final String containerNamesSingleAdditiv = "1, 1.1-1-p 40, 1.1, 1.1-3, 1.1-2-HE";
+
+    final PathoSpecimen pathoSpecimen = new PathoSpecimen();
+    pathoSpecimen.setProbeID("specimen-dummy-id");
+    pathoSpecimen.setPatientennummer("0000001");
+    pathoSpecimen.setFallnummer("5000001");
+    pathoSpecimen.setAuftragsnummer("H/20223/00001");
+
+    pathoSpecimen.setProbeGewinnungsmethode("Biopsien");
+    pathoSpecimen.setProbeName("Lunge PE");
+    pathoSpecimen.setOrgan("Lunge");
+    pathoSpecimen.setProbeEntnahmedatum(
+        LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
+    final String containerParents =
+        "NA,fdlkhj3459+0346uß, 359027354+dsgkjhdgf,fdlkhj3459+0346uß,fdlkhj3459+0346uß";
+    pathoSpecimen.setContainerParents(containerParents);
+    pathoSpecimen.setContainerGUIDs(
+        "359027354+dsgkjhdgf,3240349f+dgdfsg,fdlkhj3459+0346uß,235264dsfdsgdfsh+3,ldhas345636jl");
+    pathoSpecimen.setContainerNames(containerNamesSingleAdditiv);
+    pathoSpecimen.setContainerLabels(
+        "specimen-dummy-id, specimen-dummy-id-1-1-1, specimen-dummy-id-1-1, specimen-dummy-id-1-1-3, specimen-dummy-id-1-1-2");
+    pathoSpecimen.setContainerTypes("3, 2, 1, 2, 2");
+
+    return pathoSpecimen;
+  }
+
   @Test
   public void check() {
     assertThat(getDummyReport()).isNotNull();

@@ -148,4 +148,14 @@ class SpecimenMapperTest extends FhirValidationBase {
     var input = DummyDataUtilTest.getDummySpecimen();
     assertThat(fixture.checkInputIsValid(input)).isTrue();
   }
+
+  @Test
+  public void checkInvalidCode() {
+
+    Specimen result = new Specimen();
+    PathoSpecimen input = DummyDataUtilTest.getDummySpecimen();
+    input.setProbeName("fooo");
+    fixture.mapSpecimenType(result, input);
+    assertThat(result.hasType()).isFalse();
+  }
 }
