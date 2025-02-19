@@ -48,10 +48,10 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
             .newInstance(fhirProperties, csvMappings);
     Mockito.when(fhirProperties.getSystems()).thenReturn(fhirSystems);
     String dummyGrouperSystemName = "DummyGrouperSystemName";
-    Mockito.when(fhirSystems.getMicroscopicGrouperId()).thenReturn(dummyGrouperSystemName);
-    Mockito.when(fhirSystems.getMicroscopicGrouperId()).thenReturn(dummyGrouperSystemName);
-    Mockito.when(fhirSystems.getDiagnosticConclusionGrouperId()).thenReturn(dummyGrouperSystemName);
-    Mockito.when(fhirSystems.getMacroscopicGrouperId()).thenReturn(dummyGrouperSystemName);
+    Mockito.when(fhirSystems.getDiagnosticFindingId()).thenReturn(dummyGrouperSystemName);
+    Mockito.when(fhirSystems.getDiagnosticFindingId()).thenReturn(dummyGrouperSystemName);
+    Mockito.when(fhirSystems.getDiagnosticFindingId()).thenReturn(dummyGrouperSystemName);
+    Mockito.when(fhirSystems.getDiagnosticFindingId()).thenReturn(dummyGrouperSystemName);
     Mockito.when(fhirSystems.getPatientId()).thenReturn("dummyPatientIdSystem");
     Mockito.when(fhirSystems.getEncounterId()).thenReturn("dummyEncounterSystem");
     setBaseIdentifierType();
