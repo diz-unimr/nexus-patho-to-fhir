@@ -71,10 +71,11 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
 
     mapSpecimenType(result, input);
     // fixme: never null since profile mandatory value > error topic?
-    final boolean isInvalidResource = result.getType().getCoding().getFirst().getCode() != null;
-    log.error(
-        "resource cannot be processed since we hav no type mapping for current input: '{}'", input);
-    assert isInvalidResource;
+    final boolean isInvalidResource = result.hasType();
+    if (isInvalidResource)
+      log.error(
+          "resource cannot be processed since we hav no type mapping for current input: '{}'",
+          input);
 
     mapContainer(result, input);
 
@@ -106,19 +107,29 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     }
 
     if (input.getRootIndex() < 0) {
-      log.error("input has no root container lable: '{}", input);
+      log.error("input has no root container lable: '{}'", input);
       isValid = false;
     }
 
     if (!StringUtils.hasText(input.getAuftragsnummer())) {
-      log.error("input has encounter number: '{}", input);
+      log.error("input has encounter number: '{}'", input);
       isValid = false;
     }
     if (!StringUtils.hasText(input.getPatientennummer())) {
-      log.error("input has patient number: '{}", input);
+      log.error("input has patient number: '{}'", input);
       isValid = false;
     }
 
+    if (input.getProbeEntnahmedatum() == null) {
+      log.error("input has no extraction date: '{}'", input);
+      isValid = false;
+    }
+
+    if (!StringUtils.hasText(input.getProbeName())) {
+      log.error("input has specimen name: '{}'", input);
+
+      isValid = false;
+    }
     return isValid;
   }
 
@@ -131,8 +142,9 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     /*
     minimum mandatory collection date
     */
-    collection.setCollected(
-        new DateTimeType(Date.from(Instant.ofEpochMilli(input.getProbeEntnahmedatum()))));
+    if (input.getProbeEntnahmedatum() != null)
+      collection.setCollected(
+          new DateTimeType(Date.from(Instant.ofEpochMilli(input.getProbeEntnahmedatum()))));
     /*
      * mandatory from patho profile
      */
@@ -220,10 +232,13 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   protected void mapSpecimenType(Specimen specimen, PathoSpecimen input) {
     final CodeableConcept specimenTypeCoding = new CodeableConcept();
 
-    var type = csvMappings.specimenTypes().get(input.getProbeName());
-    specimenTypeCoding.addCoding(type.asFhirCoding());
-
-    specimen.setType(specimenTypeCoding);
+    if (csvMappings.specimenTypes().containsKey(input.getProbeName())) {
+      var type = csvMappings.specimenTypes().get(input.getProbeName());
+      specimenTypeCoding.addCoding(type.asFhirCoding());
+      specimen.setType(specimenTypeCoding);
+    } else {
+      log.warn("Specimen type '{}' unknown at input '{}'", input.getProbeName(), input);
+    }
   }
 
   /**
