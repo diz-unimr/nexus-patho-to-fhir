@@ -16,6 +16,10 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - uses: c-hive/gha-npm-cache@v1
+        
+      - name: setup npm deps
+        run: npm install
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.12.0
