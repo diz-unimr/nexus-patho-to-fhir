@@ -5,7 +5,6 @@ import ca.uhn.fhir.context.FhirContext;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +32,6 @@ public class FhirConfiguration {
   }
 
   public final FhirProperties fhirProperties;
-
 
   @Override
   public String toString() {

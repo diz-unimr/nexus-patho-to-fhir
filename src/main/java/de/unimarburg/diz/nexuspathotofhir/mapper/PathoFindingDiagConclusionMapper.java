@@ -71,7 +71,6 @@ public class PathoFindingDiagConclusionMapper extends ToFhirMapper {
     return pathoFinding;
   }
 
-
   @Override
   @Nullable public Bundle.BundleEntryComponent apply(PathoInputBase value) {
     var mapped = map(value);

@@ -36,10 +36,10 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
       MacroscopicGrouperMapper.class,
       MicroscopicGrouperMapper.class,
       ServiceRequestMapper.class,
-        PathoFindingDiagConclusionMapper.class,
-        PathoFindingMacroMapper.class,
-        PathoFindingMicroMapper.class,
-        CsvMappings.class,
+      PathoFindingDiagConclusionMapper.class,
+      PathoFindingMacroMapper.class,
+      PathoFindingMicroMapper.class,
+      CsvMappings.class,
     })
 public class PathologyReportProcessorTest {
 
@@ -84,8 +84,8 @@ public class PathologyReportProcessorTest {
       var result = outputTopic.readRecordsToList();
 
       assertThat(result.isEmpty()).isFalse();
-      var  resultString   = result.getFirst().getValue();
-        System.out.println(resultString);
+      var resultString = result.getFirst().getValue();
+      System.out.println(resultString);
       assertThat(result.getFirst().getValue().getEntry().size()).isGreaterThanOrEqualTo(7);
     }
   }
