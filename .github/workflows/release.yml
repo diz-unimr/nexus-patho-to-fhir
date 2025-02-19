@@ -65,6 +65,10 @@ jobs:
             # set latest tag for default branch
             type=raw,value=latest,enable={{is_default_branch}}
 
+      - uses: AnnAngela/cached_node-modules@v3.0.0
+      - name: install node packgages
+        run: npm install
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
