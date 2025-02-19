@@ -38,6 +38,8 @@ public class DummyDataUtil {
     report.setMakroskopischerBefund("dummy2");
     report.setDiagnoseConclusion("C41.1");
     report.setBefundtyp("Hauptbefund");
+    report.setProbeEntnahmedatum(
+        LocalDateTime.of(2022, 12, 25, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
     return report;
   }
 

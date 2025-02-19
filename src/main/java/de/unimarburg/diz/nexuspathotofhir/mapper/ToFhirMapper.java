@@ -53,7 +53,8 @@ public abstract class ToFhirMapper
     observationGrouper.setBasedOn(basedOnRef);
 
     // EffectiveDate
-    Date probeEinnahmeDatum = new Date(input.getProbeEntnahmedatum());
+    Date probeEinnahmeDatum =
+        input.getProbeEntnahmedatum() != null ? new Date(input.getProbeEntnahmedatum()) : null;
     observationGrouper.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
 
     // Status
