@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Reference;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -59,7 +58,6 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
   }
 
   @Test
-  @Disabled("must be fixed via feature brunch")
   void map_empty_is_illegal_argument() {
 
     Throwable thrown = catchThrowable(() -> fixture.map(new PathoReport()));
@@ -69,7 +67,6 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
   }
 
   @Test
-  @Disabled("must be fixed via feature brunch")
   void map_minimal() {
     final PathoReport input = DummyDataUtilTest.getDummyReport();
     System.out.println(input);

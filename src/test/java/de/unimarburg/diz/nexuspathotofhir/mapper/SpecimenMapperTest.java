@@ -83,7 +83,7 @@ class SpecimenMapperTest extends FhirValidationBase {
 
   @Test
   public void identifierStayStableForIdenticalInput() {
-    var input = DummyDataUtil.getDummySpecimen();
+    var input = DummyDataUtilTest.getDummySpecimen();
 
     var result = fixture.map(input);
     var result2 = fixture.map(input);
@@ -110,7 +110,7 @@ class SpecimenMapperTest extends FhirValidationBase {
 
   @Test
   public void specimenSubContainerCountTest() {
-    var input = DummyDataUtil.getDummySpecimen();
+    var input = DummyDataUtilTest.getDummySpecimen();
 
     var result = fixture.map(input);
 
@@ -121,7 +121,7 @@ class SpecimenMapperTest extends FhirValidationBase {
 
   @Test
   public void referencesTest() {
-    var input = DummyDataUtil.getDummySpecimen();
+    var input = DummyDataUtilTest.getDummySpecimen();
     var result = fixture.map(input);
     assertThat(result.getSubject()).isNotNull();
   }
@@ -145,7 +145,7 @@ class SpecimenMapperTest extends FhirValidationBase {
 
   @Test
   void checkIsValidTest() {
-    var input = DummyDataUtil.getDummySpecimen();
+    var input = DummyDataUtilTest.getDummySpecimen();
     assertThat(fixture.checkInputIsValid(input)).isTrue();
   }
 }
