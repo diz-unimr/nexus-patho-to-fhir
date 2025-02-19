@@ -30,7 +30,7 @@ public class DummyDataUtilTest {
     report.setMakroskopischerBefund("dummy2");
     report.setDiagnoseConclusion("C41.1");
     // Probe
-    report.setProbeName("Probe1");
+    report.setProbeName("Magen PE");
     report.setProbeID("agfag");
     report.setProbeEntnahmedatum(1719565355113L);
     report.setAuftragsgeberFABCode("KAR");

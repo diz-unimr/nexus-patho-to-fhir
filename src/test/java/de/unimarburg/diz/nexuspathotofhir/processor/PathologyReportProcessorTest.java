@@ -3,6 +3,7 @@ package de.unimarburg.diz.nexuspathotofhir.processor;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirConfiguration;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.configuration.PathoFhirContext;
@@ -32,10 +33,13 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
       FhirConfiguration.class,
       DiagnosticConclusionGrouperMapper.class,
       DiagnosticReportMapper.class,
-      IntraoperativeGrouperMapper.class,
       MacroscopicGrouperMapper.class,
       MicroscopicGrouperMapper.class,
-      ServiceRequestMapper.class
+      ServiceRequestMapper.class,
+        PathoFindingDiagConclusionMapper.class,
+        PathoFindingMacroMapper.class,
+        PathoFindingMicroMapper.class,
+        CsvMappings.class,
     })
 public class PathologyReportProcessorTest {
 
@@ -80,7 +84,9 @@ public class PathologyReportProcessorTest {
       var result = outputTopic.readRecordsToList();
 
       assertThat(result.isEmpty()).isFalse();
-      assertThat(result.get(0).getValue().getEntry().size()).isGreaterThanOrEqualTo(7);
+      var  resultString   = result.getFirst().getValue();
+        System.out.println(resultString);
+      assertThat(result.getFirst().getValue().getEntry().size()).isGreaterThanOrEqualTo(7);
     }
   }
 }

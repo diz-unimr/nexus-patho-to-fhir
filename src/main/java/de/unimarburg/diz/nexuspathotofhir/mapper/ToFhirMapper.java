@@ -11,16 +11,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.apache.kafka.streams.kstream.ValueMapper;
+import org.checkerframework.checker.units.qual.A;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-public abstract class ToFhirMapper
-    implements ValueMapper<PathoInputBase, Bundle.BundleEntryComponent> {
+public abstract class ToFhirMapper implements ValueMapper<PathoInputBase, Bundle.BundleEntryComponent> {
   private final Logger log = LoggerFactory.getLogger(ToFhirMapper.class);
-
-  public static final String SNOMED_SYSTEM = "http://snomed.info/sct";
 
   protected static final String META_SOURCE = "#nexus-pathology";
 
@@ -28,9 +27,10 @@ public abstract class ToFhirMapper
 
   protected final FhirProperties fhirProperties;
 
-  private final CsvMappings csvMappings;
+  @Autowired
+  private CsvMappings csvMappings;
 
-  public ToFhirMapper(final FhirProperties fhirProperties, final CsvMappings csvMappings) {
+  public ToFhirMapper(final FhirProperties fhirProperties, CsvMappings csvMappings) {
     this.fhirProperties = fhirProperties;
     this.csvMappings = csvMappings;
   }
