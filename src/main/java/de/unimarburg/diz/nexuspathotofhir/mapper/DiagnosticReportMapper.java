@@ -1,6 +1,7 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
+import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
@@ -18,8 +19,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class DiagnosticReportMapper extends ToFhirMapper {
 
-  public DiagnosticReportMapper(FhirProperties fhirProperties) {
-    super(fhirProperties);
+  public DiagnosticReportMapper(FhirProperties fhirProperties, CsvMappings csvMappings) {
+    super(fhirProperties, csvMappings);
   }
 
   @Override
@@ -87,7 +88,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
             input,
             PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
             fhirProperties.getSystems().getDiagnosticFindingGrouperId(),
-            "-",
+            "",
             input.getBefundtyp(),
             input.getBefundID());
 
@@ -97,7 +98,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
             input,
             PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
             fhirProperties.getSystems().getDiagnosticFindingGrouperId(),
-            "-",
+            "",
             input.getBefundtyp(),
             input.getBefundID());
 
@@ -108,7 +109,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
             input,
             PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER,
             fhirProperties.getSystems().getDiagnosticFindingGrouperId(),
-            "-",
+            "",
             input.getBefundtyp(),
             input.getBefundID());
 

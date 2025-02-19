@@ -11,7 +11,7 @@ import de.unimarburg.diz.nexuspathotofhir.mapper.*;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import de.unimarburg.diz.nexuspathotofhir.serde.FhirDeserializer;
 import de.unimarburg.diz.nexuspathotofhir.serde.FhirSerializer;
-import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtil;
+import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtilTest;
 import java.util.Properties;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -78,7 +78,7 @@ public class SpecimenProcessorTest {
           testDriver.createOutputTopic(
               OUTPUT_TOPIC, new StringDeserializer(), new FhirDeserializer<>(Bundle.class));
 
-      inputTopic.pipeInput("key1", DummyDataUtil.getDummySpecimen());
+      inputTopic.pipeInput("key1", DummyDataUtilTest.getDummySpecimen());
 
       var result = outputTopic.readRecordsToList();
 

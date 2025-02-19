@@ -6,38 +6,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import java.time.*;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
-public class DummyDataUtil {
+public class DummyDataUtilTest {
 
   public static PathoReport getDummyReport() {
-    ZoneId zoneId = ZoneId.of("UTC+1");
 
     var report = new PathoReport();
-    // meta data
-
+    report.setBefundID(UUID.randomUUID().toString());
+    report.setBefundErstellungsdatum(1719565355113L);
+    report.setLetzteBearbeitungsdatum(1719565355113L);
+    // report meta
+    report.setAuftragsnummer("H/20223/00001");
     // patient
     report.setPatientennummer("0000001");
     report.setFallnummer("5000001");
-
-    // report meta
-    report.setAuftragsnummer("H/20223/00001");
-    report.setBefundErstellungsdatum(
-        LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
-    report.setBefundID(UUID.randomUUID().toString());
-    report.setBefunddatum(ZonedDateTime.of(2023, 1, 20, 23, 45, 59, 1234, zoneId).toInstant());
-    report.setLetzteBearbeitungsdatum(
-        LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
-
+    report.setBefundtyp("Hauptbefund");
     // report clinical data
     report.setTnm("pT1-3c N2a M1");
     report.setMikroskopischerBefund("dummy1");
     report.setMakroskopischerBefund("dummy2");
     report.setDiagnoseConclusion("C41.1");
-    report.setBefundtyp("Hauptbefund");
+    // Probe
+    report.setProbeName("Magen PE");
+    report.setProbeID("agfag");
+    long currentTimeMillis = System.currentTimeMillis();
+    report.setProbeEntnahmedatum(currentTimeMillis);
+    report.setAuftragsgeberFABCode("KAR");
     return report;
   }
 
@@ -50,15 +47,15 @@ public class DummyDataUtil {
 
     PathoReport reportCorrection1 = getDummyReport();
     reportCorrection1.setBefundtyp("Korrekturbericht 1");
-    reportCorrection1.setBefunddatum(mainReport.getBefunddatum().plus(2, ChronoUnit.DAYS));
+    reportCorrection1.setBefundErstellungsdatum(mainReport.getBefundErstellungsdatum());
 
     PathoReport reportCorrection2 = getDummyReport();
     reportCorrection2.setBefundtyp("Korrekturbericht 2");
-    reportCorrection2.setBefunddatum(reportCorrection1.getBefunddatum().plus(3, ChronoUnit.DAYS));
+    reportCorrection2.setBefundErstellungsdatum(mainReport.getBefundErstellungsdatum());
 
     PathoReport reportAddition = getDummyReport();
     reportAddition.setBefundtyp("Zusatzbefund 1");
-    reportAddition.setBefunddatum(reportCorrection2.getBefunddatum().plus(7, ChronoUnit.DAYS));
+    reportAddition.setBefundErstellungsdatum(mainReport.getBefundErstellungsdatum());
 
     return List.of(mainReport, reportCorrection1, reportCorrection2, reportAddition);
   }
@@ -74,7 +71,7 @@ public class DummyDataUtil {
     pathoSpecimen.setProbeLaenge("5L");
     pathoSpecimen.setProbeEinnahmedatum(
         LocalDateTime.of(2023, 1, 2, 20, 1, 33).toEpochSecond(ZoneOffset.UTC));
-    pathoSpecimen.setProbemenge(1l);
+    pathoSpecimen.setProbemenge(1L);
     return pathoSpecimen;
   }
 

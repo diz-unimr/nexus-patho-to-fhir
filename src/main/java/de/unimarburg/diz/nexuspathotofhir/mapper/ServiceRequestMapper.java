@@ -1,6 +1,7 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
+import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
@@ -15,13 +16,14 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ServiceRequestMapper extends ToFhirMapper {
   private final Logger log = LoggerFactory.getLogger(ServiceRequestMapper.class);
 
-  public ServiceRequestMapper(FhirProperties fhirProperties) {
-    super(fhirProperties);
+  public ServiceRequestMapper(FhirProperties fhirProperties, CsvMappings csvMappings) {
+    super(fhirProperties, csvMappings);
   }
 
   @Override
@@ -63,10 +65,28 @@ public class ServiceRequestMapper extends ToFhirMapper {
             "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
 
     // TODO: Add multiple specimen
+
+    // ArraySpecimenrefence
     ArrayList<Reference> specimenRef = new ArrayList<>();
-    specimenRef.add(
-        IdentifierAndReferenceUtil.getReferenceTo(
-            "Specimen", input.getProbeID(), fhirProperties.getSystems().getSpecimenId()));
+    if (StringUtils.hasText(input.getProbeID())) {
+      log.debug("ProbeID is present");
+      // Split the String by ','
+      if (input.getProbeID().contains(",")) {
+        log.debug("Contains multiple ProbeIDs");
+        String[] arrayProbeID = input.getProbeID().split(",");
+        for (String probeID : arrayProbeID) {
+          specimenRef.add(
+              IdentifierAndReferenceUtil.getReferenceTo(
+                  "Specimen", probeID, fhirProperties.getSystems().getSpecimenId()));
+        }
+      } else {
+        log.debug("Contains single ProbeID");
+        specimenRef.add(
+            IdentifierAndReferenceUtil.getReferenceTo(
+                "Specimen", input.getProbeID(), fhirProperties.getSystems().getSpecimenId()));
+      }
+    }
+
     serviceRequest.setSpecimen(specimenRef);
 
     // status
@@ -79,8 +99,8 @@ public class ServiceRequestMapper extends ToFhirMapper {
     serviceRequest.setRequester(
         IdentifierAndReferenceUtil.getReferenceTo(
             "Organization",
-            input.getAuftragsgeberFAB(),
-            fhirProperties.getSystems().getAssignerCode()));
+            input.getAuftragsgeberFABCode(),
+            fhirProperties.getSystems().getOrganizationId()));
     // category - Fixed value: 726007
     serviceRequest.setCategory(
         List.of(
@@ -92,7 +112,6 @@ public class ServiceRequestMapper extends ToFhirMapper {
                             .setSystem("http://snomed.info/sct")
                             .setDisplay(
                                 "Pathology consultation, comprehensive, records and specimen with report (procedure)")))));
-
     return serviceRequest;
   }
 

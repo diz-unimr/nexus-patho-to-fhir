@@ -3,6 +3,7 @@ package de.unimarburg.diz.nexuspathotofhir.processor;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirConfiguration;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.configuration.PathoFhirContext;
@@ -10,7 +11,7 @@ import de.unimarburg.diz.nexuspathotofhir.mapper.*;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.serde.FhirDeserializer;
 import de.unimarburg.diz.nexuspathotofhir.serde.FhirSerializer;
-import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtil;
+import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtilTest;
 import java.util.Properties;
 import org.apache.kafka.common.serialization.*;
 import org.apache.kafka.streams.*;
@@ -32,10 +33,13 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
       FhirConfiguration.class,
       DiagnosticConclusionGrouperMapper.class,
       DiagnosticReportMapper.class,
-      IntraoperativeGrouperMapper.class,
       MacroscopicGrouperMapper.class,
       MicroscopicGrouperMapper.class,
-      ServiceRequestMapper.class
+      ServiceRequestMapper.class,
+      PathoFindingDiagConclusionMapper.class,
+      PathoFindingMacroMapper.class,
+      PathoFindingMicroMapper.class,
+      CsvMappings.class,
     })
 public class PathologyReportProcessorTest {
 
@@ -75,12 +79,14 @@ public class PathologyReportProcessorTest {
           testDriver.createOutputTopic(
               OUTPUT_TOPIC, new StringDeserializer(), new FhirDeserializer<>(Bundle.class));
 
-      inputTopic.pipeInput("key1", DummyDataUtil.getDummyReport());
+      inputTopic.pipeInput("key1", DummyDataUtilTest.getDummyReport());
 
       var result = outputTopic.readRecordsToList();
 
       assertThat(result.isEmpty()).isFalse();
-      assertThat(result.get(0).getValue().getEntry().size()).isGreaterThanOrEqualTo(7);
+      var resultString = result.getFirst().getValue();
+      System.out.println(resultString);
+      assertThat(result.getFirst().getValue().getEntry().size()).isGreaterThanOrEqualTo(7);
     }
   }
 }
