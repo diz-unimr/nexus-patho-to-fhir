@@ -1,6 +1,7 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
+import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
@@ -19,8 +20,8 @@ import org.springframework.stereotype.Service;
 public class MacroscopicGrouperMapper extends ToFhirMapper {
   private final Logger log = LoggerFactory.getLogger(MacroscopicGrouperMapper.class);
 
-  public MacroscopicGrouperMapper(FhirProperties fhirProperties) {
-    super(fhirProperties);
+  public MacroscopicGrouperMapper(FhirProperties fhirProperties, CsvMappings csvMappings) {
+    super(fhirProperties, csvMappings);
   }
 
   @Override
@@ -36,7 +37,7 @@ public class MacroscopicGrouperMapper extends ToFhirMapper {
             input,
             PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
             fhirProperties.getSystems().getDiagnosticFindingGrouperId(),
-            "-",
+            "",
             input.getBefundtyp(),
             input.getBefundID()));
 
@@ -57,7 +58,7 @@ public class MacroscopicGrouperMapper extends ToFhirMapper {
             input,
             PathologyIdentifierResourceType.PATHO_FINDING,
             fhirProperties.getSystems().getDiagnosticFindingId(),
-            "-",
+            "",
             input.getBefundtyp(),
             input.getBefundID(),
             "MACRO");

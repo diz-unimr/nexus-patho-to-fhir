@@ -9,7 +9,7 @@ import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirConfiguration;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
-import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtil;
+import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtilTest;
 import java.util.List;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Identifier;
@@ -53,7 +53,7 @@ class SpecimenMapperTest extends FhirValidationBase {
     validator.withResourcesFrom(
         "node_modules//de.medizininformatikinitiative.kerndatensatz.patho//ValueSet-mii-vs-patho-processing-procedure-snomed-ct.json");
 
-    var input = DummyDataUtil.getDummySpecimen();
+    var input = DummyDataUtilTest.getDummySpecimen();
     var result = fixture.map(input);
 
     var validationResult = validator.validateWithResult(result);

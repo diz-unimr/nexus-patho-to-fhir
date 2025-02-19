@@ -19,15 +19,20 @@ public class DecideStatusOfBefund {
       case CORRECTION3:
       case CORRECTION4:
       case CORRECTION5:
-      case CORRECTION6:
         {
           pathoFinding.setStatus(Observation.ObservationStatus.CORRECTED);
           break;
         }
-
       case ADDITION1:
       case ADDITION2:
       case ADDITION3:
+      case ADDITION4:
+      case ADDITION5:
+      case ADDITION6:
+      case ADDITION7:
+      case ADDITION8:
+      case ADDITION9:
+      case ADDITION10:
         {
           pathoFinding.setStatus(Observation.ObservationStatus.AMENDED);
           break;

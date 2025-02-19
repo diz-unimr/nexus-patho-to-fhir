@@ -11,7 +11,7 @@ import de.unimarburg.diz.nexuspathotofhir.mapper.*;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import de.unimarburg.diz.nexuspathotofhir.serde.FhirDeserializer;
 import de.unimarburg.diz.nexuspathotofhir.serde.FhirSerializer;
-import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtil;
+import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtilTest;
 import java.util.Properties;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringDeserializer;

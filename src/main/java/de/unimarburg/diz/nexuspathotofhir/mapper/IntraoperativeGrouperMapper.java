@@ -1,21 +1,12 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
-import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
-import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
-import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
-import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Observation;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class IntraoperativeGrouperMapper extends ToFhirMapper {
-  public IntraoperativeGrouperMapper(FhirProperties fhirProperties) {
+public class IntraoperativeGrouperMapper {
+  /*
+    public IntraoperativeGrouperMapper(FhirProperties fhirProperties) {
     super(fhirProperties);
   }
 
@@ -62,5 +53,5 @@ public class IntraoperativeGrouperMapper extends ToFhirMapper {
                     identifierFirstRep.getSystem(),
                     identifierFirstRep.getValue())));
     return bundleEntryComponent;
-  }
+  }*/
 }

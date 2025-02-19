@@ -18,19 +18,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class PathoFindingMacroMapper extends ToFhirMapper {
   private final Logger log = LoggerFactory.getLogger(PathoFindingMacroMapper.class);
-  private final CsvMappings csvMappings;
 
   public PathoFindingMacroMapper(FhirProperties fhirProperties, CsvMappings csvMappings) {
-    super(fhirProperties);
-    this.csvMappings = csvMappings;
+    super(fhirProperties, csvMappings);
   }
 
   @Override
   public Observation map(PathoInputBase inputBase) {
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
-    if (csvMappings.specimenTypes() == null || csvMappings.specimenTypes().isEmpty())
-      throw new RuntimeException("specimentTypes mapping is missing");
     var pathoFinding = super.mapBasePathoFinding(input);
     // Add identifier
     pathoFinding.addIdentifier(
@@ -38,7 +34,7 @@ public class PathoFindingMacroMapper extends ToFhirMapper {
             input,
             PathologyIdentifierResourceType.PATHO_FINDING,
             fhirProperties.getSystems().getDiagnosticFindingId(),
-            "-",
+            "",
             input.getBefundtyp(),
             input.getBefundID(),
             "MACRO"));
@@ -57,19 +53,6 @@ public class PathoFindingMacroMapper extends ToFhirMapper {
                 .setCoding(
                     List.of(new Coding().setCode("22634-0").setSystem("http://loinc.org")))));
 
-    mapSpecimenType(pathoFinding, input);
-
-    // valueCodeableConcept (TODO) SNOMED CODE for the diagnose
-    /*      macroPathoFinding
-    .getValueCodeableConcept()
-    .setCoding(
-        List.of(
-            new Coding()
-                .setCode("716917000")
-                .setSystem("http://snomed.info/sct")
-                .setDisplay(
-                    "Structure of lateral middle regional part of peripheral zone of right half prostate (body structure)")));*/
-
     // This is set for only one sample
     // Todo for multiple specimen
     // Add valueString
@@ -77,22 +60,10 @@ public class PathoFindingMacroMapper extends ToFhirMapper {
     return pathoFinding;
   }
 
-  // TODO: Handle for multiple Probe
-  protected void mapSpecimenType(Observation observation, PathoReport input) {
-    var type = csvMappings.specimenTypes().get(input.getProbeName());
-    observation.setCode(new CodeableConcept().addCoding(type.asFhirCoding()));
-  }
-
-  // Actual not in use
-  // public Collection<Resource> map(PathoInputBase input, int grouperType) {
-  //    return new ArrayList<Resource>();
-  // }
-
   @Override
   @Nullable public Bundle.BundleEntryComponent apply(PathoInputBase value) {
     var mapped = map(value);
     if (mapped == null) return null;
-
     final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();
     return buildBundleComponent(mapped, identifierFirstRep);
   }
