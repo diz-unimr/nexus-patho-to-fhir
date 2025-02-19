@@ -3,64 +3,149 @@ package de.unimarburg.diz.nexuspathotofhir.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
 @Data
 public class PathoSpecimen implements PathoInputBase {
 
-  @JsonProperty("ContainerGUID")
-  private String containerGUID;
-
-  @JsonProperty("ContainerID")
-  private String containerID;
-
-  @JsonProperty("ContainerName")
-  private String containerName;
-
+  /**
+   * Pathology id for root specimen
+   *
+   * <p>e.g. "H20250201S1"
+   */
   @JsonProperty("ProbeID")
   private String probeID;
 
-  @JsonProperty("ProbeLaenge")
-  private String probeLaenge;
+  /**
+   * specimen guid list assigned with specimen (ordered list)
+   *
+   * <p>e.g.: 359027354+dsgkjhdgf,fdlkhj3459+0346uß,3240349f+dgdfsg,235264dsfdsgdfsh+36
+   */
+  @JsonProperty("ContainerGUIDs")
+  private String containerGUIDs;
 
-  @JsonProperty("ParentContainer")
-  private String parentContainer;
+  /**
+   * specimen label list assigned with specimen (ordered list)
+   *
+   * <p>e.g.: H20250201S1,H20250201S1-1.1, H20250201S1-1.1-1,H20250201S1-1.1-2
+   */
+  @JsonProperty("ContainerLabels")
+  private String containerLabels;
 
-  @JsonProperty("Auftragsnummer")
+  /**
+   * specimen name list assigned with specimen IMPORTANT: here we have applied postprocessing codes
+   * as suffix (ordered list)
+   *
+   * <p>note: '|' is separator in case of multiple postprocessing
+   *
+   * <p>e.g.: 1,1.1, 1.1-1-FE,1.1-2-HE|AFP
+   */
+  @JsonProperty("ContainerNames")
+  private String containerNames;
+
+  @JsonIgnore
+  public int getRootIndex() {
+    var rootIndex = Arrays.stream(containerTypes.split(",")).toList().indexOf("3");
+    return rootIndex;
+  }
+
+  /**
+   * Container storage types which are currently used.
+   *
+   * <p>e.g. 1,2,2,3
+   * <li>3 -> root container (virtual)
+   * <li>2 -> microscopic slide
+   * <li>1 -> sub container from which slides are created
+   */
+  @JsonProperty("containerTypes")
+  private String containerTypes;
+
+  /**
+   * specimen guid list of parent container guids. Root element has no parent therefore it has value
+   * 'NA' (ordered list)
+   *
+   * <p>e.g.: NA,359027354+dsgkjhdgf,fdlkhj3459+0346uß,fdlkhj3459+0346uß
+   */
+  @JsonProperty("containerParents")
+  private String containerParents;
+
+  /**
+   * pathology service number
+   *
+   * <p>e.g. H/2025/1234567
+   */
+  @JsonProperty("auftragsnummer")
   private String auftragsnummer;
 
   /**
-   * @apiNote value '-1' -> unknown size fixme: check unit - should be 'cm'
+   * encounter number
+   *
+   * <p>e.g. 123454567
    */
-  @JsonProperty("Probemenge")
-  private Long probemenge;
-
-  @JsonProperty("ProbeName")
-  private String probeName;
-
-  @JsonProperty("ProbeEinnahmedatum")
-  private Long probeEinnahmedatum;
-
-  @JsonProperty("ProbeGewinningsmethode")
-  private String probeGewinningsmethode;
-
-  @JsonProperty("Eingangsdatum")
-  private Long eingangsdatum;
-
-  @JsonProperty("Patientennummer")
-  private String patientennummer;
-
-  @JsonProperty("Fallnummer")
+  @JsonProperty("fallnummer")
   private String fallnummer;
 
+  /** Date of specimen extraction */
+  @JsonProperty("probeEntnahmedatum")
+  private Long probeEntnahmedatum;
+
   /**
-   * @apiNote it is a UUID
+   * patient number
+   *
+   * <p>12345678
    */
-  @JsonIgnore
-  public String getUUID() {
-    return getContainerGUID();
-  }
+  @JsonProperty("patientennummer")
+  private String patientennummer;
+
+  /**
+   * Specimen type/name
+   *
+   * <p>e.g. Lunge PE
+   */
+  @JsonProperty("probeName")
+  private String probeName;
+
+  /**
+   * local organ name of which specimen has been extracted
+   *
+   * <p>if available
+   *
+   * <p>e.g. 'Lung'
+   */
+  @JsonProperty("organ")
+  private String organ;
+
+  /**
+   * Method of specimen extraction
+   *
+   * <p>e.g. Biopsie
+   */
+  @JsonProperty("probeGewinnungsmethode")
+  private String probeGewinnungsmethode;
+
+  /**
+   * list of sub container names, created from this parent container
+   *
+   * @implNote comma delimiter list
+   */
+  @JsonIgnore private List<String> subContainerNames;
+
+  /**
+   * Färbungen der Proben
+   *
+   * @implNote key is container name; value list of postprocessing applied to specimen FIXME: fill
+   *     map need implementation
+   */
+  @JsonIgnore private Map<String, List<String>> postPrecessing;
+
+  /**
+   * @implNote key is container name; value container type FIXME: fill map need implementation
+   */
+  @JsonIgnore private Map<String, Integer> subContainerTypes;
 
   @Override
   @JsonIgnore
@@ -70,41 +155,38 @@ public class PathoSpecimen implements PathoInputBase {
         && StringUtils.hasText(patientennummer);
   }
 
-  /**
-   * @apiNote value has white space separator (german name, extraction method, side localization) -
-   *     if
-   *     <p>there are special names of unknown meaning:
-   *     <ul>
-   *       <li>BRAF (Idylla)
-   *       <li>BRCA (nicht OvCa)
-   *       <li>BRCA (OcCa)
-   *       <li>EGFR (Idylla)
-   *       <li>Fusion (Archer)
-   *       <li>Fusion (Idylla)
-   *       <li>KRAS (Idylla)
-   *       <li>low coverage (Häma)
-   *       <li>MSI (Idylla)
-   *       <li>NGS BRCA (nicht OvCa)
-   *       <li>NRAS/BRAF (Idylla)
-   *     </ul>
-   *     TODO: mapping german names to coding SNOMED CT
-   */
-  @JsonProperty("Probename")
-  private String probename;
+  @JsonIgnore
+  @Override
+  public String getUUID() {
+    return containerGUIDs.split(",")[getRootIndex()];
+  }
 
-  //  /**
-  //   * @apiNote can be cast to Date since time component is empty
-  //   */
-  //  @JsonProperty("collection_date")
-  //  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmm")
-  //  private LocalDateTime specimenCollectionDate;
-  //
-  //  /**
-  //   * @apiNote it is a UUID
-  //   */
-  //  @JsonProperty("Container")
-  //  private String container;
-  //
-  @JsonProperty("ContainerTyp")
-  private Integer containerType;
+  @JsonIgnore
+  public String[] getContainerLabelsArray() {
+    return Arrays.stream(this.getContainerLabels().split(","))
+        .map(a -> a.trim())
+        .toArray(String[]::new);
+  }
+
+  @JsonIgnore
+  public String[] getContainerGUIDsArray() {
+    return Arrays.stream(this.getContainerGUIDs().split(","))
+        .map(a -> a.trim())
+        .toArray(String[]::new);
+  }
+
+  @JsonIgnore
+  public String[] getSubContainerIdsArray() {
+    return Arrays.stream(this.getContainerParents().split(","))
+        .map(a -> a.trim())
+        .filter(a -> !"NA".equals(a))
+        .toArray(String[]::new);
+  }
+
+  @JsonIgnore
+  public String[] getContainerTypesArray() {
+    return Arrays.stream(this.getContainerTypes().split(","))
+        .map(a -> a.trim())
+        .toArray(String[]::new);
+  }
 }

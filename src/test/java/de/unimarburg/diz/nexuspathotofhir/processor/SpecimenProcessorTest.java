@@ -21,7 +21,6 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.hl7.fhir.r4.model.Bundle;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,8 +41,6 @@ public class SpecimenProcessorTest {
   @Autowired SpecimenProcessor processor;
 
   @Test
-  @Disabled(
-      "expert knowledge needed before specimen can be finished - meanwhile we disable this test.")
   public void test() {
     // FIXME
     String INPUT_TOPIC = "input";
@@ -78,7 +75,8 @@ public class SpecimenProcessorTest {
           testDriver.createOutputTopic(
               OUTPUT_TOPIC, new StringDeserializer(), new FhirDeserializer<>(Bundle.class));
 
-      inputTopic.pipeInput("key1", DummyDataUtilTest.getDummySpecimen());
+      final PathoSpecimen dummySpecimen = DummyDataUtilTest.getDummySpecimen();
+      inputTopic.pipeInput("key1", dummySpecimen);
 
       var result = outputTopic.readRecordsToList();
 

@@ -12,18 +12,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: AnnAngela/cached_node-modules@v3.0.0
+      
+      - name: install node packgages
+        run: npm install
+        
       - uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
-      - uses: c-hive/gha-npm-cache@v1
-        
-      - name: setup npm deps
-        run: npm install
-
+          
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.12.0
-
+        
       - name: Execute tests
         run: ./gradlew test
 

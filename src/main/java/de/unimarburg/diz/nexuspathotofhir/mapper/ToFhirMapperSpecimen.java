@@ -14,6 +14,9 @@ public abstract class ToFhirMapperSpecimen
 
   public static final String MII_PR_Patho_Specimen =
       "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-specimen";
+  public static final String MII_Biobank_Specimen =
+      "https://www.medizininformatik-initiative.de/fhir/ext/modul-biobank/StructureDefinition/Specimen";
+
   protected static final String META_SOURCE = "#nexus-pathology";
 
   protected final FhirProperties fhirProperties;
