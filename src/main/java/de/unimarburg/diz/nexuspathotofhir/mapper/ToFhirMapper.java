@@ -60,8 +60,12 @@ public abstract class ToFhirMapper
     observationGrouper.setBasedOn(basedOnRef);
 
     // EffectiveDate
-    Date probeEinnahmeDatum = new Date(input.getProbeEntnahmedatum());
-    observationGrouper.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
+    if (input.getAuftragsnummer() != null) {
+      Date probeEntnahmeDatum = new Date(input.getProbeEntnahmedatum());
+      observationGrouper.setEffective(new DateTimeType().setValue(probeEntnahmeDatum));
+    } else {
+      throw new IllegalArgumentException("probeEntnahmedatum is null");
+    }
 
     // Status
     DecideStatusOfBefund.setFindingStatus(observationGrouper, input.getDocType());

@@ -32,7 +32,8 @@ public class DummyDataUtilTest {
     // Probe
     report.setProbeName("Magen PE");
     report.setProbeID("agfag");
-    report.setProbeEntnahmedatum(1719565355113L);
+    long currentTimeMillis = System.currentTimeMillis();
+    report.setProbeEntnahmedatum(currentTimeMillis);
     report.setAuftragsgeberFABCode("KAR");
     return report;
   }
