@@ -129,14 +129,21 @@ public abstract class ToFhirMapper
         String[] arrayProbeName = input.getProbeName().split(",");
         for (String probeName : arrayProbeName) {
           var code = csvMappings.specimenTypes().get(probeName);
-          log.debug("Code is {}", code);
-          coding.add(code.asFhirCoding());
+          if (code != null) {
+            coding.add(code.asFhirCoding());
+          } else {
+            log.warn("ProbeName cannot be mapped");
+          }
         }
         observation.setCode(new CodeableConcept().setCoding(coding));
       } else {
         log.debug("Contains single ProbeID");
         var code = csvMappings.specimenTypes().get(input.getProbeName());
-        observation.setCode(new CodeableConcept().addCoding(code.asFhirCoding()));
+        if (code != null) {
+          observation.setCode(new CodeableConcept().addCoding(code.asFhirCoding()));
+        } else {
+          log.warn("ProbeName cannot be mapped");
+        }
       }
     } else {
       log.error("The Probename is not valid");
