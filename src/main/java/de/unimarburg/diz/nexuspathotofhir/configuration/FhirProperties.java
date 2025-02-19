@@ -24,12 +24,7 @@ public class FhirProperties {
     private String specimenId;
     private String specimenRequestId;
     private String specimenContainer;
-    private String diagnosticConclusionGrouperId;
-    private String microscopicGrouperId;
-    private String macroscopicGrouperId;
-    private String interoperativeGrouperId;
     private String diagnosticFindingId;
-    private String diagnosticFindingGrouperId;
     private String performerId;
 
     @Override
@@ -62,22 +57,8 @@ public class FhirProperties {
           + ", specimenContainer='"
           + specimenContainer
           + '\''
-          + ", diagnosticConclusionGrouperId='"
-          + diagnosticConclusionGrouperId
-          + '\''
-          + ", microscopicGrouperId='"
-          + microscopicGrouperId
-          + '\''
-          + ", macroscopicGrouperId='"
-          + macroscopicGrouperId
-          + '\''
-          + ", interoperativeGrouperId='"
-          + interoperativeGrouperId
-          + '\''
           + ", diagnosticFindingId='"
           + diagnosticFindingId
-          + '\''
-          + diagnosticFindingGrouperId
           + '\''
           + performerId
           + '\''

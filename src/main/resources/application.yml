@@ -5,10 +5,10 @@ spring:
     bootstrapServers: ${BOOTSTRAP_SERVERS:localhost:9092}
     security.protocol: ${SECURITY_PROTOCOL:PLAINTEXT}
     ssl:
-      trust-store-location: file://${SSL_TRUST_STORE_LOCATION_INTERNAL:/opt/kafka-streams-template/ssl/truststore.jks}
+      trust-store-location: file://${SSL_TRUST_STORE_LOCATION:/opt/kafka-streams-template/ssl/truststore.jks}
       trust-store-password: ${SSL_TRUST_STORE_PASSWORD}
-      key-store-location: file://${SSL_KEY_STORE_LOCATION_INTERNAL:/opt/kafka-streams-template/ssl/keystore.jks}
-      key-store-password: ${SSL_KEY_STORE_PASSWORD}
+      key-store-location: file://${NEXUS_PATHO_TO_FHIR_SSL_KEY_STORE_LOCATION:opt/kafka-streams-template/ssl/keystore.jks}
+      key-store-password: ${NEXUS_PATHO_TO_FHIR_SSL_KEY_STORE_PASSWORD}
 
   cloud:
       function:
@@ -16,13 +16,13 @@ spring:
       stream:
         bindings:
           processPathoSpecimen-in-0:
-            destination: patho-specimen
+            destination: ${KAFKA_TOPIC_PATHO_SPECIMEN:patho-specimen}
           processPathoSpecimen-out-0:
-            destination: idat-patho-specimen
+            destination: ${KAFKA_TOPIC_PATHO_SPECIMEN_FHIR_BUNDLE:idat-patho-specimen}
           processPathoReport-in-0:
-            destination: patho-report
+            destination: ${KAFKA_TOPIC_PATHO_BEFUND:patho-report}
           processPathoReport-out-0:
-            destination: idat-patho-report
+            destination: ${KAFKA_TOPIC_PATHO_BEFUND_FHIR_BUNDLE:idat-patho-report}
         kafka:
           streams:
             binder:
@@ -37,18 +37,17 @@ spring:
                 spring.json.use.type.headers: "false"
 fhir:
   systems:
-    serviceRequestId: "https://your-local-system/pathology/serviceRequestId"
-    diagnosticReportId: "https://your-local-system/pathology/diagnosticReportId"
-    observationId: "https://your-local-system/pathology/observationId"
-    patientId: "https://your-local-system/pathology/patientId"
-    encounterId: "https://your-local-system/pathology/encounterId"
-    organizationId: "https://your-local-system/pathology/department"
-    specimenRequestId: "https://your-local-system/pathology/specimenRequestId"
-    diagnosticFindingId: "https://your-local-system/pathology/diagnosticFindingId"
-    diagnosticFindingGrouperId: "https://your-local-system/pathology/diagnosticFindingGrouperId"
-    specimenContainer: "https://your-local-system/pathology/specimenContainer"
-    specimenId: "https://your-local-system/pathology/specimenId"
-    performerId: "https://your-local-system/pathology/performerId"
+    serviceRequestId: ${PATHO_SERVICE_REQUEST_ID:https://your-local-system/pathology/serviceRequestId}
+    diagnosticReportId: ${PATHO_DIAGNOSTIC_REPORT_ID:https://your-local-system/pathology/diagnosticReportId}
+    observationId: ${PATHO_OBSERVATION_ID:https://your-local-system/pathology/observationId}
+    patientId: ${PATHO_PATIENT_ID:https://your-local-system/pathology/patientId}
+    encounterId: ${PATHO_ENCOUNTER_ID:https://your-local-system/pathology/encounterId}
+    organizationId: ${PATHO_ORGANIZATION_ID:https://your-local-system/pathology/department}
+    specimenRequestId: ${PATHO_SPECIMEN_REQUEST_ID:https://your-local-system/pathology/specimenRequestId}
+    diagnosticFindingId: ${PATHO_DIAGNOSTIC_FINDING_ID:https://your-local-system/pathology/diagnosticFindingId}
+    specimenContainer: ${PATHO_SPECIMEN_CONTAINER:https://your-local-system/pathology/specimenContainer}
+    specimenId: ${PATHO_SPECIMEN_ID:https://your-local-system/pathology/specimenId}
+    performerId: ${PATHO_PERFORMER_ID:https://your-local-system/pathology/performerId}
 mapping:
   location:
     specimenType: "mappings/specimenType.csv"
