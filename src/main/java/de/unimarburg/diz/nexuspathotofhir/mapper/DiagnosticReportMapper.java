@@ -87,7 +87,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
-            fhirProperties.getSystems().getDiagnosticFindingGrouperId(),
+            fhirProperties.getSystems().getDiagnosticFindingId(),
             "",
             input.getBefundtyp(),
             input.getBefundID());
@@ -97,7 +97,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
-            fhirProperties.getSystems().getDiagnosticFindingGrouperId(),
+            fhirProperties.getSystems().getDiagnosticFindingId(),
             "",
             input.getBefundtyp(),
             input.getBefundID());
@@ -108,7 +108,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER,
-            fhirProperties.getSystems().getDiagnosticFindingGrouperId(),
+            fhirProperties.getSystems().getDiagnosticFindingId(),
             "",
             input.getBefundtyp(),
             input.getBefundID());
