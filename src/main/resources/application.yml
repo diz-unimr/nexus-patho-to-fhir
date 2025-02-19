@@ -40,15 +40,15 @@ fhir:
     serviceRequestId: "https://your-local-system/pathology/serviceRequestId"
     diagnosticReportId: "https://your-local-system/pathology/diagnosticReportId"
     observationId: "https://your-local-system/pathology/observationId"
-    patientId: "https://your-local-system/pathology/patientId"
+    patientId: "https://fhir.diz.uni-marburg.de/sid/patient-id"
     encounterId: "https://your-local-system/pathology/encounterId"
     assignerId: "https://your-local-system/pathology/assignerId"
     assignerCode: "https://your-local-system/pathology/assignerCode"
     specimenRequestId: "https://your-local-system/pathology/specimenRequestId"
     diagnosticFindingId: "https://your-local-system/pathology/diagnosticFindingId"
     diagnosticFindingGrouperId: "https://your-local-system/pathology/diagnosticFindingGrouperId"
-    specimenContainer: "https://your-local-system/pathology/specimenContainer"
-    specimenId: "https://your-local-system/pathology/specimenId"
+    specimenContainer: "https://fhir.diz.uni-marburg.de/fhir/sid/specimen-container-id"
+    specimenId: "https://fhir.diz.uni-marburg.de/fhir/sid/specimen-id"
     performerId: "https://your-local-system/pathology/performerId"
 mapping:
   location:

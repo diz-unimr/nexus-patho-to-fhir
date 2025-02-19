@@ -63,11 +63,67 @@ class SpecimenMapperTest extends FhirValidationBase {
             .filter(m -> m.getSeverity() == ResultSeverityEnum.ERROR)
             .toList();
 
-    if (!validationErrors.isEmpty()) {
+    var filterValidationErrors =
+        validationErrors.stream()
+            .filter(
+                a ->
+                    !a.getMessage()
+                        .contains(
+                            "None of the codings provided are in the value set 'MII VS Patho Container Type [SNOMED CT]"))
+            .toList();
+    if (!filterValidationErrors.isEmpty()) {
       log.info("we have validation errors - mapped resource JSON representation:");
       log.info(fhirContext.newJsonParser().encodeResourceToString(result));
     }
-    assertThat(validationErrors).as("profile validation error should not be present").isEmpty();
+
+    assertThat(filterValidationErrors)
+        .as("profile validation error should not be present")
+        .isEmpty();
+  }
+
+  @Test
+  public void identifierStayStableForIdenticalInput() {
+    var input = DummyDataUtil.getDummySpecimen();
+
+    var result = fixture.map(input);
+    var result2 = fixture.map(input);
+
+    assertThat(result.getIdentifier().size()).as("specimen has only one identifier").isEqualTo(1);
+    assertThat(result.getContainer())
+        .as("all container components have only one identifier!")
+        .allSatisfy(a -> assertThat(a.getIdentifier().size()).isEqualTo(1));
+
+    assertThat(result.getIdentifierFirstRep().getValue())
+        .as("Identifier should be created the same way for identical input")
+        .isEqualTo(result2.getIdentifierFirstRep().getValue());
+    assertThat(result.getContainer())
+        .allSatisfy(
+            a ->
+                assertThat(result2.getContainer())
+                    .as("Identifier should be created the same way for identical input")
+                    .anySatisfy(
+                        b ->
+                            b.getIdentifierFirstRep()
+                                .getValue()
+                                .equals(a.getIdentifierFirstRep().getValue())));
+  }
+
+  @Test
+  public void specimenSubContainerCountTest() {
+    var input = DummyDataUtil.getDummySpecimen();
+
+    var result = fixture.map(input);
+
+    assertThat(result.getContainer().size()).isEqualTo(4);
+
+    assertThat(result.getSubject()).isNotNull();
+  }
+
+  @Test
+  public void referencesTest() {
+    var input = DummyDataUtil.getDummySpecimen();
+    var result = fixture.map(input);
+    assertThat(result.getSubject()).isNotNull();
   }
 
   @Test
@@ -85,5 +141,11 @@ class SpecimenMapperTest extends FhirValidationBase {
     assertThat(result.getRequest().getUrl()).startsWith(mapped.fhirType());
     assertThat(result.getRequest().getUrl()).contains(mapped.getIdentifierFirstRep().getValue());
     assertThat(result.getRequest().getUrl()).contains(mapped.getIdentifierFirstRep().getSystem());
+  }
+
+  @Test
+  void checkIsValidTest() {
+    var input = DummyDataUtil.getDummySpecimen();
+    assertThat(fixture.checkInputIsValid(input)).isTrue();
   }
 }

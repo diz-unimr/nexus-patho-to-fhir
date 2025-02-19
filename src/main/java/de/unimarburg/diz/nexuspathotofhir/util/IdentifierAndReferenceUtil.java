@@ -85,7 +85,7 @@ public class IdentifierAndReferenceUtil {
                 .setCode("ACSN"));
         break;
     }
-    ;
+
     identifier.setType(codeableConceptIdType);
     return identifier;
   }

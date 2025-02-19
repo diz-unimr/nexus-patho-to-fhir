@@ -8,11 +8,8 @@ import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import de.unimarburg.diz.nexuspathotofhir.model.SpecimenContainerTyp;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import org.hl7.fhir.r4.model.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,16 +40,17 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
       throw new IllegalArgumentException("input must be a PathoSpecimen");
     if (csvMappings.specimenTypes() == null || csvMappings.specimenTypes().isEmpty())
       throw new RuntimeException("specimentTypes mapping is missing");
+
+    if (!checkInputIsValid(input)) {
+      // error logging in method before
+      // fixme: may be add input to error topic
+      return null;
+    }
+
     Specimen result = new Specimen();
 
     setMeta(result);
     setIdentifiers(result, input);
-
-    // ProbenID name aus Nexus z.b. H202500123S1 - muss pseudonymisiert werden!
-    result.setAccessionIdentifier(
-        new Identifier()
-            .setValue(input.getProbeID())
-            .setSystem(fhirProperties.getSystems().getAssignerId()));
 
     /*
      * fixme: result.addParent() Referenz auf die Parent Probe
@@ -86,6 +84,42 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     mapSpecimenCollection(result, input);
 
     return result;
+  }
+
+  public boolean checkInputIsValid(PathoSpecimen input) {
+
+    boolean isValid = true;
+    var arrayLength =
+        Arrays.asList(
+            input.getContainerLabelsArray().length,
+            input.getContainerGUIDsArray().length,
+            input.getContainerTypesArray().length,
+            // note getSubContainerIdsArray() removes 'NA' value which is 'root' therefore we need
+            // to add +1
+            input.getSubContainerIdsArray().length + 1);
+
+    var countSet = new HashSet<Integer>();
+    arrayLength.forEach(a -> countSet.add(a));
+    if (countSet.size() > 1) {
+      log.error("input has different count of lables,guids,types,ids: '{}'", input);
+      isValid = false;
+    }
+
+    if (input.getRootIndex() < 0) {
+      log.error("input has no root container lable: '{}", input);
+      isValid = false;
+    }
+
+    if (!StringUtils.hasText(input.getAuftragsnummer())) {
+      log.error("input has encounter number: '{}", input);
+      isValid = false;
+    }
+    if (!StringUtils.hasText(input.getPatientennummer())) {
+      log.error("input has patient number: '{}", input);
+      isValid = false;
+    }
+
+    return isValid;
   }
 
   @NotNull(
@@ -132,19 +166,13 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   }
 
   private void setIdentifiers(Specimen result, PathoSpecimen input) {
-    // fixme: should setAccessionIdentifier and main identifier have different values ? why?
 
-    // main resource identifier
-    // FIXME: get container GUID
+    // for easy specimen reference from pathology service request we use lab label her, too.
     result.addIdentifier(
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierResourceType.SPECIMEN,
-            fhirProperties.getSystems().getSpecimenRequestId(),
-            "TODO: specific per specimen"));
+        new Identifier()
+            .setValue(input.getProbeID())
+            .setSystem(fhirProperties.getSystems().getSpecimenId()));
 
-    // probe id
-    // fixme kläre was hier rein soll
     result.setAccessionIdentifier(
         new Identifier()
             .setValue(input.getProbeID())
@@ -161,27 +189,24 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     List<Specimen.SpecimenContainerComponent> container = new ArrayList<>();
 
     // hier brauchen wir alle Container
-    var guis = input.getContainerGUIDsArray();
+    var containerLabels = input.getContainerLabelsArray();
     var containerTypes = input.getContainerTypesArray();
-    for (int i = 0; i < guis.length; i++) {
+    for (int i = 0; i < containerLabels.length; i++) {
       // skip root container
       if (i == input.getRootIndex()) continue;
 
-      var subContainerGuid = guis[i];
+      var subContainerLabel = containerLabels[i];
       var subContainerType = Integer.valueOf(containerTypes[i]);
       var mappedType = SpecimenContainerTyp.valueOf(subContainerType);
 
       final Specimen.SpecimenContainerComponent specimenContainerComponent =
-          new Specimen.SpecimenContainerComponent()
-              .addIdentifier(
-                  new Identifier()
-                      .setSystem(fhirProperties.getSystems().getSpecimenContainer())
-                      .setValue(input.getProbeID()));
-
+          new Specimen.SpecimenContainerComponent();
       specimenContainerComponent
           .addIdentifier()
-          .setValue(subContainerGuid)
+          .setUse(Identifier.IdentifierUse.USUAL)
+          .setValue(subContainerLabel)
           .setSystem(fhirProperties.getSystems().getSpecimenContainer());
+
       var containerType = addContainerType(input, mappedType);
       specimenContainerComponent.setType(new CodeableConcept(containerType));
       container.add(specimenContainerComponent);
@@ -235,8 +260,8 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
             typeCoding
                 .setCode("434464009")
                 .setDisplay("Tissue cassette (physical object)")
-                .setSystem(MappingEntry.SNOMED_SYSTEM);
-            // .setVersion("http://snomed.info/sct/900000000000207008/version/20240501");
+                .setSystem(MappingEntry.SNOMED_SYSTEM)
+                .setVersion("http://snomed.info/sct/900000000000207008/version/20240501");
             /**
              * specimenTypeCoding .addCoding() .setCode("441652008") .setDisplay("Formalin-fixed
              * paraffin-embedded tissue specimen") .setSystem(MappingEntry.SNOMED_SYSTEM)

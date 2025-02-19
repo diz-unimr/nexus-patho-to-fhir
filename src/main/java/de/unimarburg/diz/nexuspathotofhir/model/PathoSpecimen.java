@@ -161,19 +161,29 @@ public class PathoSpecimen implements PathoInputBase {
     return containerGUIDs.split(",")[getRootIndex()];
   }
 
+  @JsonIgnore
+  public String[] getContainerLabelsArray() {
+    return Arrays.stream(this.getContainerLabels().split(","))
+        .map(a -> a.trim())
+        .toArray(String[]::new);
+  }
+
+  @JsonIgnore
   public String[] getContainerGUIDsArray() {
     return Arrays.stream(this.getContainerGUIDs().split(","))
         .map(a -> a.trim())
         .toArray(String[]::new);
   }
 
-  public String[] getSubContainerIds() {
+  @JsonIgnore
+  public String[] getSubContainerIdsArray() {
     return Arrays.stream(this.getContainerParents().split(","))
         .map(a -> a.trim())
         .filter(a -> !"NA".equals(a))
         .toArray(String[]::new);
   }
 
+  @JsonIgnore
   public String[] getContainerTypesArray() {
     return Arrays.stream(this.getContainerTypes().split(","))
         .map(a -> a.trim())
