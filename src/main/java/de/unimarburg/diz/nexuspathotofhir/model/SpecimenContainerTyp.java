@@ -7,7 +7,9 @@ import java.util.Optional;
 public enum SpecimenContainerTyp {
   SUB_CONTAINER(1),
   MICROSCOPE_SLIDE(2),
-  ROOT_CONTAINER(3);
+  ROOT_CONTAINER(3),
+  /** keine echte Probe ist eine Kontrolle oder Vorbereitung */
+  BLANK_CUT(12);
 
   private final int value;
 
@@ -16,6 +18,7 @@ public enum SpecimenContainerTyp {
   }
 
   public static SpecimenContainerTyp valueOf(int value) {
+
     final Optional<SpecimenContainerTyp> first =
         Arrays.stream(values()).filter(v -> v.value == value).findFirst();
     if (first.isPresent()) return first.get();

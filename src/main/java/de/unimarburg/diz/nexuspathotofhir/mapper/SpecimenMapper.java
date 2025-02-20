@@ -210,6 +210,13 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
       var subContainerLabel = containerLabels[i];
       var subContainerType = Integer.valueOf(containerTypes[i]);
       var mappedType = SpecimenContainerTyp.valueOf(subContainerType);
+      if (mappedType == SpecimenContainerTyp.BLANK_CUT) {
+        log.warn(
+            "skipping subcontainer '{}' since typ is blank cut. Specimen ID '{}'",
+            subContainerLabel,
+            input.getProbeID());
+        continue;
+      }
 
       final Specimen.SpecimenContainerComponent specimenContainerComponent =
           new Specimen.SpecimenContainerComponent();
