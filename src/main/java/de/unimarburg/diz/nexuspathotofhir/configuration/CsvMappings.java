@@ -6,8 +6,8 @@ import com.opencsv.exceptions.CsvValidationException;
 import de.unimarburg.diz.nexuspathotofhir.model.MappingEntry;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -88,8 +88,9 @@ public class CsvMappings {
 
   public Map<String, MappingEntry> specimenTypes() {
     if (specimentTypeMappingLocationMap == null) {
+      if (!StringUtils.hasText(specimenTypeMappingLocation))
+        throw new IllegalArgumentException("path to specimenTypeMappingLocation CSV is empty");
       var path = getPath(specimenTypeMappingLocation);
-
       specimentTypeMappingLocationMap = CsvMappings.readLineByLine(path);
     }
     return specimentTypeMappingLocationMap;
@@ -97,6 +98,8 @@ public class CsvMappings {
 
   public Map<String, MappingEntry> specimenExtractionMethod() {
     if (specimenExtractionMethodMap == null) {
+      if (!StringUtils.hasText(specimenExtractionMethod))
+        throw new IllegalArgumentException("path to specimenExtractionMethod CSV is empty");
       var path = getPath(specimenExtractionMethod);
 
       specimenExtractionMethodMap = CsvMappings.readLineByLine(path);
@@ -106,17 +109,19 @@ public class CsvMappings {
 
   public Map<String, MappingEntry> specimenContainerType() {
     if (specimenContainerTypeMap == null) {
+      if (!StringUtils.hasText(specimenContainerType))
+        throw new IllegalArgumentException("path to specimenContainerType CSV is empty");
       var path = getPath(specimenContainerType);
       specimenContainerTypeMap = CsvMappings.readLineByLine(path);
     }
     return specimenContainerTypeMap;
   }
 
-  @NotNull private Path getPath(String specimenContainerType) {
+  @NotNull private Path getPath(String location) {
     Path path;
     try {
-      path = Paths.get(ClassLoader.getSystemResource(specimenContainerType).toURI());
-    } catch (URISyntaxException e) {
+      path = Paths.get(location);
+    } catch (InvalidPathException e) {
       throw new RuntimeException(e);
     }
     return path;

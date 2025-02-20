@@ -40,6 +40,13 @@ class SpecimenMapperTest extends FhirValidationBase {
   }
 
   @Test
+  void dummyInput() {
+    final PathoSpecimen value = DummyDataUtilTest.getDummySpecimen();
+    var result = fixture.apply(value);
+    assertThat(result).isNotNull();
+  }
+
+  @Test
   void isFhirProfileValid() {
 
     validator.withResourcesFrom(
