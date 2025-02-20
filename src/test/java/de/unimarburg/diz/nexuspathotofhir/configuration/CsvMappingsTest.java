@@ -3,6 +3,8 @@ package de.unimarburg.diz.nexuspathotofhir.configuration;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import de.unimarburg.diz.nexuspathotofhir.model.MappingEntry;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,11 +16,19 @@ class CsvMappingsTest {
 
   @Test
   void specimenTypes() throws Exception {
-    assertThat(fixture.specimenTypes().size()).isGreaterThan(10);
+    final Map<String, MappingEntry> stringMappingEntryMap = fixture.specimenTypes();
+    assertThat(stringMappingEntryMap.size()).isGreaterThan(10);
   }
 
   @Test
   void specimenExtractionMethod() throws Exception {
-    assertThat(fixture.specimenExtractionMethod().size()).isGreaterThan(10);
+    final Map<String, MappingEntry> stringMappingEntryMap = fixture.specimenExtractionMethod();
+    assertThat(stringMappingEntryMap.size()).isGreaterThan(10);
+  }
+
+  @Test
+  void specimenContainerType() throws Exception {
+    final Map<String, MappingEntry> stringMappingEntryMap = fixture.specimenContainerType();
+    assertThat(stringMappingEntryMap.size()).isGreaterThan(10);
   }
 }
