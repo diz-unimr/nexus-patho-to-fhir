@@ -49,7 +49,9 @@ public class PathoSpecimen implements PathoInputBase {
 
   @JsonIgnore
   public int getRootIndex() {
-    var rootIndex = Arrays.stream(containerTypes.split(",")).toList().indexOf("3");
+    if (containerTypes == null) return -1;
+    final String[] split = containerTypes.split(",");
+    var rootIndex = Arrays.stream(split).toList().indexOf("3");
     return rootIndex;
   }
 
@@ -158,11 +160,14 @@ public class PathoSpecimen implements PathoInputBase {
   @JsonIgnore
   @Override
   public String getUUID() {
-    return containerGUIDs.split(",")[getRootIndex()];
+    if (!StringUtils.hasText(this.probeID))
+      throw new RuntimeException("patho specimen without probeId!");
+    return this.probeID;
   }
 
   @JsonIgnore
   public String[] getContainerLabelsArray() {
+    if (this.getContainerLabels() == null) return new String[0];
     return Arrays.stream(this.getContainerLabels().split(","))
         .map(a -> a.trim())
         .toArray(String[]::new);
@@ -170,6 +175,7 @@ public class PathoSpecimen implements PathoInputBase {
 
   @JsonIgnore
   public String[] getContainerGUIDsArray() {
+    if (this.getContainerGUIDs() == null) return new String[0];
     return Arrays.stream(this.getContainerGUIDs().split(","))
         .map(a -> a.trim())
         .toArray(String[]::new);
@@ -177,6 +183,7 @@ public class PathoSpecimen implements PathoInputBase {
 
   @JsonIgnore
   public String[] getSubContainerIdsArray() {
+    if (this.getContainerParents() == null) return new String[0];
     return Arrays.stream(this.getContainerParents().split(","))
         .map(a -> a.trim())
         .filter(a -> !"NA".equals(a))
@@ -185,6 +192,7 @@ public class PathoSpecimen implements PathoInputBase {
 
   @JsonIgnore
   public String[] getContainerTypesArray() {
+    if (this.getContainerTypes() == null) return new String[0];
     return Arrays.stream(this.getContainerTypes().split(","))
         .map(a -> a.trim())
         .toArray(String[]::new);

@@ -2,8 +2,8 @@ localCode,localShortName,snomedCode,snomedDisplayName
 Magen,,119379005,Specimen from stomach (specimen)
 Magen PE,,122632000,Specimen from stomach obtained by incisional biopsy (specimen)
 Mamma,,127456000,Specimen from breast (specimen)
-Mamma links,,735198008,Specimen from left breast (specimen)
-Mamma rechts,,735197003,Specimen from right breast (specimen)
+Mamma li,,735198008,Specimen from left breast (specimen)
+Mamma re,,735197003,Specimen from right breast (specimen)
 Mamma PE,,397199005,Specimen from breast obtained by excision (specimen)
 GBG-Pallas Resektat,,127456000,Specimen from breast (specimen)
 Ösophagus PE,,127463000,Specimen from esophagus obtained by incisional biopsy (specimen)
@@ -219,3 +219,5 @@ Exenteration männlich,,65111004,Pelvic exenteration male (procedure)
 Exenteration weiblich,,55853002,Pelvic exenteration female (procedure)
 Ductus deferns TE,,110939004,Vas deferens cytologic material (specimen)
 Ductus choledochus,,446129006,Bile specimen from common bile duct (specimen)
+Sonstiges Groß,,,
+Sonstiges Klein,,,
