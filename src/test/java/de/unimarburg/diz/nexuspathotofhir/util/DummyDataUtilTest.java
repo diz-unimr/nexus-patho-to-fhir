@@ -89,7 +89,7 @@ public class DummyDataUtilTest {
         doubleAdditiv ? containerNamesDoubleAdditiv : containerNamesSingleAdditiv);
     pathoSpecimen.setContainerLabels(
         "specimen-dummy-id, specimen-dummy-id-1-1-1, specimen-dummy-id-1-1, specimen-dummy-id-1-1-3, specimen-dummy-id-1-1-2");
-    pathoSpecimen.setContainerTypes("3, 2, 1, 2, 2");
+    pathoSpecimen.setContainerTyps("3, 2, 1, 2, 2");
 
     return pathoSpecimen;
   }
@@ -122,7 +122,7 @@ public class DummyDataUtilTest {
     pathoSpecimen.setContainerNames(containerNamesSingleAdditiv);
     pathoSpecimen.setContainerLabels(
         "specimen-dummy-id, specimen-dummy-id-1-1-1, specimen-dummy-id-1-1, specimen-dummy-id-1-1-3, specimen-dummy-id-1-1-2");
-    pathoSpecimen.setContainerTypes("3, 2, 1, 2, 2");
+    pathoSpecimen.setContainerTyps("3, 2, 1, 2, 2");
 
     return pathoSpecimen;
   }
