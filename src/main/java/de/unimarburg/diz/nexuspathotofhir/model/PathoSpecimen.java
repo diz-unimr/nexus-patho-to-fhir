@@ -17,7 +17,7 @@ public class PathoSpecimen implements PathoInputBase {
    *
    * <p>e.g. "H20250201S1"
    */
-  @JsonProperty("ProbeID")
+  @JsonProperty("probeID")
   private String probeID;
 
   /**
@@ -25,7 +25,7 @@ public class PathoSpecimen implements PathoInputBase {
    *
    * <p>e.g.: 359027354+dsgkjhdgf,fdlkhj3459+0346uß,3240349f+dgdfsg,235264dsfdsgdfsh+36
    */
-  @JsonProperty("ContainerGUIDs")
+  @JsonProperty("containerGUIDs")
   private String containerGUIDs;
 
   /**
@@ -33,7 +33,7 @@ public class PathoSpecimen implements PathoInputBase {
    *
    * <p>e.g.: H20250201S1,H20250201S1-1.1, H20250201S1-1.1-1,H20250201S1-1.1-2
    */
-  @JsonProperty("ContainerLabels")
+  @JsonProperty("containerLabels")
   private String containerLabels;
 
   /**
@@ -44,13 +44,13 @@ public class PathoSpecimen implements PathoInputBase {
    *
    * <p>e.g.: 1,1.1, 1.1-1-FE,1.1-2-HE|AFP
    */
-  @JsonProperty("ContainerNames")
+  @JsonProperty("containerNames")
   private String containerNames;
 
   @JsonIgnore
   public int getRootIndex() {
-    if (containerTypes == null) return -1;
-    final String[] split = containerTypes.split(",");
+    if (containerTyps == null) return -1;
+    final String[] split = containerTyps.split(",");
     var rootIndex = Arrays.stream(split).toList().indexOf("3");
     return rootIndex;
   }
@@ -63,8 +63,8 @@ public class PathoSpecimen implements PathoInputBase {
    * <li>2 -> microscopic slide
    * <li>1 -> sub container from which slides are created
    */
-  @JsonProperty("containerTypes")
-  private String containerTypes;
+  @JsonProperty("containerTyps")
+  private String containerTyps;
 
   /**
    * specimen guid list of parent container guids. Root element has no parent therefore it has value
@@ -126,7 +126,7 @@ public class PathoSpecimen implements PathoInputBase {
    *
    * <p>e.g. Biopsie
    */
-  @JsonProperty("probeGewinnungsmethode")
+  @JsonProperty("probeGewinningsmethode")
   private String probeGewinnungsmethode;
 
   /**
@@ -192,8 +192,8 @@ public class PathoSpecimen implements PathoInputBase {
 
   @JsonIgnore
   public String[] getContainerTypesArray() {
-    if (this.getContainerTypes() == null) return new String[0];
-    return Arrays.stream(this.getContainerTypes().split(","))
+    if (this.getContainerTyps() == null) return new String[0];
+    return Arrays.stream(this.getContainerTyps().split(","))
         .map(a -> a.trim())
         .toArray(String[]::new);
   }
