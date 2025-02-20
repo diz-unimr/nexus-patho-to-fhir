@@ -16,14 +16,14 @@ Sekret/Speichel auftupfen,,225098009,Collection of sample of saliva (procedure),
 Konusbiopsie,,110469002,Cone biopsy (procedure) ,Technik Gebärmutter(hals)
 Lavage,,67889009,Irrigation (procedure),
 Polypektomie,,82035006,Resection of polyp (procedure),
-Biopsien,,86273004,Biopsy (procedure)
+Biopsien,PE,86273004,Biopsy (procedure)
 Zuschnitt Groß,,65801008,Excision (procedure)
 Zuschnitt Klein,,38829003,Partial excision (procedure)
 Schnellschnitt,,38829003,Partial excision (procedure)
 Zytologie,,48635004,Fine needle biopsy (procedure)
 Molpatho,,,
 Studien,,118292001, Removal (procedure)
-Sektion,,430856003,Tissue section (specimen)
-Fetalpathologie,,,
+Sektion,,29240004,Autopsy examination
+Fetalpathologie,,29240004,Autopsy examination,
 Zyto+Sonderfälle,,,
 Zuschnitt,,65801008,Excision (procedure)
