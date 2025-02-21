@@ -23,8 +23,6 @@ public class SpecimenProcessor extends BaseProcessor {
 
   public Bundle processSpecimen(PathoInputBase inputBase) {
     final Bundle bundle = getBasicBundle(inputBase).addEntry(specimenMapper.apply(inputBase));
-    // do not create empty bundles
-    if (bundle.getEntry().isEmpty()) return null;
     return bundle;
   }
 
