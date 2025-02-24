@@ -72,7 +72,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     mapSpecimenType(result, input);
     // fixme: never null since profile mandatory value > error topic?
     final boolean isInvalidResource = result.hasType();
-    if (isInvalidResource) {
+    if (!isInvalidResource) {
       log.error(
           "resource cannot be processed since we hav no type mapping for current input: '{}'",
           input);
