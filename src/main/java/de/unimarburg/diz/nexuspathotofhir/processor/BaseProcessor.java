@@ -15,6 +15,10 @@ public class BaseProcessor {
         Hashing.farmHashFingerprint64()
             .hashString(report.getUUID(), StandardCharsets.UTF_8)
             .toString();
-    return (Bundle) new Bundle().setId(hash).setMeta(new Meta().setSource("#nexus-pathology"));
+    return (Bundle)
+        new Bundle()
+            .setType(Bundle.BundleType.BATCH)
+            .setId(hash)
+            .setMeta(new Meta().setSource("#nexus-pathology"));
   }
 }
