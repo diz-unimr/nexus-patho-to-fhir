@@ -1,5 +1,5 @@
 
-FROM eclipse-temurin:21-jdk-jammy AS build
+FROM eclipse-temurin:21.0.6_7-jdk-jammy AS build
 WORKDIR /home/gradle/src
 ENV GRADLE_USER_HOME=/gradle
 
