@@ -74,7 +74,8 @@ public class ServiceRequestMapper extends ToFhirMapper {
       // Split the String by ','
       if (input.getProbeID().contains(",")) {
         log.debug("Contains multiple ProbeIDs");
-        String[] arrayProbeID = Arrays.stream(input.getProbeID().split(",")).map(String::trim).toArray(String[]::new);
+        String[] arrayProbeID =
+            Arrays.stream(input.getProbeID().split(",")).map(String::trim).toArray(String[]::new);
         for (String probeID : arrayProbeID) {
           specimenRef.add(
               IdentifierAndReferenceUtil.getReferenceTo(

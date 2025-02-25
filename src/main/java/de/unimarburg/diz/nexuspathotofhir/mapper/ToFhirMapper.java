@@ -127,7 +127,8 @@ public abstract class ToFhirMapper
       if (input.getProbeName().contains(",")) {
         ArrayList<Coding> coding = new ArrayList<>();
         log.debug("Contains multiple Probe");
-        String[] arrayProbeName = Arrays.stream(input.getProbeName().split(",")).map(String::trim).toArray(String[]::new);
+        String[] arrayProbeName =
+            Arrays.stream(input.getProbeName().split(",")).map(String::trim).toArray(String[]::new);
         for (String probeName : arrayProbeName) {
           var code = csvMappings.specimenTypes().get(probeName);
           if (code != null) {
