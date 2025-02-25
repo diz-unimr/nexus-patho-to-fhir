@@ -8,6 +8,7 @@ import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.util.DecideStatusOfBefund;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import org.apache.kafka.streams.kstream.ValueMapper;
@@ -126,7 +127,7 @@ public abstract class ToFhirMapper
       if (input.getProbeName().contains(",")) {
         ArrayList<Coding> coding = new ArrayList<>();
         log.debug("Contains multiple Probe");
-        String[] arrayProbeName = input.getProbeName().split(",");
+        String[] arrayProbeName = Arrays.stream(input.getProbeName().split(",")).map(String::trim).toArray(String[]::new);
         for (String probeName : arrayProbeName) {
           var code = csvMappings.specimenTypes().get(probeName);
           if (code != null) {

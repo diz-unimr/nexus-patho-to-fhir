@@ -9,6 +9,7 @@ import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.hl7.fhir.r4.model.*;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +74,7 @@ public class ServiceRequestMapper extends ToFhirMapper {
       // Split the String by ','
       if (input.getProbeID().contains(",")) {
         log.debug("Contains multiple ProbeIDs");
-        String[] arrayProbeID = input.getProbeID().split(",");
+        String[] arrayProbeID = Arrays.stream(input.getProbeID().split(",")).map(String::trim).toArray(String[]::new);
         for (String probeID : arrayProbeID) {
           specimenRef.add(
               IdentifierAndReferenceUtil.getReferenceTo(
