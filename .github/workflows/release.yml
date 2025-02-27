@@ -2,13 +2,10 @@
 name: release
 
 on:
-  workflow_dispatch:
   workflow_run:
-    workflows: ["Run Tests"]
+    workflows: ["build"]
     branches: "main"
     types: [completed]
-  release:
-    types: [published]
 
 permissions: read-all
 
