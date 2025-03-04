@@ -26,6 +26,12 @@ public class FhirProperties {
     private String specimenContainer;
     private String diagnosticFindingId;
     private String performerId;
+    private String pathoFindingGrouperMicroId;
+    private String pathoFindingGrouperMacroId;
+    private String pathoFindingGrouperDigConcId;
+    private String pathoFindingMicroId;
+    private String pathoFindingMacroId;
+    private String pathoFindingDiagConcId;
 
     @Override
     public String toString() {
@@ -57,8 +63,23 @@ public class FhirProperties {
           + ", specimenContainer='"
           + specimenContainer
           + '\''
+          + ", pathoFindingGrouperMicroId='"
+          + pathoFindingGrouperMicroId
+          + '\''
+          + ", pathoFindingGrouperMacroId='"
+          + pathoFindingGrouperMacroId
+          + '\''
+          + ", pathoFindingGrouperDigConcId='"
+          + pathoFindingGrouperDigConcId
+          + '\''
           + ", diagnosticFindingId='"
-          + diagnosticFindingId
+          + pathoFindingMicroId
+          + '\''
+          + ", diagnosticFindingId='"
+          + pathoFindingMacroId
+          + '\''
+          + ", pathoFindingDiagConcId='"
+          + pathoFindingDiagConcId
           + '\''
           + performerId
           + '\''

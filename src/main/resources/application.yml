@@ -43,11 +43,18 @@ fhir:
     patientId: ${PATHO_PATIENT_ID:https://your-local-system/pathology/patientId}
     encounterId: ${PATHO_ENCOUNTER_ID:https://your-local-system/pathology/encounterId}
     organizationId: ${PATHO_ORGANIZATION_ID:https://your-local-system/pathology/department}
+    performerId: ${PATHO_PERFORMER_ID:https://your-local-system/pathology/performerId}
     specimenRequestId: ${PATHO_SPECIMEN_REQUEST_ID:https://your-local-system/pathology/specimenRequestId}
-    diagnosticFindingId: ${PATHO_DIAGNOSTIC_FINDING_ID:https://your-local-system/pathology/diagnosticFindingId}
     specimenContainer: ${PATHO_SPECIMEN_CONTAINER:https://your-local-system/pathology/specimenContainer}
     specimenId: ${PATHO_SPECIMEN_ID:https://your-local-system/pathology/specimenId}
-    performerId: ${PATHO_PERFORMER_ID:https://your-local-system/pathology/performerId}
+    pathoFindingGrouperMicroId: ${PATHO_FINDING_GROUPER_MICRO_ID:https://your-local-system/pathology/patho-finding-grouper-micro-id}
+    pathoFindingGrouperMacroId: ${PATHO_FINDING_GROUPER_MACRO_ID:https://your-local-system/pathology/patho-finding-grouper-micro-id}
+    pathoFindingGrouperDigConcId: ${PATHO_FINDING_GROUPER_DIAG_CONC_ID:https://your-local-system/pathology/patho-finding-grouper-diag-conc-id}
+    pathoFindingMicroId: ${PATHO_FINDING_MICRO_ID:https://your-local-system/pathology/patho-finding-micro-id}
+    pathoFindingMacroId: ${PATHO_FINDING_Macro_ID:https://your-local-system/pathology/patho-finding-macro-id}
+    pathoFindingDiagConcId: ${PATHO_FINDING_DIAG_CONC_ID:https://your-local-system/pathology/patho-finding-diag-conc-id}
+
+
 mapping:
   location:
     specimenType: ${NEXUS_PATHO_SPECIMEN_TYPES_MAPPING_CSV:src/main/resources/mappings/specimenType.csv}

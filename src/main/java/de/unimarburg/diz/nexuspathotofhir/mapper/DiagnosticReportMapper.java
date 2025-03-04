@@ -3,8 +3,8 @@ package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
-import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoReportInputBase;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
@@ -24,7 +24,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
   }
 
   @Override
-  public DiagnosticReport map(PathoInputBase inputBase) {
+  public DiagnosticReport map(PathoReportInputBase inputBase) {
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
 
@@ -56,9 +56,6 @@ public class DiagnosticReportMapper extends ToFhirMapper {
                 PathologyIdentifierResourceType.SERVICE_REQUEST,
                 fhirProperties.getSystems().getServiceRequestId())));
 
-    // map status
-    getConditionalReportStatus(diagnosticReport, input.getBefundtyp());
-
     // map code
     diagnosticReport.setCode(
         new CodeableConcept()
@@ -87,20 +84,14 @@ public class DiagnosticReportMapper extends ToFhirMapper {
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
-            fhirProperties.getSystems().getDiagnosticFindingId(),
-            "",
-            input.getBefundtyp(),
-            input.getBefundID());
+            fhirProperties.getSystems().getPathoFindingGrouperMicroId());
 
     // Create Reference ID MacroBefundGrouper
     Identifier idPathoFindingGrouperMacro =
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
-            fhirProperties.getSystems().getDiagnosticFindingId(),
-            "",
-            input.getBefundtyp(),
-            input.getBefundID());
+            fhirProperties.getSystems().getPathoFindingGrouperMacroId());
 
     // Create Reference ID DiagnoseConclusionGrouper
 
@@ -108,10 +99,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER,
-            fhirProperties.getSystems().getDiagnosticFindingId(),
-            "",
-            input.getBefundtyp(),
-            input.getBefundID());
+            fhirProperties.getSystems().getPathoFindingGrouperDigConcId());
 
     // Add each references to result array
     resultRefereces.add(
@@ -126,14 +114,14 @@ public class DiagnosticReportMapper extends ToFhirMapper {
     // map conclusion code
     // Need to be mapped
     // vlt. die Krebs Diagnosis
-    diagnosticReport.addConclusionCode(
+    /*    diagnosticReport.addConclusionCode(
         new CodeableConcept()
             .addCoding(
                 new Coding()
                     .setCode("1234")
                     .setDisplay("Snomed diagnose")
                     .setSystem("http://snomed.info/sct")));
-    // map effectiveDateTime
+    // map effectiveDateTime*/
     Date probeEinnahmeDatum = new Date(input.getProbeEntnahmedatum());
     diagnosticReport.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
 
@@ -144,25 +132,14 @@ public class DiagnosticReportMapper extends ToFhirMapper {
             "Organization", PERFORMER, fhirProperties.getSystems().getPerformerId());
     performer.add(organizationRef);
     diagnosticReport.setPerformer(performer);
-
+    if (input.getBefundtyp().contains("Hauptbefund")) {
+      diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.FINAL);
+    }
     return diagnosticReport;
   }
 
-  public static void getConditionalReportStatus(
-      DiagnosticReport diagnosticReport, String befundArt) {
-    if (befundArt.contains("Hauptbefund")) {
-      diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.FINAL);
-    } else if (befundArt.contains("Nachbericht")) {
-      diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.AMENDED);
-    } else if (befundArt.contains("Zusatzbericht")) {
-      diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.APPENDED);
-    } else if (befundArt.contains("Korrekturbericht")) {
-      diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.CORRECTED);
-    }
-  }
-
   @Override
-  @Nullable public Bundle.BundleEntryComponent apply(PathoInputBase value) {
+  @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
     var mapped = map(value);
     if (mapped == null) return null;
 

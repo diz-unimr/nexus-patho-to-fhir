@@ -3,8 +3,8 @@ package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
-import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoReportInputBase;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.util.ArrayList;
@@ -35,21 +35,19 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
   }
 
   @Override
-  public Observation map(PathoInputBase inputBase) {
+  public Observation map(PathoReportInputBase inputBase) {
     log.debug("creating DiagnosticConclusionGrouper from patho-guid '{}'", inputBase.getUUID());
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
     var pathoFindingGrouper = super.mapBaseGrouper(input);
 
     // Add identifier
+    // Add identifier
     pathoFindingGrouper.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER,
-            fhirProperties.getSystems().getDiagnosticFindingId(),
-            "",
-            input.getBefundtyp(),
-            input.getBefundID()));
+            fhirProperties.getSystems().getPathoFindingGrouperDigConcId()));
 
     // Add Meta: source, profile
     pathoFindingGrouper.setMeta(
@@ -63,15 +61,14 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
     // Add hasMember
     // TODO: For multiple PathoFindings
     ArrayList<Reference> hasMembers = new ArrayList<>();
+    int pathoFindingNumber = 1;
     Identifier identifierPathoFinding =
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.PATHO_FINDING,
-            fhirProperties.getSystems().getDiagnosticFindingId(),
+            fhirProperties.getSystems().getPathoFindingDiagConcId(),
             "",
-            input.getBefundtyp(),
-            input.getBefundID(),
-            "DIAGNOSE_CONCLUSION");
+            String.valueOf(pathoFindingNumber));
     hasMembers.add(
         IdentifierAndReferenceUtil.getReferenceTo("Observation", identifierPathoFinding));
     pathoFindingGrouper.setHasMember(hasMembers);
@@ -84,20 +81,15 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
-            fhirProperties.getSystems().getDiagnosticFindingId(),
-            "",
-            input.getBefundtyp(),
-            input.getBefundID());
+            fhirProperties.getSystems().getPathoFindingGrouperMacroId());
 
     // Add microscopic-grouper
     Identifier idPathoFindingGrouperMicro =
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
-            fhirProperties.getSystems().getDiagnosticFindingId(),
-            "",
-            input.getBefundtyp(),
-            input.getBefundID());
+            fhirProperties.getSystems().getPathoFindingGrouperMicroId());
+
     derievedFrom.add(
         IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMacro));
     derievedFrom.add(
@@ -115,7 +107,7 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
   }
 
   @Override
-  @Nullable public Bundle.BundleEntryComponent apply(PathoInputBase value) {
+  @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
     var mapped = map(value);
     if (mapped == null) return null;
 

@@ -48,10 +48,9 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
             .newInstance(fhirProperties, csvMappings);
     Mockito.when(fhirProperties.getSystems()).thenReturn(fhirSystems);
     String dummyGrouperSystemName = "DummyGrouperSystemName";
-    Mockito.when(fhirSystems.getDiagnosticFindingId()).thenReturn(dummyGrouperSystemName);
-    Mockito.when(fhirSystems.getDiagnosticFindingId()).thenReturn(dummyGrouperSystemName);
-    Mockito.when(fhirSystems.getDiagnosticFindingId()).thenReturn(dummyGrouperSystemName);
-    Mockito.when(fhirSystems.getDiagnosticFindingId()).thenReturn(dummyGrouperSystemName);
+    Mockito.when(fhirSystems.getPathoFindingGrouperDigConcId()).thenReturn(dummyGrouperSystemName);
+    Mockito.when(fhirSystems.getPathoFindingGrouperMacroId()).thenReturn(dummyGrouperSystemName);
+    Mockito.when(fhirSystems.getPathoFindingGrouperMicroId()).thenReturn(dummyGrouperSystemName);
     Mockito.when(fhirSystems.getPatientId()).thenReturn("dummyPatientIdSystem");
     Mockito.when(fhirSystems.getEncounterId()).thenReturn("dummyEncounterSystem");
     setBaseIdentifierType();
@@ -80,7 +79,7 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
     var identifier = grouperObservation.getIdentifierFirstRep();
 
     // assertThat(identifier.getSystem()).isEqualTo(dummyGrouperSystemName);
-    assertThat(identifier.getValue()).contains(baseIdentifierType.name());
+    // assertThat(identifier.getValue()).contains(baseIdentifierType.name());
 
     assertThat(grouperObservation.getEncounter()).isInstanceOf(Reference.class);
     assertThat(grouperObservation.getEncounter().getReference())

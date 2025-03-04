@@ -1,7 +1,7 @@
 /* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
 package de.unimarburg.diz.nexuspathotofhir.util;
 
-import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoReportInputBase;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.util.StringUtils;
 
@@ -18,31 +18,35 @@ public class IdentifierAndReferenceUtil {
    * @return identifier string
    */
   public static String getPathoIdentifierValue(
-      PathoInputBase inputBase, PathologyIdentifierResourceType identType, String[] args) {
+      PathoReportInputBase inputBase, PathologyIdentifierResourceType identType, String[] args) {
     if (identType == null) throw new IllegalArgumentException("identType was null");
     if (inputBase == null) throw new IllegalArgumentException("inputBase was null");
     if (!StringUtils.hasText(inputBase.getAuftragsnummer()))
       throw new IllegalArgumentException("inputBase.Auftragnummer was null");
-
     var builder = new StringBuilder();
-
     if (identType == PathologyIdentifierResourceType.PATIENT) {
       return inputBase.getPatientennummer();
     } else if (identType == PathologyIdentifierResourceType.SERVICE_REQUEST) {
       return inputBase.getAuftragsnummer();
-    } else {
-      builder.append(inputBase.getFallnummer());
-      builder.append("-");
+    } else if (identType == PathologyIdentifierResourceType.DIAGNOSTIC_REPORT) {
+      return inputBase.getAuftragsnummer();
+    } else if (identType == PathologyIdentifierResourceType.MICROSCOPIC_GROUPER
+        || identType == PathologyIdentifierResourceType.MACROSCOPIC_GROUPER
+        || identType == PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER) {
       builder.append(inputBase.getAuftragsnummer());
       builder.append("-");
-      builder.append(identType.name());
+      builder.append(inputBase.getBefundtyp());
+    } else if (identType == PathologyIdentifierResourceType.PATHO_FINDING) {
+      builder.append(inputBase.getBefundID());
+      builder.append("-");
+      builder.append(inputBase.getBefundtyp());
     }
     if (args != null && args.length > 0) builder.append(String.join("-", args));
     return builder.toString();
   }
 
   public static Identifier getIdentifier(
-      PathoInputBase inputBase,
+      PathoReportInputBase inputBase,
       PathologyIdentifierResourceType identType,
       String system,
       String... args) {
@@ -52,7 +56,7 @@ public class IdentifierAndReferenceUtil {
   }
 
   public static Identifier getIdentifierWithType(
-      PathoInputBase inputBase,
+      PathoReportInputBase inputBase,
       PathologyIdentifierType pathologyIdentifierType,
       PathologyIdentifierResourceType identType,
       String system,
@@ -89,7 +93,7 @@ public class IdentifierAndReferenceUtil {
   }
 
   public static Identifier getIdentifier(
-      PathoInputBase inputBase, PathologyIdentifierResourceType identType, String system) {
+      PathoReportInputBase inputBase, PathologyIdentifierResourceType identType, String system) {
     return new Identifier()
         .setSystem(system)
         .setValue(getPathoIdentifierValue(inputBase, identType, null));

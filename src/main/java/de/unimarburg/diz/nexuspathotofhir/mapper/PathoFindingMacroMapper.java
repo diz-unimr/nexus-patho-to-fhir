@@ -3,8 +3,8 @@ package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
-import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoReportInputBase;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.util.*;
@@ -24,21 +24,20 @@ public class PathoFindingMacroMapper extends ToFhirMapper {
   }
 
   @Override
-  public Observation map(PathoInputBase inputBase) {
+  public Observation map(PathoReportInputBase inputBase) {
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
     var pathoFinding = super.mapBasePathoFinding(input);
     // Add identifier
+    // TODO: This should be fixed when the mapping of patho text will be done
+    int pathoFindingNumber = 1;
     pathoFinding.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.PATHO_FINDING,
-            fhirProperties.getSystems().getDiagnosticFindingId(),
+            fhirProperties.getSystems().getPathoFindingMacroId(),
             "",
-            input.getBefundtyp(),
-            input.getBefundID(),
-            "MACRO"));
-
+            String.valueOf(pathoFindingNumber)));
     // Category
     pathoFinding.setCategory(
         List.of(
@@ -61,7 +60,7 @@ public class PathoFindingMacroMapper extends ToFhirMapper {
   }
 
   @Override
-  @Nullable public Bundle.BundleEntryComponent apply(PathoInputBase value) {
+  @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
     var mapped = map(value);
     if (mapped == null) return null;
     final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();

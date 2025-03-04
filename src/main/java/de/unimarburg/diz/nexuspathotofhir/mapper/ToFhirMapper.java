@@ -3,8 +3,8 @@ package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
-import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoReportInputBase;
 import de.unimarburg.diz.nexuspathotofhir.util.DecideStatusOfBefund;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 public abstract class ToFhirMapper
-    implements ValueMapper<PathoInputBase, Bundle.BundleEntryComponent> {
+    implements ValueMapper<PathoReportInputBase, Bundle.BundleEntryComponent> {
   private final Logger log = LoggerFactory.getLogger(ToFhirMapper.class);
 
   protected static final String META_SOURCE = "#nexus-pathology";
@@ -35,7 +35,7 @@ public abstract class ToFhirMapper
     this.csvMappings = csvMappings;
   }
 
-  public abstract Resource map(PathoInputBase input);
+  public abstract Resource map(PathoReportInputBase input);
 
   // PathoFinding Grouper
   public Observation mapBaseGrouper(PathoReport input) {
@@ -61,16 +61,23 @@ public abstract class ToFhirMapper
     observationGrouper.setBasedOn(basedOnRef);
 
     // EffectiveDate
-    if (input.getAuftragsnummer() != null) {
+    if (input.getProbeEntnahmedatum() != null) {
       Date probeEntnahmeDatum = new Date(input.getProbeEntnahmedatum());
       observationGrouper.setEffective(new DateTimeType().setValue(probeEntnahmeDatum));
     } else {
       throw new IllegalArgumentException("probeEntnahmedatum is null");
     }
 
+    // Report Issued Date
+    if (input.getBefundErstellungsdatum() != null) {
+      Date probeEntnahmeDatum = new Date(input.getBefundErstellungsdatum());
+      observationGrouper.setIssued(probeEntnahmeDatum);
+    } else {
+      throw new IllegalArgumentException("Befunderstellungsdatum is null");
+    }
+
     // Status
     DecideStatusOfBefund.setFindingStatus(observationGrouper, input.getDocType());
-    // Specimen
 
     return observationGrouper;
   }
@@ -101,6 +108,13 @@ public abstract class ToFhirMapper
     // EffectiveDate
     Date probeEinnahmeDatum = new Date(input.getProbeEntnahmedatum());
     observationFinding.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
+
+    if (input.getBefundErstellungsdatum() != null) {
+      Date probeEntnahmeDatum = new Date(input.getBefundErstellungsdatum());
+      observationFinding.setIssued(probeEntnahmeDatum);
+    } else {
+      throw new IllegalArgumentException("Befunderstellungsdatum is null");
+    }
 
     // ServiceRequestIdentifier
     ArrayList<Reference> basedOnRef = new ArrayList<>();
@@ -152,7 +166,7 @@ public abstract class ToFhirMapper
     }
   }
 
-  public abstract Bundle.BundleEntryComponent apply(PathoInputBase input);
+  public abstract Bundle.BundleEntryComponent apply(PathoReportInputBase input);
 
   protected Bundle.BundleEntryRequestComponent buildPutRequest(
       Resource resource, String identifierSystem) {

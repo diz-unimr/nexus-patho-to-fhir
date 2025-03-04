@@ -23,7 +23,7 @@ public class PathologyReportProcessor extends BaseProcessor {
   }
 
   public Bundle processReport(PathoReport report) {
-    return getBasicBundle(report)
+    return getBasicBundle2(report)
         .setEntry(toFhirMappers.parallelStream().map(a -> a.apply(report)).toList());
   }
 

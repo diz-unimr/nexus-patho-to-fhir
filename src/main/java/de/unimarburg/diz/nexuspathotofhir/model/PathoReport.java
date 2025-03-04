@@ -8,7 +8,7 @@ import lombok.Data;
 import org.springframework.util.StringUtils;
 
 @Data
-public class PathoReport implements PathoInputBase {
+public class PathoReport implements PathoReportInputBase {
 
   /** incremental number for this object instance to allow order */
   @JsonProperty("befundID")

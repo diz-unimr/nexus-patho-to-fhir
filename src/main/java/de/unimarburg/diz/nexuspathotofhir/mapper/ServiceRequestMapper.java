@@ -3,8 +3,8 @@ package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
-import de.unimarburg.diz.nexuspathotofhir.model.PathoInputBase;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
+import de.unimarburg.diz.nexuspathotofhir.model.PathoReportInputBase;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierType;
@@ -28,7 +28,7 @@ public class ServiceRequestMapper extends ToFhirMapper {
   }
 
   @Override
-  public ServiceRequest map(PathoInputBase inputBase) {
+  public ServiceRequest map(PathoReportInputBase inputBase) {
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
 
@@ -118,7 +118,7 @@ public class ServiceRequestMapper extends ToFhirMapper {
   }
 
   @Override
-  @Nullable public Bundle.BundleEntryComponent apply(PathoInputBase value) {
+  @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
     var mapped = map(value);
     if (mapped == null) return null;
 
