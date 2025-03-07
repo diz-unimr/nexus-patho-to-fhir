@@ -27,7 +27,6 @@ public class ServiceRequestMapper extends ToFhirMapper {
     super(fhirProperties, csvMappings);
   }
 
-  @Override
   public ServiceRequest map(PathoReportInputBase inputBase) {
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
@@ -117,7 +116,6 @@ public class ServiceRequestMapper extends ToFhirMapper {
     return serviceRequest;
   }
 
-  @Override
   @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
     var mapped = map(value);
     if (mapped == null) return null;

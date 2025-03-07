@@ -23,7 +23,7 @@ public class BaseProcessor {
             .setMeta(new Meta().setSource("#nexus-pathology"));
   }
 
-  protected static Bundle getBasicBundle2(PathoReportInputBase report) {
+  protected static Bundle getBasicBundleReport(PathoReportInputBase report) {
 
     var hash =
         Hashing.farmHashFingerprint64()

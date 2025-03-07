@@ -24,12 +24,12 @@ public class MacroscopicGrouperMapper extends ToFhirMapper {
     super(fhirProperties, csvMappings);
   }
 
-  @Override
-  public Observation map(PathoReportInputBase inputBase) {
+  public Observation map(
+      PathoReportInputBase inputBase, ArrayList<String> identifiers, String idSystem) {
     log.debug("creating MacroscopicGrouper from patho-guid '{}'", inputBase.getUUID());
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
-    var pathoFindingGrouper = super.mapBaseGrouper(input);
+    Observation pathoFindingGrouper = super.mapBaseGrouper(input, identifiers, idSystem);
 
     // Add identifier
     pathoFindingGrouper.addIdentifier(
@@ -41,7 +41,7 @@ public class MacroscopicGrouperMapper extends ToFhirMapper {
     // Add Meta: source, profile
     pathoFindingGrouper.setMeta(
         new Meta()
-            .setSource(META_SOURCE)
+            .setSource("")
             .setProfile(
                 List.of(
                     new CanonicalType(
@@ -49,26 +49,16 @@ public class MacroscopicGrouperMapper extends ToFhirMapper {
 
     // Add hasMember
     // TODO: For multiple PathoFindings
-    ArrayList<Reference> hasMembers = new ArrayList<>();
-    int pathoFindingNumber = 1;
-    Identifier identifier =
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierResourceType.PATHO_FINDING,
-            fhirProperties.getSystems().getPathoFindingMacroId(),
-            "",
-            String.valueOf(pathoFindingNumber));
-    hasMembers.add(IdentifierAndReferenceUtil.getReferenceTo("Observation", identifier));
-    pathoFindingGrouper.setHasMember(hasMembers);
 
     // Add ValueString
     pathoFindingGrouper.getValueStringType().setValueAsString(input.getMakroskopischerBefund());
+
     return pathoFindingGrouper;
   }
 
-  @Override
-  @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
-    var mapped = map(value);
+  @Nullable public Bundle.BundleEntryComponent apply(
+      PathoReportInputBase value, ArrayList<String> identifiers, String idSystem) {
+    var mapped = map(value, identifiers, idSystem);
     if (mapped == null) return null;
 
     final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();

@@ -34,12 +34,12 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
     super(fhirProperties, csvMappings);
   }
 
-  @Override
-  public Observation map(PathoReportInputBase inputBase) {
+  public Observation map(
+      PathoReportInputBase inputBase, ArrayList<String> identifiers, String idSystems) {
     log.debug("creating DiagnosticConclusionGrouper from patho-guid '{}'", inputBase.getUUID());
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
-    var pathoFindingGrouper = super.mapBaseGrouper(input);
+    var pathoFindingGrouper = super.mapBaseGrouper(input, identifiers, idSystems);
 
     // Add identifier
     // Add identifier
@@ -58,24 +58,8 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
                     new CanonicalType(
                         "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-diagnostic-conclusion-grouper"))));
 
-    // Add hasMember
-    // TODO: For multiple PathoFindings
-    ArrayList<Reference> hasMembers = new ArrayList<>();
-    int pathoFindingNumber = 1;
-    Identifier identifierPathoFinding =
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierResourceType.PATHO_FINDING,
-            fhirProperties.getSystems().getPathoFindingDiagConcId(),
-            "",
-            String.valueOf(pathoFindingNumber));
-    hasMembers.add(
-        IdentifierAndReferenceUtil.getReferenceTo("Observation", identifierPathoFinding));
-    pathoFindingGrouper.setHasMember(hasMembers);
-
     // Add derivedFrom
     ArrayList<Reference> derievedFrom = new ArrayList<>();
-
     // Add macroscopic-grouper
     Identifier idPathoFindingGrouperMacro =
         IdentifierAndReferenceUtil.getIdentifier(
@@ -89,26 +73,19 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
             input,
             PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
             fhirProperties.getSystems().getPathoFindingGrouperMicroId());
-
     derievedFrom.add(
         IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMacro));
     derievedFrom.add(
         IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMicro));
     pathoFindingGrouper.setDerivedFrom(derievedFrom);
-
     // Add ValueString
     pathoFindingGrouper.getValueStringType().setValueAsString(input.getDiagnoseConclusion());
     return pathoFindingGrouper;
   }
 
-  protected boolean hasDiagnosticConclusionData(PathoReport input) {
-    // FIXME: implement
-    return true;
-  }
-
-  @Override
-  @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
-    var mapped = map(value);
+  @Nullable public Bundle.BundleEntryComponent apply(
+      PathoReportInputBase value, ArrayList<String> identifiers, String idSystems) {
+    var mapped = map(value, identifiers, idSystems);
     if (mapped == null) return null;
 
     final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();

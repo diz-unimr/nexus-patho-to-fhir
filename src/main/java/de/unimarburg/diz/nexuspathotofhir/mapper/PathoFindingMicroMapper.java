@@ -5,8 +5,6 @@ import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReportInputBase;
-import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.util.*;
 import org.hl7.fhir.r4.model.*;
 import org.jetbrains.annotations.NotNull;
@@ -23,24 +21,12 @@ public class PathoFindingMicroMapper extends ToFhirMapper {
     super(fhirProperties, csvMappings);
   }
 
-  @Override
-  public Observation map(PathoReportInputBase inputBase) {
+  public Observation map(
+      PathoReportInputBase inputBase, String id, String idSystem, String code, String value) {
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
 
-    var pathoFinding = super.mapBasePathoFinding(input);
-    // Add identifier
-    // Serialnumber of the patho-finding
-    // TODO: This should be fixed when the mapping of patho text will be done
-    int pathoFindingNumber = 1;
-    pathoFinding.addIdentifier(
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierResourceType.PATHO_FINDING,
-            fhirProperties.getSystems().getPathoFindingMicroId(),
-            "",
-            String.valueOf(pathoFindingNumber)));
-
+    var pathoFinding = super.mapBasePathoFinding(input, id, idSystem, code, value);
     // CodeCategory
     pathoFinding.setCategory(
         List.of(
@@ -55,19 +41,12 @@ public class PathoFindingMicroMapper extends ToFhirMapper {
                 .setCoding(
                     List.of(new Coding().setCode("22635-7").setSystem("http://loinc.org")))));
 
-    // This is set for only one sample
-    // Todo for multiple specimen
-    // Add valueString
-    // For first version add the valueString but according to the patho type
-    // Add value String
-    pathoFinding.getValueStringType().setValueAsString(input.getMikroskopischerBefund());
-    // status
     return pathoFinding;
   }
 
-  @Override
-  @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
-    var mapped = map(value);
+  @Nullable public Bundle.BundleEntryComponent apply(
+      PathoReportInputBase value, String id, String idSystem, String code, String stringValue) {
+    var mapped = map(value, id, idSystem, code, stringValue);
     if (mapped == null) return null;
 
     final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();

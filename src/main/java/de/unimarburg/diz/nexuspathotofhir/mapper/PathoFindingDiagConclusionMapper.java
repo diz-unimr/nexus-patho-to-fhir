@@ -5,8 +5,6 @@ import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReportInputBase;
-import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
-import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.util.*;
 import org.hl7.fhir.r4.model.*;
 import org.jetbrains.annotations.NotNull;
@@ -23,23 +21,12 @@ public class PathoFindingDiagConclusionMapper extends ToFhirMapper {
     super(fhirProperties, csvMappings);
   }
 
-  @Override
-  public Observation map(PathoReportInputBase inputBase) {
+  public Observation map(
+      PathoReportInputBase inputBase, String id, String idSystem, String code, String stringValue) {
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
-    var pathoFinding = super.mapBasePathoFinding(input);
-    // Add identifier TODO: For multiple observations
-    // Add identifier
+    var pathoFinding = super.mapBasePathoFinding(input, id, idSystem, code, stringValue);
     // TODO: This should be fixed when the mapping of patho text will be done
-    int pathoFindingNumber = 1;
-    pathoFinding.addIdentifier(
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierResourceType.PATHO_FINDING,
-            fhirProperties.getSystems().getPathoFindingDiagConcId(),
-            "",
-            String.valueOf(pathoFindingNumber)));
-
     // CategoryCode
     pathoFinding.setCategory(
         List.of(
@@ -53,27 +40,17 @@ public class PathoFindingDiagConclusionMapper extends ToFhirMapper {
             new CodeableConcept()
                 .setCoding(
                     List.of(new Coding().setCode("22637-3").setSystem("http://loinc.org")))));
-
-    // valueCodeableConcept (TODO) SNOMED CODE for the diagnose
-    /*      pathoFinding
-    .getValueCodeableConcept()
-    .setCoding(
-        List.of(
-            new Coding()
-                .setCode("716917000")
-                .setSystem("http://snomed.info/sct")
-                .setDisplay(
-                    "Structure of lateral middle regional part of peripheral zone of right half prostate (body structure)")));*/
-    // For first version add the valueString but according to the patho type
-
-    // Add valueString
-    pathoFinding.getValueStringType().setValueAsString(input.getDiagnoseConclusion());
+    // Identifier
+    Identifier identifier = new Identifier();
+    identifier.setSystem(fhirProperties.getSystems().getPathoFindingMicroId());
+    identifier.setValue(id);
+    pathoFinding.addIdentifier(identifier);
     return pathoFinding;
   }
 
-  @Override
-  @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
-    var mapped = map(value);
+  @Nullable public Bundle.BundleEntryComponent apply(
+      PathoReportInputBase value, String id, String idSystem, String code, String stringValue) {
+    var mapped = map(value, id, idSystem, code, stringValue);
     if (mapped == null) return null;
 
     final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();

@@ -48,7 +48,7 @@ fhir:
     specimenContainer: ${PATHO_SPECIMEN_CONTAINER:https://your-local-system/pathology/specimenContainer}
     specimenId: ${PATHO_SPECIMEN_ID:https://your-local-system/pathology/specimenId}
     pathoFindingGrouperMicroId: ${PATHO_FINDING_GROUPER_MICRO_ID:https://your-local-system/pathology/patho-finding-grouper-micro-id}
-    pathoFindingGrouperMacroId: ${PATHO_FINDING_GROUPER_MACRO_ID:https://your-local-system/pathology/patho-finding-grouper-micro-id}
+    pathoFindingGrouperMacroId: ${PATHO_FINDING_GROUPER_MACRO_ID:https://your-local-system/pathology/patho-finding-grouper-macro-id}
     pathoFindingGrouperDigConcId: ${PATHO_FINDING_GROUPER_DIAG_CONC_ID:https://your-local-system/pathology/patho-finding-grouper-diag-conc-id}
     pathoFindingMicroId: ${PATHO_FINDING_MICRO_ID:https://your-local-system/pathology/patho-finding-micro-id}
     pathoFindingMacroId: ${PATHO_FINDING_Macro_ID:https://your-local-system/pathology/patho-finding-macro-id}

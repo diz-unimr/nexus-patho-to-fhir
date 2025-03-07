@@ -18,4 +18,10 @@ public interface PathoReportInputBase extends Serializable {
   String getUUID();
 
   String getBefundtyp();
+
+  String getMikroskopischerBefund();
+
+  String getMakroskopischerBefund();
+
+  String getDiagnoseConclusion();
 }

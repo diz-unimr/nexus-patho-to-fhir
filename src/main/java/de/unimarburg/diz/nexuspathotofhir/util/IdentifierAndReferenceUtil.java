@@ -35,11 +35,8 @@ public class IdentifierAndReferenceUtil {
         || identType == PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER) {
       builder.append(inputBase.getAuftragsnummer());
       builder.append("-");
-      builder.append(inputBase.getBefundtyp());
+      builder.append(inputBase.getBefundtyp().replaceAll("\\s+", ""));
     } else if (identType == PathologyIdentifierResourceType.PATHO_FINDING) {
-      builder.append(inputBase.getBefundID());
-      builder.append("-");
-      builder.append(inputBase.getBefundtyp());
     }
     if (args != null && args.length > 0) builder.append(String.join("-", args));
     return builder.toString();

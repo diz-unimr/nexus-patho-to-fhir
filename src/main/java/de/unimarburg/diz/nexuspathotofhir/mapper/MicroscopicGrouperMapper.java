@@ -24,13 +24,13 @@ public class MicroscopicGrouperMapper extends ToFhirMapper {
     super(fhirProperties, csvMappings);
   }
 
-  @Override
-  public Observation map(PathoReportInputBase inputBase) {
+  public Observation map(
+      PathoReportInputBase inputBase, ArrayList<String> identifiers, String idSystem) {
     log.debug("creating MicroscopicGrouper from patho-guid '{}'", inputBase.getUUID());
     if (!(inputBase instanceof PathoReport input))
       throw new IllegalArgumentException("input must be a PathoReport");
 
-    var pathoFindingGrouper = super.mapBaseGrouper(input);
+    var pathoFindingGrouper = super.mapBaseGrouper(input, identifiers, idSystem);
 
     // identifier
     pathoFindingGrouper.addIdentifier(
@@ -47,30 +47,14 @@ public class MicroscopicGrouperMapper extends ToFhirMapper {
                 List.of(
                     new CanonicalType(
                         "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-microscopic-grouper"))));
-
-    // Add hasMember
-    // TODO: For multiple PathoFindings
-    ArrayList<Reference> hasMembers = new ArrayList<>();
-    // TODO: Fix it for multiple pathoFinding
-    int pathoFindingNumber = 1;
-    Identifier identifier =
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierResourceType.PATHO_FINDING,
-            fhirProperties.getSystems().getPathoFindingMicroId(),
-            "",
-            String.valueOf(pathoFindingNumber));
-    hasMembers.add(IdentifierAndReferenceUtil.getReferenceTo("Observation", identifier));
-    pathoFindingGrouper.setHasMember(hasMembers);
-
     // Add ValueString
     pathoFindingGrouper.getValueStringType().setValueAsString(input.getMikroskopischerBefund());
     return pathoFindingGrouper;
   }
 
-  @Override
-  @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
-    var mapped = map(value);
+  @Nullable public Bundle.BundleEntryComponent apply(
+      PathoReportInputBase value, ArrayList<String> identifiers, String idSystem) {
+    var mapped = map(value, identifiers, idSystem);
     if (mapped == null) return null;
 
     final Identifier identifierFirstRep = mapped.getIdentifierFirstRep();

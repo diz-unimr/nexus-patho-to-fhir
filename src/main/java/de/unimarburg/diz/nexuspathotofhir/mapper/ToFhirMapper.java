@@ -4,22 +4,20 @@ package de.unimarburg.diz.nexuspathotofhir.mapper;
 import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
-import de.unimarburg.diz.nexuspathotofhir.model.PathoReportInputBase;
 import de.unimarburg.diz.nexuspathotofhir.util.DecideStatusOfBefund;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import org.apache.kafka.streams.kstream.ValueMapper;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-public abstract class ToFhirMapper
-    implements ValueMapper<PathoReportInputBase, Bundle.BundleEntryComponent> {
+public abstract class ToFhirMapper {
+
   private final Logger log = LoggerFactory.getLogger(ToFhirMapper.class);
 
   protected static final String META_SOURCE = "#nexus-pathology";
@@ -35,21 +33,23 @@ public abstract class ToFhirMapper
     this.csvMappings = csvMappings;
   }
 
-  public abstract Resource map(PathoReportInputBase input);
-
   // PathoFinding Grouper
-  public Observation mapBaseGrouper(PathoReport input) {
+  public Observation mapBaseGrouper(
+      PathoReport input, ArrayList<String> refPathoFiningIds, String idSystems) {
     if (input == null) return null;
     final Observation observationGrouper = new Observation();
     // Encounter
     observationGrouper.setEncounter(
         IdentifierAndReferenceUtil.getReferenceTo(
-            "Encounter", input.getFallnummer(), fhirProperties.getSystems().getEncounterId()));
-
+            "Encounter",
+            input.getFallnummer().trim(),
+            fhirProperties.getSystems().getEncounterId()));
     // Patient
     observationGrouper.setSubject(
         IdentifierAndReferenceUtil.getReferenceTo(
-            "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
+            "Patient",
+            input.getPatientennummer().trim(),
+            fhirProperties.getSystems().getPatientId()));
 
     // ServiceRequestIdentifier
     ArrayList<Reference> basedOnRef = new ArrayList<>();
@@ -59,7 +59,6 @@ public abstract class ToFhirMapper
             input.getAuftragsnummer(),
             fhirProperties.getSystems().getServiceRequestId()));
     observationGrouper.setBasedOn(basedOnRef);
-
     // EffectiveDate
     if (input.getProbeEntnahmedatum() != null) {
       Date probeEntnahmeDatum = new Date(input.getProbeEntnahmedatum());
@@ -67,7 +66,6 @@ public abstract class ToFhirMapper
     } else {
       throw new IllegalArgumentException("probeEntnahmedatum is null");
     }
-
     // Report Issued Date
     if (input.getBefundErstellungsdatum() != null) {
       Date probeEntnahmeDatum = new Date(input.getBefundErstellungsdatum());
@@ -75,28 +73,44 @@ public abstract class ToFhirMapper
     } else {
       throw new IllegalArgumentException("Befunderstellungsdatum is null");
     }
-
     // Status
     DecideStatusOfBefund.setFindingStatus(observationGrouper, input.getDocType());
-
+    ArrayList<Reference> hasMembers = new ArrayList<>();
+    for (String id : refPathoFiningIds) {
+      Identifier identifier = new Identifier();
+      identifier.setValue(id);
+      identifier.setSystem(idSystems);
+      hasMembers.add(IdentifierAndReferenceUtil.getReferenceTo("Observation", identifier));
+    }
+    observationGrouper.setHasMember(hasMembers);
     return observationGrouper;
   }
 
   // PathoFinding
-  public Observation mapBasePathoFinding(PathoReport input) {
+  public Observation mapBasePathoFinding(
+      PathoReport input, String id, String idSystem, String code, String value) {
     if (input == null) return null;
     if (csvMappings.specimenTypes() == null || csvMappings.specimenTypes().isEmpty())
       // throw new RuntimeException("specimentTypes mapping is missing");
       log.error("specimentTypes mapping is missing");
     final Observation observationFinding = new Observation();
+    // Identifier
+    Identifier identifier = new Identifier();
+    identifier.setSystem(idSystem);
+    identifier.setValue(id);
+    observationFinding.addIdentifier(identifier);
     // Encounter
     observationFinding.setEncounter(
         IdentifierAndReferenceUtil.getReferenceTo(
-            "Encounter", input.getFallnummer(), fhirProperties.getSystems().getEncounterId()));
+            "Encounter",
+            input.getFallnummer().trim(),
+            fhirProperties.getSystems().getEncounterId()));
     // Subject/Patient
     observationFinding.setSubject(
         IdentifierAndReferenceUtil.getReferenceTo(
-            "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
+            "Patient",
+            input.getPatientennummer().trim(),
+            fhirProperties.getSystems().getPatientId()));
     // Metadata: Profile and Source
     observationFinding.setMeta(
         new Meta()
@@ -108,14 +122,12 @@ public abstract class ToFhirMapper
     // EffectiveDate
     Date probeEinnahmeDatum = new Date(input.getProbeEntnahmedatum());
     observationFinding.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
-
     if (input.getBefundErstellungsdatum() != null) {
       Date probeEntnahmeDatum = new Date(input.getBefundErstellungsdatum());
       observationFinding.setIssued(probeEntnahmeDatum);
     } else {
       throw new IllegalArgumentException("Befunderstellungsdatum is null");
     }
-
     // ServiceRequestIdentifier
     ArrayList<Reference> basedOnRef = new ArrayList<>();
     basedOnRef.add(
@@ -124,12 +136,15 @@ public abstract class ToFhirMapper
             input.getAuftragsnummer(),
             fhirProperties.getSystems().getServiceRequestId()));
     observationFinding.setBasedOn(basedOnRef);
-
     //
     mapProbeNameToCode(observationFinding, input);
-
     // status
     DecideStatusOfBefund.setFindingStatus(observationFinding, input.getDocType());
+    // CodeFinding
+    ArrayList<Coding> coding = new ArrayList<>();
+    coding.add(new Coding().setCode(code).setSystem("http://loinc.org"));
+    observationFinding.setCode(new CodeableConcept().setCoding(coding));
+    observationFinding.getValueStringType().setValueAsString(value);
 
     return observationFinding;
   }
@@ -166,8 +181,6 @@ public abstract class ToFhirMapper
     }
   }
 
-  public abstract Bundle.BundleEntryComponent apply(PathoReportInputBase input);
-
   protected Bundle.BundleEntryRequestComponent buildPutRequest(
       Resource resource, String identifierSystem) {
     var request = new Bundle.BundleEntryRequestComponent();
@@ -179,4 +192,18 @@ public abstract class ToFhirMapper
                 "%s?identifier=%s|%s",
                 resource.getResourceType().name(), identifierSystem, resource.getId()));
   }
+
+  protected Bundle.BundleEntryRequestComponent buildPatchRequest(
+      Resource resource, String identifierSystem) {
+    var request = new Bundle.BundleEntryRequestComponent();
+    return request
+        .setMethod(Bundle.HTTPVerb.PATCH)
+        .setUrl(resource.getResourceType().name())
+        .setIfMatch(
+            String.format(
+                "%s?identifier=%s|%s",
+                resource.getResourceType().name(), identifierSystem, resource.getId()));
+  }
+
+  public void mapBaseGrouper(PathoReport pathoReport) {}
 }
