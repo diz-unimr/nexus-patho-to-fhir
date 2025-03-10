@@ -7,8 +7,12 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
 import de.unimarburg.diz.nexuspathotofhir.configuration.FhirProperties;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
+import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtilTest;
+import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import org.hl7.fhir.r4.model.Reference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -21,13 +25,12 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
   @Mock public FhirProperties fhirProperties;
   @Mock public CsvMappings csvMappings;
   @Mock public FhirProperties.FhirSystems fhirSystems = new FhirProperties.FhirSystems();
-  protected T fixture;
+  private T fixture;
 
   public BasePathoGrouperMapperTest(Class<T> fixtureClass) {
     this.fixtureClass = fixtureClass;
   }
 
-  /** must set target PathologyIdentifierType */
   public abstract void setBaseIdentifierType();
 
   @BeforeEach
@@ -54,43 +57,45 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
 
   @Test
   void map_empty_is_illegal_argument() {
-
-    Throwable thrown = catchThrowable(() -> fixture.mapBaseGrouper(new PathoReport()));
+    ArrayList<String> refPathoFiningIds = new ArrayList<>();
+    refPathoFiningIds.add("t1");
+    String idSystems = "thisSystem";
+    Throwable thrown =
+        catchThrowable(
+            () -> fixture.mapBaseGrouper(new PathoReport(), refPathoFiningIds, idSystems));
     assertThat(thrown)
         .as("invalid input will not be accepted")
         .isInstanceOf(IllegalArgumentException.class);
   }
-}
 
-  /*@Test
-    void map_minimal() {
-      final PathoReport input = DummyDataUtilTest.getDummyReport();
-      System.out.println(input);
+  @Test
+  void map_minimal() {
+    final PathoReport input = DummyDataUtilTest.getDummyReport();
+    System.out.println(input);
+    ArrayList<String> refPathoFiningIds = new ArrayList<>();
+    refPathoFiningIds.add("t1");
+    String idSystems = "thisSystem";
 
-      var result = fixture.map(input);
+    var result = fixture.mapBaseGrouper(input, refPathoFiningIds, idSystems);
 
-      assertThat(result).isNotNull();
-      assertThat(result.fhirType()).isEqualTo("Observation");
+    assertThat(result).isNotNull();
+    assertThat(result.fhirType()).isEqualTo("Observation");
 
-      final Observation grouperObservation = (Observation) result;
-      var identifier = grouperObservation.getIdentifierFirstRep();
+    // assertThat(identifier.getSystem()).isEqualTo(dummyGrouperSystemName);
+    // assertThat(identifier.getValue()).contains(baseIdentifierType.name());
 
-      // assertThat(identifier.getSystem()).isEqualTo(dummyGrouperSystemName);
-      // assertThat(identifier.getValue()).contains(baseIdentifierType.name());
+    assertThat(result.getEncounter()).isInstanceOf(Reference.class);
+    assertThat(result.getEncounter().getReference())
+        .isEqualTo(
+            IdentifierAndReferenceUtil.getReferenceTo(
+                    "Encounter", input.getFallnummer(), "dummyEncounterSystem")
+                .getReference());
 
-      assertThat(grouperObservation.getEncounter()).isInstanceOf(Reference.class);
-      assertThat(grouperObservation.getEncounter().getReference())
-          .isEqualTo(
-              IdentifierAndReferenceUtil.getReferenceTo(
-                      "Encounter", input.getFallnummer(), "dummyEncounterSystem")
-                  .getReference());
-
-      assertThat(grouperObservation.getSubject()).isInstanceOf(Reference.class);
-      assertThat(grouperObservation.getSubject().getReference())
-          .isEqualTo(
-              IdentifierAndReferenceUtil.getReferenceTo(
-                      "Patient", input.getPatientennummer(), "dummyPatientIdSystem")
-                  .getReference());
-    }
+    assertThat(result.getSubject()).isInstanceOf(Reference.class);
+    assertThat(result.getSubject().getReference())
+        .isEqualTo(
+            IdentifierAndReferenceUtil.getReferenceTo(
+                    "Patient", input.getPatientennummer(), "dummyPatientIdSystem")
+                .getReference());
   }
-  */
+}
