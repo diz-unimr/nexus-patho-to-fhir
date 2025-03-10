@@ -118,6 +118,7 @@ public class DiagnosticReportPatchMapper extends ToFhirMapper {
 
   @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
     var mapped = map(value);
+    var resourceType = "DiagnosticReport";
     if (mapped == null) return null;
     // identifier
 
@@ -126,20 +127,21 @@ public class DiagnosticReportPatchMapper extends ToFhirMapper {
             value,
             PathologyIdentifierResourceType.DIAGNOSTIC_REPORT,
             fhirProperties.getSystems().getDiagnosticReportId());
-    return buildBundleComponent(mapped, identifier);
+    return buildBundleComponent(mapped, identifier, resourceType);
   }
 
   @NotNull protected Bundle.BundleEntryComponent buildBundleComponent(
-      Parameters mapped, Identifier identifierFirstRep) {
+      Parameters mapped, Identifier identifierFirstRep, String resourceType) {
     return new Bundle.BundleEntryComponent()
         .setResource(mapped)
         .setRequest(
             new Bundle.BundleEntryRequestComponent()
                 .setMethod(Bundle.HTTPVerb.PATCH)
-                .setUrl("DiagnosticReport")
-                .setIfMatch(
+                .setUrl(
                     String.format(
-                        "identifier=%s|%s",
-                        identifierFirstRep.getSystem(), identifierFirstRep.getValue())));
+                        "%s?identifier=%s|%s",
+                        resourceType,
+                        identifierFirstRep.getSystem(),
+                        identifierFirstRep.getValue())));
   }
 }

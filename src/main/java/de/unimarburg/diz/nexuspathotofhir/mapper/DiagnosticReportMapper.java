@@ -14,10 +14,15 @@ import java.util.List;
 import org.hl7.fhir.r4.model.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class DiagnosticReportMapper extends ToFhirMapper {
+
+  public static final Logger logger = LoggerFactory.getLogger(DiagnosticReportMapper.class);
 
   public DiagnosticReportMapper(FhirProperties fhirProperties, CsvMappings csvMappings) {
     super(fhirProperties, csvMappings);
@@ -78,36 +83,48 @@ public class DiagnosticReportMapper extends ToFhirMapper {
     // map result (TODO)
 
     ArrayList<Reference> resultRefereces = new ArrayList<>();
-    // Create Reference ID MicroBefundGrouper
-    Identifier idPathoFindingGrouperMicro =
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
-            fhirProperties.getSystems().getPathoFindingGrouperMicroId());
+    if (StringUtils.hasText(inputBase.getMikroskopischerBefund())) {
+
+      // Create Reference ID MicroBefundGrouper
+      Identifier idPathoFindingGrouperMicro =
+          IdentifierAndReferenceUtil.getIdentifier(
+              input,
+              PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
+              fhirProperties.getSystems().getPathoFindingGrouperMicroId());
+      resultRefereces.add(
+          IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMicro));
+    } else {
+      logger.info("Micro text is empty");
+    }
 
     // Create Reference ID MacroBefundGrouper
-    Identifier idPathoFindingGrouperMacro =
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
-            fhirProperties.getSystems().getPathoFindingGrouperMacroId());
+    if (StringUtils.hasText(inputBase.getMakroskopischerBefund())) {
+      Identifier idPathoFindingGrouperMacro =
+          IdentifierAndReferenceUtil.getIdentifier(
+              input,
+              PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
+              fhirProperties.getSystems().getPathoFindingGrouperMacroId());
+      resultRefereces.add(
+          IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMacro));
 
-    // Create Reference ID DiagnoseConclusionGrouper
+    } else {
+      logger.info("Macro text is empty");
+    }
 
-    Identifier idPathoFindingGrouperDiagConclusion =
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER,
-            fhirProperties.getSystems().getPathoFindingGrouperDigConcId());
-
+    if (StringUtils.hasText(inputBase.getDiagnoseConclusion())) {
+      // Create Reference ID DiagnoseConclusionGrouper
+      Identifier idPathoFindingGrouperDiagConclusion =
+          IdentifierAndReferenceUtil.getIdentifier(
+              input,
+              PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER,
+              fhirProperties.getSystems().getPathoFindingGrouperDigConcId());
+      resultRefereces.add(
+          IdentifierAndReferenceUtil.getReferenceTo(
+              "Observation", idPathoFindingGrouperDiagConclusion));
+    } else {
+      logger.info("DiagnosticConclusion report text is empty");
+    }
     // Add each references to result array
-    resultRefereces.add(
-        IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMicro));
-    resultRefereces.add(
-        IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMacro));
-    resultRefereces.add(
-        IdentifierAndReferenceUtil.getReferenceTo(
-            "Observation", idPathoFindingGrouperDiagConclusion));
     diagnosticReport.setResult(resultRefereces);
 
     // map conclusion code

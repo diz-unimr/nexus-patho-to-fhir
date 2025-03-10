@@ -31,7 +31,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
       PathologyReportProcessor.class,
       PathoFhirContext.class,
       FhirConfiguration.class,
-      DiagnosticConclusionGrouperMapper.class,
+      DiagConGrouperMapperTest.class,
       DiagnosticReportMapper.class,
       MacroscopicGrouperMapper.class,
       MicroscopicGrouperMapper.class,
@@ -39,6 +39,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
       PathoFindingDiagConclusionMapper.class,
       PathoFindingMacroMapper.class,
       PathoFindingMicroMapper.class,
+      DiagnosticReportPatchMapper.class,
       CsvMappings.class,
     })
 public class PathologyReportProcessorTest {

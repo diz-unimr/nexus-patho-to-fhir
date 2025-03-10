@@ -1,4 +1,4 @@
-/* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
+/* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2025 */
 package de.unimarburg.diz.nexuspathotofhir.configuration;
 
 import de.unimarburg.diz.nexuspathotofhir.serde.FhirDeserializer;

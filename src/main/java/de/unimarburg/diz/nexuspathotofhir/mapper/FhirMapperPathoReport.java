@@ -62,8 +62,6 @@ public class FhirMapperPathoReport {
     }
     String befundId = inputBase.getBefundID();
     String befundTyp = inputBase.getBefundtyp().replaceAll("\\s+", "");
-    // construct serviceRequest
-    bundle.addEntry(serviceRequestMapper.apply(inputBase));
 
     // Handle DiagnosticConclusion
     // TODO: Decide whether the pathoReport of type Hauptbefund oder andere typ
@@ -168,6 +166,8 @@ public class FhirMapperPathoReport {
     }
     if (befundTyp.contains("Hauptbefund")) {
       bundle.addEntry(diagnosticReportMapper.apply(inputBase));
+      // construct serviceRequest
+      bundle.addEntry(serviceRequestMapper.apply(inputBase));
     } else
       // Create a Patch DianosticReport
       // TODO

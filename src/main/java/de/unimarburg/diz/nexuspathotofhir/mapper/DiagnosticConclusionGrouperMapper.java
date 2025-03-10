@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * Represents german diagnostic report section named 'Diagnostische Schlussfolgerung' It is
@@ -42,7 +43,6 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
     var pathoFindingGrouper = super.mapBaseGrouper(input, identifiers, idSystems);
 
     // Add identifier
-    // Add identifier
     pathoFindingGrouper.addIdentifier(
         IdentifierAndReferenceUtil.getIdentifier(
             input,
@@ -61,22 +61,32 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
     // Add derivedFrom
     ArrayList<Reference> derievedFrom = new ArrayList<>();
     // Add macroscopic-grouper
-    Identifier idPathoFindingGrouperMacro =
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
-            fhirProperties.getSystems().getPathoFindingGrouperMacroId());
+
+    if (StringUtils.hasText(inputBase.getMakroskopischerBefund())) {
+      Identifier idPathoFindingGrouperMacro =
+          IdentifierAndReferenceUtil.getIdentifier(
+              input,
+              PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
+              fhirProperties.getSystems().getPathoFindingGrouperMacroId());
+      derievedFrom.add(
+          IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMacro));
+    } else {
+      log.info("Macro text is empty");
+    }
 
     // Add microscopic-grouper
-    Identifier idPathoFindingGrouperMicro =
-        IdentifierAndReferenceUtil.getIdentifier(
-            input,
-            PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
-            fhirProperties.getSystems().getPathoFindingGrouperMicroId());
-    derievedFrom.add(
-        IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMacro));
-    derievedFrom.add(
-        IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMicro));
+    if (StringUtils.hasText(inputBase.getMikroskopischerBefund())) {
+      Identifier idPathoFindingGrouperMicro =
+          IdentifierAndReferenceUtil.getIdentifier(
+              input,
+              PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
+              fhirProperties.getSystems().getPathoFindingGrouperMicroId());
+      derievedFrom.add(
+          IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMicro));
+    } else {
+      log.info("Micro text is empty");
+    }
+    // Add derievedFrom
     pathoFindingGrouper.setDerivedFrom(derievedFrom);
     // Add ValueString
     pathoFindingGrouper.getValueStringType().setValueAsString(input.getDiagnoseConclusion());

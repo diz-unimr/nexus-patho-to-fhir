@@ -6,14 +6,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoReport;
 import de.unimarburg.diz.nexuspathotofhir.model.PathoSpecimen;
 import java.time.*;
-import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 public class DummyDataUtilTest {
 
   public static PathoReport getDummyReport() {
-
     var report = new PathoReport();
     report.setBefundID(UUID.randomUUID().toString());
     report.setBefundErstellungsdatum(1719565355113L);
@@ -26,8 +24,8 @@ public class DummyDataUtilTest {
     report.setBefundtyp("Hauptbefund");
     // report clinical data
     report.setTnm("pT1-3c N2a M1");
-    report.setMikroskopischerBefund("dummy1");
-    report.setMakroskopischerBefund("dummy2");
+    report.setMikroskopischerBefund("dummy Mikro");
+    report.setMakroskopischerBefund("dummy Makro");
     report.setDiagnoseConclusion("C41.1");
     // Probe
     report.setProbeName("Magen PE");
@@ -38,26 +36,29 @@ public class DummyDataUtilTest {
     return report;
   }
 
-  /**
-   * @return chronologically ordered reports: main, correction 1, correction 2, addition 1
-   */
-  public static List<PathoReport> getFourReportVariants() {
-
-    PathoReport mainReport = getDummyReport();
-
-    PathoReport reportCorrection1 = getDummyReport();
-    reportCorrection1.setBefundtyp("Korrekturbericht 1");
-    reportCorrection1.setBefundErstellungsdatum(mainReport.getBefundErstellungsdatum());
-
-    PathoReport reportCorrection2 = getDummyReport();
-    reportCorrection2.setBefundtyp("Korrekturbericht 2");
-    reportCorrection2.setBefundErstellungsdatum(mainReport.getBefundErstellungsdatum());
-
-    PathoReport reportAddition = getDummyReport();
-    reportAddition.setBefundtyp("Zusatzbefund 1");
-    reportAddition.setBefundErstellungsdatum(mainReport.getBefundErstellungsdatum());
-
-    return List.of(mainReport, reportCorrection1, reportCorrection2, reportAddition);
+  public static PathoReport getDummyReportOtherType() {
+    var report = new PathoReport();
+    report.setBefundID(UUID.randomUUID().toString());
+    report.setBefundErstellungsdatum(1719565355113L);
+    report.setLetzteBearbeitungsdatum(1719565355113L);
+    // report meta
+    report.setAuftragsnummer("H/20223/00001");
+    // patient
+    report.setPatientennummer("0000001");
+    report.setFallnummer("5000001");
+    report.setBefundtyp("Zusatzbefund 1");
+    // report clinical data
+    report.setTnm("pT1-3c N2a M1");
+    report.setMikroskopischerBefund("dummy1");
+    report.setMakroskopischerBefund("dummy2");
+    report.setDiagnoseConclusion("C41.1");
+    // Probe
+    report.setProbeName("Magen PE");
+    report.setProbeID("agfag");
+    long currentTimeMillis = System.currentTimeMillis();
+    report.setProbeEntnahmedatum(currentTimeMillis);
+    report.setAuftragsgeberFABCode("KAR");
+    return report;
   }
 
   public static PathoSpecimen getDummySpecimen() {
@@ -92,10 +93,6 @@ public class DummyDataUtilTest {
     pathoSpecimen.setContainerTyps("3, 2, 1, 2, 2");
 
     return pathoSpecimen;
-  }
-
-  public String getRandomValue(DummyValueType targetType) {
-    return "";
   }
 
   public static PathoSpecimen getRandomDummySpecimen() {

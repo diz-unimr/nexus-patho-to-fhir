@@ -1,4 +1,4 @@
-/* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
+/* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2025 */
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.configuration.CsvMappings;
@@ -41,15 +41,11 @@ public abstract class ToFhirMapper {
     // Encounter
     observationGrouper.setEncounter(
         IdentifierAndReferenceUtil.getReferenceTo(
-            "Encounter",
-            input.getFallnummer().trim(),
-            fhirProperties.getSystems().getEncounterId()));
+            "Encounter", input.getFallnummer(), fhirProperties.getSystems().getEncounterId()));
     // Patient
     observationGrouper.setSubject(
         IdentifierAndReferenceUtil.getReferenceTo(
-            "Patient",
-            input.getPatientennummer().trim(),
-            fhirProperties.getSystems().getPatientId()));
+            "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
 
     // ServiceRequestIdentifier
     ArrayList<Reference> basedOnRef = new ArrayList<>();

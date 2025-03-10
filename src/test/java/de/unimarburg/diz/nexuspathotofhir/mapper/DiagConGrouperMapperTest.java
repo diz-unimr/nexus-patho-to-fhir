@@ -1,12 +1,12 @@
-/* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2023 */
+/* GNU AFFERO GENERAL PUBLIC LICENSE  Version 3 (C)2025 */
 package de.unimarburg.diz.nexuspathotofhir.mapper;
 
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 
-class DiagnosticConclusionGrouperMapperTest<T extends ToFhirMapper>
+public class DiagConGrouperMapperTest<T extends ToFhirMapper>
     extends BasePathoGrouperMapperTest<T> {
 
-  public DiagnosticConclusionGrouperMapperTest() {
+  public DiagConGrouperMapperTest() {
     //noinspection unchecked
     super((Class<T>) DiagnosticConclusionGrouperMapper.class);
   }

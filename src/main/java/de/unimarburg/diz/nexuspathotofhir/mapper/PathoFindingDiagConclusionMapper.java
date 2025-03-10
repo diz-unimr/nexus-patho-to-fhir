@@ -40,11 +40,6 @@ public class PathoFindingDiagConclusionMapper extends ToFhirMapper {
             new CodeableConcept()
                 .setCoding(
                     List.of(new Coding().setCode("22637-3").setSystem("http://loinc.org")))));
-    // Identifier
-    Identifier identifier = new Identifier();
-    identifier.setSystem(fhirProperties.getSystems().getPathoFindingMicroId());
-    identifier.setValue(id);
-    pathoFinding.addIdentifier(identifier);
     return pathoFinding;
   }
 
