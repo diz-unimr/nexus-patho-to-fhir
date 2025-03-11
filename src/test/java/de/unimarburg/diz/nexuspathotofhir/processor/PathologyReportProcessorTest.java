@@ -31,7 +31,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
       PathologyReportProcessor.class,
       PathoFhirContext.class,
       FhirConfiguration.class,
-      DiagConGrouperMapperTest.class,
+      DiagnosticConclusionGrouperMapper.class,
       DiagnosticReportMapper.class,
       MacroscopicGrouperMapper.class,
       MicroscopicGrouperMapper.class,
@@ -41,6 +41,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
       PathoFindingMicroMapper.class,
       DiagnosticReportPatchMapper.class,
       CsvMappings.class,
+      FhirMapperPathoReport.class
     })
 public class PathologyReportProcessorTest {
 
@@ -87,7 +88,7 @@ public class PathologyReportProcessorTest {
       assertThat(result.isEmpty()).isFalse();
       var resultString = result.getFirst().getValue();
       System.out.println(resultString);
-      assertThat(result.getFirst().getValue().getEntry().size()).isGreaterThanOrEqualTo(7);
+      assertThat(result.getFirst().getValue().getEntry().size()).isGreaterThanOrEqualTo(10);
     }
   }
 }

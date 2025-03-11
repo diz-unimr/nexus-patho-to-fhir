@@ -50,7 +50,7 @@ public class DiagnosticReportPatchMapper extends ToFhirMapper {
 
     Parameters.ParametersParameterComponent resultPart =
         new Parameters.ParametersParameterComponent();
-    resultPart.setName("value");
+    // resultPart.setName("value");
 
     // Create the operation parameter
     if (StringUtils.hasText(inputBase.getDiagnoseConclusion())) {
@@ -105,15 +105,6 @@ public class DiagnosticReportPatchMapper extends ToFhirMapper {
     operationParam.addPart(resultPart);
     parameters.addParameter(operationParam);
     return parameters;
-  }
-
-  protected Parameters.ParametersParameterComponent createParameter(
-      Parameters.ParametersParameterComponent resultPart, String referenceString) {
-    resultPart.addPart(
-        new Parameters.ParametersParameterComponent()
-            .setName("reference")
-            .setValue(new StringType(referenceString)));
-    return resultPart;
   }
 
   @Nullable public Bundle.BundleEntryComponent apply(PathoReportInputBase value) {
