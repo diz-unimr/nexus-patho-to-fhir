@@ -98,15 +98,11 @@ public abstract class ToFhirMapper {
     // Encounter
     observationFinding.setEncounter(
         IdentifierAndReferenceUtil.getReferenceTo(
-            "Encounter",
-            input.getFallnummer().trim(),
-            fhirProperties.getSystems().getEncounterId()));
+            "Encounter", input.getFallnummer(), fhirProperties.getSystems().getEncounterId()));
     // Subject/Patient
     observationFinding.setSubject(
         IdentifierAndReferenceUtil.getReferenceTo(
-            "Patient",
-            input.getPatientennummer().trim(),
-            fhirProperties.getSystems().getPatientId()));
+            "Patient", input.getPatientennummer(), fhirProperties.getSystems().getPatientId()));
     // Metadata: Profile and Source
     observationFinding.setMeta(
         new Meta()
@@ -116,8 +112,13 @@ public abstract class ToFhirMapper {
                         "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-finding")))
             .setSource(META_SOURCE));
     // EffectiveDate
-    Date probeEinnahmeDatum = new Date(input.getProbeEntnahmedatum());
-    observationFinding.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
+    if (input.getProbeEntnahmedatum() != null) {
+      Date probeEinnahmeDatum = new Date(input.getProbeEntnahmedatum());
+      observationFinding.setEffective(new DateTimeType().setValue(probeEinnahmeDatum));
+    } else {
+      throw new IllegalArgumentException("probeEntnahmedatum is null");
+    }
+
     if (input.getBefundErstellungsdatum() != null) {
       Date probeEntnahmeDatum = new Date(input.getBefundErstellungsdatum());
       observationFinding.setIssued(probeEntnahmeDatum);
@@ -133,7 +134,7 @@ public abstract class ToFhirMapper {
             fhirProperties.getSystems().getServiceRequestId()));
     observationFinding.setBasedOn(basedOnRef);
     //
-    mapProbeNameToCode(observationFinding, input);
+    // mapProbeNameToCode(observationFinding, input);
     // status
     DecideStatusOfBefund.setFindingStatus(observationFinding, input.getDocType());
     // CodeFinding

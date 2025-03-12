@@ -145,7 +145,9 @@ public class FhirMapperPathoReport {
       int index = 0;
       bundle.addEntry(
           diagnosticConclusionGrouperMapper.apply(
-              inputBase, idList, fhirProperties.getSystems().getPathoFindingDiagConcId()));
+              inputBase,
+              idList,
+              fhirProperties.getSystems().getPathoFindingDiagnosticConclusionId()));
       // Iterate over the ArrayList using a for loop
       // Iterate over the entries of the current HashMap
       for (String key : codeValueMap.keySet()) {
@@ -156,7 +158,7 @@ public class FhirMapperPathoReport {
             pathoFindingDiagConclusionMapper.apply(
                 inputBase,
                 idList.get(index),
-                fhirProperties.getSystems().getPathoFindingDiagConcId(),
+                fhirProperties.getSystems().getPathoFindingDiagnosticConclusionId(),
                 key,
                 value));
         index++;

@@ -47,7 +47,7 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER,
-            fhirProperties.getSystems().getPathoFindingGrouperDigConcId()));
+            fhirProperties.getSystems().getPathoDiagnosticConclusionGrouperId()));
 
     // Add Meta: source, profile
     pathoFindingGrouper.setMeta(
@@ -67,7 +67,7 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
           IdentifierAndReferenceUtil.getIdentifier(
               input,
               PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
-              fhirProperties.getSystems().getPathoFindingGrouperMacroId());
+              fhirProperties.getSystems().getPathoMacroGrouperId());
       derievedFrom.add(
           IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMacro));
     } else {
@@ -80,7 +80,7 @@ public class DiagnosticConclusionGrouperMapper extends ToFhirMapper {
           IdentifierAndReferenceUtil.getIdentifier(
               input,
               PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
-              fhirProperties.getSystems().getPathoFindingGrouperMicroId());
+              fhirProperties.getSystems().getPathoMicroGrouperId());
       derievedFrom.add(
           IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMicro));
     } else {

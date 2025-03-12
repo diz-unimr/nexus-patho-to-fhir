@@ -39,7 +39,6 @@ fhir:
   systems:
     serviceRequestId: ${PATHO_SERVICE_REQUEST_ID:https://your-local-system/pathology/serviceRequestId}
     diagnosticReportId: ${PATHO_DIAGNOSTIC_REPORT_ID:https://your-local-system/pathology/diagnosticReportId}
-    observationId: ${PATHO_OBSERVATION_ID:https://your-local-system/pathology/observationId}
     patientId: ${PATHO_PATIENT_ID:https://your-local-system/pathology/patientId}
     encounterId: ${PATHO_ENCOUNTER_ID:https://your-local-system/pathology/encounterId}
     organizationId: ${PATHO_ORGANIZATION_ID:https://your-local-system/pathology/department}
@@ -47,12 +46,12 @@ fhir:
     specimenRequestId: ${PATHO_SPECIMEN_REQUEST_ID:https://your-local-system/pathology/specimenRequestId}
     specimenContainer: ${PATHO_SPECIMEN_CONTAINER:https://your-local-system/pathology/specimenContainer}
     specimenId: ${PATHO_SPECIMEN_ID:https://your-local-system/pathology/specimenId}
-    pathoFindingGrouperMicroId: ${PATHO_FINDING_GROUPER_MICRO_ID:https://your-local-system/pathology/patho-finding-grouper-micro-id}
-    pathoFindingGrouperMacroId: ${PATHO_FINDING_GROUPER_MACRO_ID:https://your-local-system/pathology/patho-finding-grouper-macro-id}
-    pathoFindingGrouperDigConcId: ${PATHO_FINDING_GROUPER_DIAG_CONC_ID:https://your-local-system/pathology/patho-finding-grouper-diag-conc-id}
+    pathoMicroGrouperId: ${PATHO_MICRO_GROUPER_ID:https://your-local-system/pathology/patho-microscopic-grouper-id}
+    pathoMacroGrouperId: ${PATHO_MACRO_GROUPER_ID:https://your-local-system/pathology/patho-macroscopic-grouper-id}
+    pathoDiagnosticConclusionGrouperId: ${PATHO_DIAGNOSTIC_CONCLUSION_GROUPER_ID:https://your-local-system/pathology/patho-diagnostic-conclusion-grouper-id}
     pathoFindingMicroId: ${PATHO_FINDING_MICRO_ID:https://your-local-system/pathology/patho-finding-micro-id}
-    pathoFindingMacroId: ${PATHO_FINDING_Macro_ID:https://your-local-system/pathology/patho-finding-macro-id}
-    pathoFindingDiagConcId: ${PATHO_FINDING_DIAG_CONC_ID:https://your-local-system/pathology/patho-finding-diag-conc-id}
+    pathoFindingMacroId: ${PATHO_FINDING_MACRO_ID:https://your-local-system/pathology/patho-finding-macro-id}
+    pathoFindingDiagnosticConclusionId: ${PATHO_FINDING_DIAGNOSTIC_CONCLUSION_ID:https://your-local-system/pathology/patho-finding-diagnostic-conclusion-id}
 
 
 mapping:

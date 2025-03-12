@@ -11,7 +11,6 @@ import de.unimarburg.diz.nexuspathotofhir.util.DummyDataUtilTest;
 import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import org.hl7.fhir.r4.model.Reference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
+public abstract class BasePathoFindingMapperTest<T extends ToFhirMapper> {
   private final Class<T> fixtureClass;
   public PathologyIdentifierResourceType baseIdentifierType = null;
   @Mock public FhirProperties fhirProperties;
@@ -27,11 +26,9 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
   @Mock public FhirProperties.FhirSystems fhirSystems = new FhirProperties.FhirSystems();
   private T fixture;
 
-  public BasePathoGrouperMapperTest(Class<T> fixtureClass) {
+  public BasePathoFindingMapperTest(Class<T> fixtureClass) {
     this.fixtureClass = fixtureClass;
   }
-
-  public abstract void setBaseIdentifierType();
 
   @BeforeEach
   public void beforeEachBase()
@@ -47,25 +44,24 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
             .newInstance(fhirProperties, csvMappings);
     Mockito.when(fhirProperties.getSystems()).thenReturn(fhirSystems);
     String dummyGrouperSystemName = "DummyGrouperSystemName";
-    Mockito.when(fhirSystems.getPathoMacroGrouperId()).thenReturn(dummyGrouperSystemName);
-    Mockito.when(fhirSystems.getPathoMicroGrouperId()).thenReturn(dummyGrouperSystemName);
-    Mockito.when(fhirSystems.getPathoDiagnosticConclusionGrouperId())
+    Mockito.when(fhirSystems.getPathoFindingDiagnosticConclusionId())
         .thenReturn(dummyGrouperSystemName);
+    Mockito.when(fhirSystems.getPathoFindingMicroId()).thenReturn(dummyGrouperSystemName);
+    Mockito.when(fhirSystems.getPathoFindingMacroId()).thenReturn(dummyGrouperSystemName);
     Mockito.when(fhirSystems.getPatientId()).thenReturn("dummyPatientIdSystem");
     Mockito.when(fhirSystems.getEncounterId()).thenReturn("dummyEncounterSystem");
-    setBaseIdentifierType();
   }
 
   @Test
   void map_empty_is_illegal_argument() {
-    ArrayList<String> refPathoFiningIds = new ArrayList<>();
-    refPathoFiningIds.add("t1");
-    String idSystems = "thisSystem";
-    // Test Grouper
-    Throwable thrownGrouper =
+    String id = "123";
+    String idSystem = "patho-finding-system";
+    String code = "ABC";
+    String value = "Test";
+    Throwable thrownFindings =
         catchThrowable(
-            () -> fixture.mapBaseGrouper(new PathoReport(), refPathoFiningIds, idSystems));
-    assertThat(thrownGrouper)
+            () -> fixture.mapBasePathoFinding(new PathoReport(), id, idSystem, code, value));
+    assertThat(thrownFindings)
         .as("invalid input will not be accepted")
         .isInstanceOf(IllegalArgumentException.class);
   }
@@ -73,15 +69,17 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
   @Test
   void mapMinimalPathoGrouper() {
     final PathoReport input = DummyDataUtilTest.getDummyReport();
-    System.out.println(input);
-    ArrayList<String> refPathoFiningIds = new ArrayList<>();
-    refPathoFiningIds.add("t1");
-    String idSystems = "thisSystem";
-    var result = fixture.mapBaseGrouper(input, refPathoFiningIds, idSystems);
+    String id = "123";
+    String idSystem = "patho-finding-system";
+    String code = "ABC";
+    String value = "Test";
+    var result = fixture.mapBasePathoFinding(input, id, idSystem, code, value);
     assertThat(result).isNotNull();
     assertThat(result.fhirType()).isEqualTo("Observation");
+
     // assertThat(identifier.getSystem()).isEqualTo(dummyGrouperSystemName);
     // assertThat(identifier.getValue()).contains(baseIdentifierType.name());
+
     assertThat(result.getEncounter()).isInstanceOf(Reference.class);
     assertThat(result.getEncounter().getReference())
         .isEqualTo(

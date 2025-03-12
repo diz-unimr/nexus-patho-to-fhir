@@ -6,7 +6,6 @@ import org.hl7.fhir.r4.model.*;
 import org.springframework.util.StringUtils;
 
 public class IdentifierAndReferenceUtil {
-
   /**
    * Build identifier encounterNumber-journalNumber-arg1-arg2-...
    *
@@ -36,7 +35,6 @@ public class IdentifierAndReferenceUtil {
       builder.append(inputBase.getAuftragsnummer());
       builder.append("-");
       builder.append(inputBase.getBefundtyp().replaceAll("\\s+", ""));
-    } else if (identType == PathologyIdentifierResourceType.PATHO_FINDING) {
     }
     if (args != null && args.length > 0) builder.append(String.join("-", args));
     return builder.toString();
@@ -84,7 +82,6 @@ public class IdentifierAndReferenceUtil {
                 .setCode("ACSN"));
         break;
     }
-
     identifier.setType(codeableConceptIdType);
     return identifier;
   }

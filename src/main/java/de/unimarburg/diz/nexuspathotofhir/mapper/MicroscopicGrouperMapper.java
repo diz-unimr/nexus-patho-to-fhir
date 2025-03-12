@@ -37,7 +37,7 @@ public class MicroscopicGrouperMapper extends ToFhirMapper {
         IdentifierAndReferenceUtil.getIdentifier(
             input,
             PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
-            fhirProperties.getSystems().getPathoFindingGrouperMicroId()));
+            fhirProperties.getSystems().getPathoMicroGrouperId()));
 
     // Add Meta: source, profile
     pathoFindingGrouper.setMeta(

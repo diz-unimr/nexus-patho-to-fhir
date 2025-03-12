@@ -17,7 +17,6 @@ public class FhirProperties {
   public static class FhirSystems {
     private String serviceRequestId;
     private String diagnosticReportId;
-    private String observationId;
     private String organizationId;
     private String patientId;
     private String encounterId;
@@ -26,12 +25,12 @@ public class FhirProperties {
     private String specimenContainer;
     private String diagnosticFindingId;
     private String performerId;
-    private String pathoFindingGrouperMicroId;
-    private String pathoFindingGrouperMacroId;
-    private String pathoFindingGrouperDigConcId;
+    private String pathoMicroGrouperId;
+    private String pathoMacroGrouperId;
+    private String pathoDiagnosticConclusionGrouperId;
     private String pathoFindingMicroId;
     private String pathoFindingMacroId;
-    private String pathoFindingDiagConcId;
+    private String pathoFindingDiagnosticConclusionId;
 
     @Override
     public String toString() {
@@ -41,9 +40,6 @@ public class FhirProperties {
           + '\''
           + ", diagnosticReportId='"
           + diagnosticReportId
-          + '\''
-          + ", observationId='"
-          + observationId
           + '\''
           + ", patientId='"
           + patientId
@@ -64,13 +60,13 @@ public class FhirProperties {
           + specimenContainer
           + '\''
           + ", pathoFindingGrouperMicroId='"
-          + pathoFindingGrouperMicroId
+          + pathoMicroGrouperId
           + '\''
           + ", pathoFindingGrouperMacroId='"
-          + pathoFindingGrouperMacroId
+          + pathoMacroGrouperId
           + '\''
           + ", pathoFindingGrouperDigConcId='"
-          + pathoFindingGrouperDigConcId
+          + pathoDiagnosticConclusionGrouperId
           + '\''
           + ", diagnosticFindingId='"
           + pathoFindingMicroId
@@ -79,7 +75,7 @@ public class FhirProperties {
           + pathoFindingMacroId
           + '\''
           + ", pathoFindingDiagConcId='"
-          + pathoFindingDiagConcId
+          + pathoFindingDiagnosticConclusionId
           + '\''
           + performerId
           + '\''

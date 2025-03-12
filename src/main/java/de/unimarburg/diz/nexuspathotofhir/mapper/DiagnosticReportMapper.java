@@ -90,7 +90,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
           IdentifierAndReferenceUtil.getIdentifier(
               input,
               PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
-              fhirProperties.getSystems().getPathoFindingGrouperMicroId());
+              fhirProperties.getSystems().getPathoMicroGrouperId());
       resultRefereces.add(
           IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMicro));
     } else {
@@ -103,7 +103,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
           IdentifierAndReferenceUtil.getIdentifier(
               input,
               PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
-              fhirProperties.getSystems().getPathoFindingGrouperMacroId());
+              fhirProperties.getSystems().getPathoMicroGrouperId());
       resultRefereces.add(
           IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMacro));
 
@@ -117,7 +117,7 @@ public class DiagnosticReportMapper extends ToFhirMapper {
           IdentifierAndReferenceUtil.getIdentifier(
               input,
               PathologyIdentifierResourceType.DIAGNOSTIC_CONCLUSION_GROUPER,
-              fhirProperties.getSystems().getPathoFindingGrouperDigConcId());
+              fhirProperties.getSystems().getPathoDiagnosticConclusionGrouperId());
       resultRefereces.add(
           IdentifierAndReferenceUtil.getReferenceTo(
               "Observation", idPathoFindingGrouperDiagConclusion));
