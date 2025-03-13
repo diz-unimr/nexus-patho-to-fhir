@@ -53,6 +53,7 @@ mapping:
     specimenType: ${NEXUS_PATHO_SPECIMEN_TYPES_MAPPING_CSV:src/main/resources/mappings/specimenType.csv}
     specimenExtractionMethod: ${NEXUS_PATHO_SPECIMEN_EXTRACTION_MAPPING_CSV:src/main/resources/mappings/specimenExtractionMethod.csv}
     specimenContainerType: ${NEXUS_PATHO_SPECIMEN_CONTAINERTYPE_MAPPING_CSV:src/main/resources/mappings/specimenContainerType.csv}
+    specimenBodysite: ${NEXUS_PATHO_SPECIMEN_BODYSITE_MAPPING_CSV:src/main/resources/mappings/specimenBodysite.csv}
 management:
   server:
     port: 8080

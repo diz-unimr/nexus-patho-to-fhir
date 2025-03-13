@@ -164,7 +164,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     return target;
   }
 
-  private Coding getExtractionMethodCoding(PathoSpecimen input) {
+  protected Coding getExtractionMethodCoding(PathoSpecimen input) {
 
     if (!csvMappings.specimenExtractionMethod().containsKey(input.getProbeGewinnungsmethode()))
       return null;
@@ -174,8 +174,11 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     }
   }
 
-  private CodeableConcept mapBodySite(PathoSpecimen input) {
-    // todo: map organ/tissue to SNOMED CT code
+  protected CodeableConcept mapBodySite(PathoSpecimen input) {
+    if (csvMappings.specimenBodysite().containsKey(input.getProbeName())) {
+      var coding = csvMappings.specimenBodysite().get(input.getProbeName()).asFhirCoding();
+      return new CodeableConcept(coding);
+    }
     return null;
   }
 
@@ -313,7 +316,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
     return typeCoding;
   }
 
-  private void setMeta(Specimen specimen) {
+  protected void setMeta(Specimen specimen) {
     specimen.setMeta(
         new Meta()
             .setProfile(

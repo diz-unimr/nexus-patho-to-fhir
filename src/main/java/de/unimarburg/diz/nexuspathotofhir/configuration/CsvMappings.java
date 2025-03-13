@@ -28,16 +28,19 @@ public class CsvMappings {
   private final String specimenTypeMappingLocation;
   private final String specimenExtractionMethod;
   private final String specimenContainerType;
+  private final String specimenBodysiteMappingLocation;
 
   private Map<String, MappingEntry> specimenContainerTypeMap;
   private Map<String, MappingEntry> specimenExtractionMethodMap;
   private Map<String, MappingEntry> specimentTypeMappingLocationMap;
+  private Map<String, MappingEntry> bodysiteMappingLocationMap;
 
   @Autowired
   public CsvMappings(
       @Value("${mapping.location.specimenType}") String specimenTypeMappingLocation,
       @Value("${mapping.location.specimenExtractionMethod}") String specimenExtractionMethod,
-      @Value("${mapping.location.specimenContainerType}") String specimenContainerType) {
+      @Value("${mapping.location.specimenContainerType}") String specimenContainerType,
+      @Value("${mapping.location.specimenBodysite}") String specimenBodysiteMappingLocation) {
 
     if (!StringUtils.hasLength(specimenTypeMappingLocation))
       throw new IllegalArgumentException("'mapping.location.specimenType' must be set.");
@@ -50,6 +53,7 @@ public class CsvMappings {
     this.specimenContainerType = specimenContainerType;
     this.specimenTypeMappingLocation = specimenTypeMappingLocation;
     this.specimenExtractionMethod = specimenExtractionMethod;
+    this.specimenBodysiteMappingLocation = specimenBodysiteMappingLocation;
   }
 
   public static Map<String, MappingEntry> readLineByLine(Path filePath) {
@@ -94,6 +98,16 @@ public class CsvMappings {
       specimentTypeMappingLocationMap = CsvMappings.readLineByLine(path);
     }
     return specimentTypeMappingLocationMap;
+  }
+
+  public Map<String, MappingEntry> specimenBodysite() {
+    if (bodysiteMappingLocationMap == null) {
+      if (!StringUtils.hasText(specimenBodysiteMappingLocation))
+        throw new IllegalArgumentException("path to specimenBodysiteMappingLocation CSV is empty");
+      var path = getPath(specimenBodysiteMappingLocation);
+      bodysiteMappingLocationMap = CsvMappings.readLineByLine(path);
+    }
+    return bodysiteMappingLocationMap;
   }
 
   public Map<String, MappingEntry> specimenExtractionMethod() {
