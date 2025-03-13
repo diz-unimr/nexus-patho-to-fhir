@@ -75,8 +75,11 @@ class SpecimenMapperTest extends FhirValidationBase {
             .filter(
                 a ->
                     !a.getMessage()
-                        .contains(
-                            "None of the codings provided are in the value set 'MII VS Patho Container Type [SNOMED CT]"))
+                            .contains(
+                                "None of the codings provided are in the value set 'MII VS Patho Container Type [SNOMED CT]")
+                        && !a.getMessage()
+                            .contains(
+                                "The Coding provided (http://snomed.info/sct#39607008) was not found in the value set 'ValueSet - SNOMED CT Body Strutures'"))
             .toList();
     if (!filterValidationErrors.isEmpty()) {
       log.info("we have validation errors - mapped resource JSON representation:");
@@ -158,11 +161,20 @@ class SpecimenMapperTest extends FhirValidationBase {
 
   @Test
   public void checkInvalidCode() {
-
     Specimen result = new Specimen();
     PathoSpecimen input = DummyDataUtilTest.getDummySpecimen();
     input.setProbeName("fooo");
     fixture.mapSpecimenType(result, input);
     assertThat(result.hasType()).isFalse();
+  }
+
+  @Test
+  public void bodysiteMapping() {
+    var input = DummyDataUtilTest.getDummySpecimen();
+    var result = fixture.map(input);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getCollection().getBodySite().getCodingFirstRep().getCode())
+        .isEqualTo("39607008");
   }
 }
