@@ -6,7 +6,7 @@
   "author": "diz marburg",
   "license": "AGPL3",
   "dependencies": {
-    "de.basisprofil.r4": "1.5.1",
+    "de.basisprofil.r4": "1.5.3",
     "de.medizininformatikinitiative.kerndatensatz.patho": "2025.0.2",
     "de.gematik.isik-basismodul": "4.0.0",
     "de.medizininformatikinitiative.kerndatensatz.meta": "2025.0.0",
