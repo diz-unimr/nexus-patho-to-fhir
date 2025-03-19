@@ -12,6 +12,8 @@ import de.unimarburg.diz.nexuspathotofhir.util.IdentifierAndReferenceUtil;
 import de.unimarburg.diz.nexuspathotofhir.util.PathologyIdentifierResourceType;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
+import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.Reference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,12 +22,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
-  private final Class<T> fixtureClass;
+  protected final Class<T> fixtureClass;
   public PathologyIdentifierResourceType baseIdentifierType = null;
   @Mock public FhirProperties fhirProperties;
   @Mock public CsvMappings csvMappings;
   @Mock public FhirProperties.FhirSystems fhirSystems = new FhirProperties.FhirSystems();
-  private T fixture;
+  protected T fixture;
 
   public BasePathoGrouperMapperTest(Class<T> fixtureClass) {
     this.fixtureClass = fixtureClass;
@@ -46,13 +48,13 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
             .getConstructor(FhirProperties.class, CsvMappings.class)
             .newInstance(fhirProperties, csvMappings);
     Mockito.when(fhirProperties.getSystems()).thenReturn(fhirSystems);
-    String dummyGrouperSystemName = "DummyGrouperSystemName";
-    Mockito.when(fhirSystems.getPathoMacroGrouperId()).thenReturn(dummyGrouperSystemName);
-    Mockito.when(fhirSystems.getPathoMicroGrouperId()).thenReturn(dummyGrouperSystemName);
+    Mockito.when(fhirSystems.getPathoMacroGrouperId()).thenReturn("GrouperMacroId");
+    Mockito.when(fhirSystems.getPathoMicroGrouperId()).thenReturn("GrouperMicroId");
     Mockito.when(fhirSystems.getPathoDiagnosticConclusionGrouperId())
-        .thenReturn(dummyGrouperSystemName);
+        .thenReturn("GrouperDiagConId");
     Mockito.when(fhirSystems.getPatientId()).thenReturn("dummyPatientIdSystem");
     Mockito.when(fhirSystems.getEncounterId()).thenReturn("dummyEncounterSystem");
+    Mockito.when(fhirSystems.getServiceRequestId()).thenReturn("dummyServiceRequestSystem");
     setBaseIdentifierType();
   }
 
@@ -80,8 +82,9 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
     var result = fixture.mapBaseGrouper(input, refPathoFiningIds, idSystems);
     assertThat(result).isNotNull();
     assertThat(result.fhirType()).isEqualTo("Observation");
-    // assertThat(identifier.getSystem()).isEqualTo(dummyGrouperSystemName);
-    // assertThat(identifier.getValue()).contains(baseIdentifierType.name());
+    String dummyGrouperSystemName = "DummyGrouperSystemName";
+
+    // Enconter
     assertThat(result.getEncounter()).isInstanceOf(Reference.class);
     assertThat(result.getEncounter().getReference())
         .isEqualTo(
@@ -89,11 +92,25 @@ public abstract class BasePathoGrouperMapperTest<T extends ToFhirMapper> {
                     "Encounter", input.getFallnummer(), "dummyEncounterSystem")
                 .getReference());
 
+    // Patient
     assertThat(result.getSubject()).isInstanceOf(Reference.class);
     assertThat(result.getSubject().getReference())
         .isEqualTo(
             IdentifierAndReferenceUtil.getReferenceTo(
                     "Patient", input.getPatientennummer(), "dummyPatientIdSystem")
                 .getReference());
+
+    // ServiceRequest
+    assertThat(result.getBasedOn().getFirst()).isInstanceOf(Reference.class);
+    assertThat(result.getBasedOn().getFirst().getReference())
+        .isEqualTo(
+            IdentifierAndReferenceUtil.getReferenceTo(
+                    "ServiceRequest", input.getAuftragsnummer(), "dummyServiceRequestSystem")
+                .getReference());
+
+    // Befunderstllungsdatum
+    Date probeEntnahmeDatum = new Date(1719565355113L);
+    DateTimeType dateTimeType = new DateTimeType(probeEntnahmeDatum);
+    assertThat(result.getEffective().toString()).isEqualTo(dateTimeType.toString());
   }
 }

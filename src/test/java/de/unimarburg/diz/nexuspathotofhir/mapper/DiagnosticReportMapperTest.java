@@ -36,7 +36,7 @@ class DiagnosticReportMapperTest {
   }
 
   @Test
-  void mapMinimalDiagosticReport() {
+  void mapDiagosticReport() {
     final PathoReport input = DummyDataUtilTest.getDummyReport();
     var result = diagnosticReportMapper.map(input);
     assertThat(result).isNotNull();

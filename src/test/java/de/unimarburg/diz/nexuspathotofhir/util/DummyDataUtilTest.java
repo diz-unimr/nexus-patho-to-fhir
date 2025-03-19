@@ -13,7 +13,7 @@ public class DummyDataUtilTest {
 
   public static PathoReport getDummyReport() {
     var report = new PathoReport();
-    report.setBefundID(UUID.randomUUID().toString());
+    report.setBefundID("xyz");
     report.setBefundErstellungsdatum(1719565355113L);
     report.setLetzteBearbeitungsdatum(1719565355113L);
     // report meta
@@ -30,7 +30,7 @@ public class DummyDataUtilTest {
     // Probe
     report.setProbeName("Magen PE");
     report.setProbeID("agfag");
-    long currentTimeMillis = System.currentTimeMillis();
+    long currentTimeMillis = 1719565355113L;
     report.setProbeEntnahmedatum(currentTimeMillis);
     report.setAuftragsgeberFABCode("KAR");
     return report;

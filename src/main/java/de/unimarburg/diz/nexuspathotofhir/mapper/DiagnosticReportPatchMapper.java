@@ -61,7 +61,7 @@ public class DiagnosticReportPatchMapper extends ToFhirMapper {
               fhirProperties.getSystems().getPathoDiagnosticConclusionGrouperId());
       Reference reference =
           IdentifierAndReferenceUtil.getReferenceTo(
-              "DiagnosticReport", idPathoFindingGrouperDiagConclusion);
+              "Observation", idPathoFindingGrouperDiagConclusion);
       // Add the operation parameter to the parameters resource
       resultPart.addPart(
           new Parameters.ParametersParameterComponent()
@@ -78,7 +78,7 @@ public class DiagnosticReportPatchMapper extends ToFhirMapper {
               PathologyIdentifierResourceType.MICROSCOPIC_GROUPER,
               fhirProperties.getSystems().getPathoMicroGrouperId());
       Reference reference =
-          IdentifierAndReferenceUtil.getReferenceTo("DiagnosticReport", idPathoFindingGrouperMicro);
+          IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMicro);
       // Add the operation parameter to the parameters resource
       resultPart.addPart(
           new Parameters.ParametersParameterComponent()
@@ -95,7 +95,7 @@ public class DiagnosticReportPatchMapper extends ToFhirMapper {
               PathologyIdentifierResourceType.MACROSCOPIC_GROUPER,
               fhirProperties.getSystems().getPathoMacroGrouperId());
       Reference reference =
-          IdentifierAndReferenceUtil.getReferenceTo("DiagnosticReport", idPathoFindingGrouperMacro);
+          IdentifierAndReferenceUtil.getReferenceTo("Observation", idPathoFindingGrouperMacro);
       // Add the operation parameter to the parameters resource
       resultPart.addPart(
           new Parameters.ParametersParameterComponent()

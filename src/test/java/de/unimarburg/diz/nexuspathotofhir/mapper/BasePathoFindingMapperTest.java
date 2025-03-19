@@ -19,12 +19,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public abstract class BasePathoFindingMapperTest<T extends ToFhirMapper> {
-  private final Class<T> fixtureClass;
+  protected final Class<T> fixtureClass;
   public PathologyIdentifierResourceType baseIdentifierType = null;
   @Mock public FhirProperties fhirProperties;
   @Mock public CsvMappings csvMappings;
   @Mock public FhirProperties.FhirSystems fhirSystems = new FhirProperties.FhirSystems();
-  private T fixture;
+  protected T fixture;
 
   public BasePathoFindingMapperTest(Class<T> fixtureClass) {
     this.fixtureClass = fixtureClass;
@@ -43,11 +43,11 @@ public abstract class BasePathoFindingMapperTest<T extends ToFhirMapper> {
             .getConstructor(FhirProperties.class, CsvMappings.class)
             .newInstance(fhirProperties, csvMappings);
     Mockito.when(fhirProperties.getSystems()).thenReturn(fhirSystems);
-    String dummyGrouperSystemName = "DummyGrouperSystemName";
+
+    Mockito.when(fhirSystems.getPathoFindingMacroId()).thenReturn("PathoFindingMacroId");
+    Mockito.when(fhirSystems.getPathoFindingMicroId()).thenReturn("PathoFindingMicroId");
     Mockito.when(fhirSystems.getPathoFindingDiagnosticConclusionId())
-        .thenReturn(dummyGrouperSystemName);
-    Mockito.when(fhirSystems.getPathoFindingMicroId()).thenReturn(dummyGrouperSystemName);
-    Mockito.when(fhirSystems.getPathoFindingMacroId()).thenReturn(dummyGrouperSystemName);
+        .thenReturn("PathoFindingDiagConcId");
     Mockito.when(fhirSystems.getPatientId()).thenReturn("dummyPatientIdSystem");
     Mockito.when(fhirSystems.getEncounterId()).thenReturn("dummyEncounterSystem");
   }
