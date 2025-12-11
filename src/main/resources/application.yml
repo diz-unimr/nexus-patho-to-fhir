@@ -48,6 +48,9 @@ fhir:
     specimenContainer: ${PATHO_SPECIMEN_CONTAINER:https://your-local-system/pathology/specimenContainer}
     specimenId: ${PATHO_SPECIMEN_ID:https://your-local-system/pathology/specimenId}
     performerId: ${PATHO_PERFORMER_ID:https://your-local-system/pathology/performerId}
+  profiles:
+    specimenProfilePatho: "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-specimen"
+    specimenProfileBioBank: "https://www.medizininformatik-initiative.de/fhir/ext/modul-biobank/StructureDefinition/Specimen|2025.0.4"
 mapping:
   location:
     specimenType: ${NEXUS_PATHO_SPECIMEN_TYPES_MAPPING_CSV:src/main/resources/mappings/specimenType.csv}

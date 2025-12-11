@@ -32,6 +32,8 @@ class SpecimenMapperTest extends FhirValidationBase {
 
   @Autowired SpecimenMapper fixture;
 
+  @Autowired FhirProperties fhirProperties;
+
   @Test
   void emptyInput() {
     final PathoSpecimen value = new PathoSpecimen();
@@ -98,6 +100,9 @@ class SpecimenMapperTest extends FhirValidationBase {
     var result = fixture.map(input);
     var result2 = fixture.map(input);
 
+    assertThat(result).isNotNull();
+    assertThat(result2).isNotNull();
+
     assertThat(result.getIdentifier().size()).as("specimen has only one identifier").isEqualTo(1);
     assertThat(result.getContainer())
         .as("all container components have only one identifier!")
@@ -123,17 +128,34 @@ class SpecimenMapperTest extends FhirValidationBase {
     var input = DummyDataUtilTest.getDummySpecimen();
 
     var result = fixture.map(input);
-
+    assertThat(result).isNotNull();
     assertThat(result.getContainer().size()).isEqualTo(4);
 
     assertThat(result.getSubject()).isNotNull();
   }
 
   @Test
-  public void referencesTest() {
+  public void referencesPatientTest() {
     var input = DummyDataUtilTest.getDummySpecimen();
     var result = fixture.map(input);
+    assertThat(result).isNotNull();
     assertThat(result.getSubject()).isNotNull();
+    assertThat(result.getSubject().getReference()).contains("Patient");
+  }
+
+  @Test
+  public void metaTest() {
+    var input = DummyDataUtilTest.getDummySpecimen();
+    var result = fixture.map(input);
+    assertThat(result).isNotNull();
+    assertThat(result.getMeta().getProfile()).hasSize(2);
+
+    assertThat(result.getMeta().getProfile().getFirst().getValue())
+        .isEqualTo(fhirProperties.getProfiles().getSpecimenProfileBioBank());
+    assertThat(result.getMeta().getProfile().getLast().getValue())
+        .isEqualTo(fhirProperties.getProfiles().getSpecimenProfilePatho());
+
+    assertThat(result.getMeta().getSource()).isEqualTo("#nexus-pathology");
   }
 
   @Test

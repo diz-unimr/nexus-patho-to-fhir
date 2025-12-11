@@ -278,7 +278,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
                 .setDisplay("Specimen vial (physical object)")
                 .setSystem(MappingEntry.SNOMED_SYSTEM)
                 .setVersion(MappingEntry.SNOMED_VERSION);
-            /**
+            /*
              * specimenTypeCoding .addCoding() .setCode("434746001") .setDisplay( "Cytology specimen
              * vial containing preservative fluid (physical object)")
              * .setSystem(MappingEntry.SNOMED_SYSTEM) .setVersion(MappingEntry.SNOMED_VERSION);*
@@ -289,7 +289,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
                 .setDisplay("Tissue cassette (physical object)")
                 .setSystem(MappingEntry.SNOMED_SYSTEM)
                 .setVersion("http://snomed.info/sct/900000000000207008/version/20240501");
-            /**
+            /*
              * specimenTypeCoding .addCoding() .setCode("441652008") .setDisplay("Formalin-fixed
              * paraffin-embedded tissue specimen") .setSystem(MappingEntry.SNOMED_SYSTEM)
              * .setVersion("http://snomed.info/sct/900000000000207008/version/20240501");*
@@ -321,8 +321,8 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
         new Meta()
             .setProfile(
                 List.of(
-                    new CanonicalType(ToFhirMapperSpecimen.MII_Biobank_Specimen),
-                    new CanonicalType(ToFhirMapperSpecimen.MII_PR_Patho_Specimen)))
+                    new CanonicalType(fhirProperties.getProfiles().getSpecimenProfileBioBank()),
+                    new CanonicalType(fhirProperties.getProfiles().getSpecimenProfilePatho())))
             .setSource(ToFhirMapperSpecimen.META_SOURCE));
   }
 
