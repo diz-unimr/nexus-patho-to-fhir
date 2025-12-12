@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class FhirProperties {
 
   @NestedConfigurationProperty private FhirSystems systems = new FhirSystems();
+  @NestedConfigurationProperty private Profiles profiles = new Profiles();
 
   @Data
   public static class FhirSystems {
@@ -66,8 +67,26 @@ public class FhirProperties {
     }
   }
 
+  @Data
+  public static class Profiles {
+    private String specimenProfilePatho;
+    private String specimenProfileBioBank;
+
+    @Override
+    public String toString() {
+      return "Profiles{"
+          + "specimenProfilePatho='"
+          + specimenProfilePatho
+          + '\''
+          + ", specimenProfileBioBank='"
+          + specimenProfileBioBank
+          + '\''
+          + '}';
+    }
+  }
+
   @Override
   public String toString() {
-    return "FhirProperties{" + "systems=" + getSystems() + '}';
+    return "FhirProperties{" + "systems=" + getSystems() + "profiles" + getProfiles() + '}';
   }
 }
