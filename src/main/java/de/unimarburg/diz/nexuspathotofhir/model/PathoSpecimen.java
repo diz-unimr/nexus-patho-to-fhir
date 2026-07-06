@@ -50,6 +50,7 @@ public class PathoSpecimen implements PathoInputBase {
   @JsonIgnore
   public int getRootIndex() {
     if (containerTyps == null) return -1;
+    containerTyps = containerTyps.replaceAll("\\s","");
     final String[] split = containerTyps.split(",");
     var rootIndex = Arrays.stream(split).toList().indexOf("3");
     return rootIndex;

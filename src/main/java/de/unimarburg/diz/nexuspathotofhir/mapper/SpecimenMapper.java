@@ -101,8 +101,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
             // to add +1
             input.getSubContainerIdsArray().length + 1);
 
-    var countSet = new HashSet<Integer>();
-    arrayLength.forEach(a -> countSet.add(a));
+    var countSet = new HashSet<>(arrayLength);
     if (countSet.size() > 1) {
       log.error("input has different count of lables,guids,types,ids: '{}'", input);
       isValid = false;
@@ -254,9 +253,12 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
   }
 
   /**
-   * nexus container type = 1 has only 2 specimen types cytology vial and formalin-fixed
-   * paraffin-embedded block container type = 3 is parent specimen container type = 2 are microscope
-   * slides (433466003,Microscope slide (physical object))
+   * nexus container
+   * <p>type = 1 has only 2 specimen types cytology vial and formalin-fixed
+   * paraffin-embedded block container </p>
+   * <p>type = 3 is parent specimen container </p>
+   * <p>type = 2 are microscope
+   * slides (433466003,Microscope slide (physical object))</p>
    *
    * @param input
    */
@@ -264,7 +266,7 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
       PathoSpecimen input, SpecimenContainerTyp nexusContainerTyp) {
     var typeCoding = new Coding();
     /*
-    brauchen container-ID für
+     * brauchen container-ID für
      */
 
     // alternativ kann man den namen der Probe prüfen '-0-X' ist Zytologie Proeb und '-1-X' sind
