@@ -81,7 +81,7 @@ class SpecimenMapperTest extends FhirValidationBase {
                                 "None of the codings provided are in the value set 'MII VS Patho Container Type [SNOMED CT]")
                         && !a.getMessage()
                             .contains(
-                                "The Coding provided (http://snomed.info/sct#39607008) was not found in the value set 'ValueSet - SNOMED CT Body Strutures'"))
+                                "The Coding provided (http://snomed.info/sct#39607008) was not found in the value set 'MII VS Biobank BodyStructures SCT'"))
             .toList();
     if (!filterValidationErrors.isEmpty()) {
       log.info("we have validation errors - mapped resource JSON representation:");
