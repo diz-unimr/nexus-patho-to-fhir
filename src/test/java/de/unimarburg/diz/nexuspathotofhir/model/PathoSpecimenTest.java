@@ -21,11 +21,10 @@ public class PathoSpecimenTest {
     assertThat(fix.getContainerGUIDsArray()).isEmpty();
   }
 
-    @Test
-    public void specimenGetRootIndex() {
-        var fix = new PathoSpecimen();
-        fix.setContainerTyps("1, 1,1,2, 3, 2");
-        assertThat(fix.getRootIndex()).isEqualTo(4);
-    }
-
+  @Test
+  public void specimenGetRootIndex() {
+    var fix = new PathoSpecimen();
+    fix.setContainerTyps("1, 1,1,2, 3, 2");
+    assertThat(fix.getRootIndex()).isEqualTo(4);
+  }
 }

@@ -50,7 +50,7 @@ fhir:
     performerId: ${PATHO_PERFORMER_ID:https://your-local-system/pathology/performerId}
   profiles:
     specimenProfilePatho: "https://www.medizininformatik-initiative.de/fhir/ext/modul-patho/StructureDefinition/mii-pr-patho-specimen"
-    specimenProfileBioBank: "https://www.medizininformatik-initiative.de/fhir/ext/modul-biobank/StructureDefinition/Specimen|2025.0.4"
+    specimenProfileBioBank: "https://www.medizininformatik-initiative.de/fhir/ext/modul-biobank/StructureDefinition/Specimen|2026.0.1"
 mapping:
   location:
     specimenType: ${NEXUS_PATHO_SPECIMEN_TYPES_MAPPING_CSV:src/main/resources/mappings/specimenType.csv}

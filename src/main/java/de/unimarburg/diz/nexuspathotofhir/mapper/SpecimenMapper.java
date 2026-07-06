@@ -254,11 +254,13 @@ public class SpecimenMapper extends ToFhirMapperSpecimen {
 
   /**
    * nexus container
-   * <p>type = 1 has only 2 specimen types cytology vial and formalin-fixed
-   * paraffin-embedded block container </p>
-   * <p>type = 3 is parent specimen container </p>
-   * <p>type = 2 are microscope
-   * slides (433466003,Microscope slide (physical object))</p>
+   *
+   * <p>type = 1 has only 2 specimen types cytology vial and formalin-fixed paraffin-embedded block
+   * container
+   *
+   * <p>type = 3 is parent specimen container
+   *
+   * <p>type = 2 are microscope slides (433466003,Microscope slide (physical object))
    *
    * @param input
    */
