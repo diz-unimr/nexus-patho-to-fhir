@@ -45,7 +45,7 @@ tasks.register('integrationTest', Test) {
 check.dependsOn integrationTest
 
 ext {
-	set('springCloudVersion', "2024.0.0")
+	set('springCloudVersion', "2024.0.3")
 	set("hapiFhirVersion", "7.6.1")
 }
 
